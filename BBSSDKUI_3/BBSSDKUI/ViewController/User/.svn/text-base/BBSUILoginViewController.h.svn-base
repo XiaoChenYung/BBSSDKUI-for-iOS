@@ -1,0 +1,15 @@
+//
+//  NSLoginViewController.h
+//  BBSSDKUI
+//
+//  Created by youzu_Max on 2017/4/12.
+//  Copyright © 2017年 MOB. All rights reserved.
+//
+
+#import "BBSUIBaseUserViewController.h"
+
+@interface BBSUILoginViewController : BBSUIBaseUserViewController
+
+@property (nonatomic, copy) void (^cancelLoginBlock)();
+
+@end

@@ -1,0 +1,17 @@
+//
+//  BBSUIMacro.pch
+//  BBSSDKUI
+//
+//  Created by liyc on 2017/2/16.
+//  Copyright © 2017年 MOB. All rights reserved.
+//
+
+#ifndef BBSUIMacro_pch
+#define BBSUIMacro_pch
+
+// Include any system framework and library headers here that should be included in all compilation units.
+// You will also need to set the Prefix Header build setting of one or more of your targets to reference this file.
+
+#import "BBSUIMacro.h"
+
+#endif /* BBSUIMacro_pch */
