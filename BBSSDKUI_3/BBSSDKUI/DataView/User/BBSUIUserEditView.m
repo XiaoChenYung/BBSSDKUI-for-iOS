@@ -272,6 +272,11 @@
 - (void)cameraButtonHandler:(UIButton *)cameraButton
 {
     UIAlertController * alertVC = [UIAlertController alertControllerWithTitle:nil message:nil preferredStyle:UIAlertControllerStyleActionSheet];
+    
+    UIPopoverPresentationController *popoverController = alertVC.popoverPresentationController;
+    popoverController.sourceView = self;
+    popoverController.sourceRect = CGRectMake(DZSUIScreen_width/2,DZSUIScreen_height,1.0,1.0);
+    
     UIAlertAction * takePhoto = [UIAlertAction actionWithTitle:@"拍摄" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
         [self takePhoto];
     }];

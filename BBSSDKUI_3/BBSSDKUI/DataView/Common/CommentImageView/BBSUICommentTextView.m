@@ -11,6 +11,7 @@
 #import "BBSUIImagePickerView.h"
 #import "Masonry.h"
 #import "UIImage+BBSFunction.h"
+#import "BBSUIExpressionViewConfiguration.h"
 
 #define SCREEN_WIDTH    [UIScreen mainScreen].bounds.size.width
 #define SCREEN_HEIGHT   [UIScreen mainScreen].bounds.size.height
@@ -23,7 +24,7 @@
 #define CT_SCALE_X      SCREEN_WIDTH/320.0
 #define CT_SCALE_Y      SCREEN_HEIGHT/568.0
 
-@interface BBSUICommentTextView() <iBBSUIImagePickerViewDelegate>
+@interface BBSUICommentTextView() <iBBSUIImagePickerViewDelegate,BBSUIExpressionViewDelegate>
 {
     UIButton                *_issueBtn;
     UIView                  *_bgView;
@@ -36,8 +37,11 @@
 
 @property (nonatomic ,strong) BBSUIImagePickerView *imagePickerView ;
 
+@property (nonatomic, strong) BBSUIExpressionView *expView;
+
 @property (nonatomic, copy)   void (^handler)(NSArray <UIImage *>*images,NSString *content);
 
+@property (nonatomic, assign) CGFloat keyboardHeight;
 
 @end
 
@@ -86,6 +90,7 @@
         NSValue *value = [info objectForKey:UIKeyboardFrameEndUserInfoKey];
         //        CGFloat duration = [[info objectForKey:UIKeyboardAnimationDurationUserInfoKey] floatValue];
         CGSize keyboardSize = [value CGRectValue].size;
+        _keyboardHeight = keyboardSize.height;
         
         // 5s ios10 可能有问题  带验证
         [UIView animateWithDuration:0.5 animations:^{
@@ -96,7 +101,15 @@
                 self.y = SCREEN_HEIGHT - keyboardSize.height - ConvertTo6_H(316)*CT_SCALE_Y ;
             }
             
-            [_imagePickerView setFrame:CGRectMake(0, SCREEN_HEIGHT - keyboardSize.height, self.superview.width, keyboardSize.height)];
+            [_imagePickerView setFrame:CGRectMake(0, SCREEN_HEIGHT - keyboardSize.height, self.superview.width, _keyboardHeight)];
+            
+  
+//            //表情
+//            if (!_expView)
+//            {
+//                _expView = [[BBSUIExpressionView alloc] initWithFrame:CGRectMake(0, SCREEN_HEIGHT - _keyboardHeight, SCREEN_WIDTH, _keyboardHeight)];
+//                _expView.delegate = self;
+//            }
             
 //            self.y = SCREEN_HEIGHT - keyboardSize.height - ConvertTo6_H(316)*CT_SCALE_Y ;
         }];
@@ -107,7 +120,6 @@
 }
 - (void)keyboardWillDisappear:(NSNotification *)notif
 {
-    
 //    [UIView animateWithDuration:0.5 animations:^{
 //        self.y = SCREEN_HEIGHT;
 //    }];
@@ -122,7 +134,8 @@
     }];
     [_bgView removeFromSuperview];
     [_imagePickerView removeFromSuperview];
-
+    [_expView removeFromSuperview];
+    _expView = nil;
 }
 
 #pragma mark - 非通知调用键盘消失方法
@@ -176,7 +189,7 @@
     CGFloat keyboarButtonWidth = 40;
     CGFloat keyboarButtonHeight = 34;
     _keyboardButton = [UIButton buttonWithType:UIButtonTypeCustom];
-//    [self addSubview:_keyboardButton];
+    [self addSubview:_keyboardButton];
     [_keyboardButton setFrame:CGRectMake(BBS_RIGHT(_imagePickButton) + 20,
                                          _issueBtn.y + _issueBtn.height / 2 - keyboarButtonHeight / 2,
                                          keyboarButtonWidth, 
@@ -188,12 +201,12 @@
     CGFloat faceButtonWidth = 40;
     CGFloat faceButtonHeight = 40;
     _faceButton = [UIButton buttonWithType:UIButtonTypeCustom];
-//    [self addSubview:_faceButton];
+    [self addSubview:_faceButton];
     [_faceButton setFrame:CGRectMake(BBS_RIGHT(_keyboardButton) + 20,
                                      _issueBtn.y + _issueBtn.height / 2 - faceButtonHeight / 2,
                                      faceButtonWidth,
                                      faceButtonHeight)];
-    [_faceButton setImage:[UIImage BBSImageNamed:@"/Thread/Face.png"] forState:UIControlStateNormal];
+    [_faceButton setImage:[UIImage BBSImageNamed:@"/Thread/Face@2x.png"] forState:UIControlStateNormal];
     [_faceButton addTarget:self action:@selector(_faceButtonHandler:) forControlEvents:UIControlEventTouchUpInside];
     
     //标志
@@ -223,20 +236,28 @@
     _imagePickerView = [[BBSUIImagePickerView alloc] init];
     _imagePickerView.delegate = self ;
     [_imagePickerView setFrame:CGRectMake(0, SCREEN_HEIGHT, self.superview.width, 0)];
+    
 }
 
 #pragma mark - 点击发布按钮
 - (void)issueBtnClicked
 {
+    NSString *string = [self.countNumTextView parseAttributeTextToNormalString:self.countNumTextView.textStorage];
+    
+    
+        NSLog(@"%@",string);
+    
     [self dismissCommentView];
     if (self.handler) {
-        self.handler([_imagePickerView selectedImages], self.countNumTextView.text);
+        self.handler([_imagePickerView selectedImages], string);
     }
 }
 
 - (void)_pickButtonHandler:(UIButton *)button
 {
     [_countNumTextView resignFirstResponder];
+    
+    [_expView removeFromSuperview];
 }
 
 - (void)_keyboardButtonHandler:(UIButton *)button
@@ -244,19 +265,29 @@
     if (![_countNumTextView isFirstResponder]) {
         [_countNumTextView becomeFirstResponder];
     }
+    
+    [_expView removeFromSuperview];
 }
 
 - (void)_faceButtonHandler:(UIButton *)button
 {
+    //表情
+    if (!_expView)
+    {
+        _expView = [[BBSUIExpressionView alloc] initWithFrame:CGRectMake(0, SCREEN_HEIGHT - _keyboardHeight, SCREEN_WIDTH, _keyboardHeight)];
+        _expView.delegate = self;
+    }
+    [self keyboardWillDisappear];
     
+    [self.superview addSubview:_expView];
 }
 
 - (QZCountNumTextView *)countNumTextView
 {
     if (!_countNumTextView) {
 
-        _countNumTextView = [QZCountNumTextView countNumTextView];
-        _countNumTextView.frame = CGRectMake(10, 100, [UIScreen mainScreen].bounds.size.width - 20, 150);
+        _countNumTextView = [[QZCountNumTextView alloc] initWithFrame:CGRectMake(10, 100, [UIScreen mainScreen].bounds.size.width - 20, 150)];
+//        _countNumTextView.frame = CGRectMake(10, 100, [UIScreen mainScreen].bounds.size.width - 20, 150);
         _countNumTextView.placeholder = @"分享新鲜事...";
         _countNumTextView.maxCount = 100;
     }
@@ -293,4 +324,12 @@
     
     [_badge setTitle:[NSString stringWithFormat:@"%zd",badge] forState:UIControlStateDisabled];
 }
+
+#pragma mark BBSUIExpressionViewDelegate
+
+- (void)expressionView:(BBSUIExpressionView *)expressionView didSelectImageName:(NSString *)imageName
+{
+    [_countNumTextView setExpressionWithImageName:imageName fontSize:_countNumTextView.defaultFontSize];
+}
+
 @end

@@ -145,6 +145,11 @@
                                              selector:@selector(keyboardWillShow:)
                                                  name:UIKeyboardWillShowNotification
                                                object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(keyboardWillHide:)
+                                                 name:UIKeyboardWillHideNotification
+                                               object:nil];
 }
 
 - (void)keyboardWillShow:(NSNotification *)aNotification
@@ -155,10 +160,23 @@
     CGRect keyboardRect = [aValue CGRectValue];
     int height = keyboardRect.size.height;
     
-    [_tableView mas_remakeConstraints:^(MASConstraintMaker *make) {
+    [_tableView mas_updateConstraints:^(MASConstraintMaker *make) {
         make.top.mas_equalTo(_darkView.mas_bottom);
         make.left.right.equalTo(@0);
         make.bottom.mas_equalTo(- height);
+    }];
+    
+    [UIView animateWithDuration:0.5 animations:^{
+        [self.view layoutIfNeeded];
+    }];
+}
+
+- (void)keyboardWillHide:(NSNotification *)aNotification
+{
+    [_tableView mas_remakeConstraints:^(MASConstraintMaker *make) {
+        make.top.mas_equalTo(_darkView.mas_bottom);
+        make.left.right.equalTo(@0);
+        make.bottom.mas_equalTo(0);
     }];
 }
 

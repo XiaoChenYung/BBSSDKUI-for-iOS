@@ -27,6 +27,8 @@ typedef NS_ENUM(NSInteger, BBSUICollectionViewType)
  */
 @property (nonatomic, strong) NSNumber *authorid;
 
+@property (nonatomic, copy) void (^deleteCellBlock)();
+
 - (instancetype)init:(BBSUICollectionViewType)type;
 - (instancetype)initWithFrame:(CGRect)frame type:(BBSUICollectionViewType)type;
 

@@ -20,12 +20,14 @@
      self.enabledToolbarItems = @[
                                   ZSSRichTextEditorToolbarBold,
                                 ZSSRichTextEditorToolbarItalic,
-                                  ZSSRichTextEditorToolbarStrikeThrough,
+//                                  ZSSRichTextEditorToolbarStrikeThrough,
 //                                  ZSSRichTextEditorToolbarUnorderedList,
-                                  ZSSRichTextEditorToolbarH1,
-                                  ZSSRichTextEditorToolbarH2,
-                                  ZSSRichTextEditorToolbarH3,
-                                  ZSSRichTextEditorToolbarH4
+//                                  ZSSRichTextEditorToolbarH1,
+//                                  ZSSRichTextEditorToolbarH2,
+//                                  ZSSRichTextEditorToolbarH3,
+//                                  ZSSRichTextEditorToolbarH4
+                                  ZSSRichTextEditorToolbarStrikeThrough,
+                                  ZSSRichTextEditorToolbarUnorderedList
                                   ];
     
     self.toolbarItemTintColor = [UIColor darkGrayColor];

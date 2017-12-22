@@ -380,6 +380,8 @@
 #pragma mark - request
 - (void)requestData
 {
+    [self getStickForumData];
+    
     __weak typeof(self) weakSelf = self;
     [BBSSDK getForumListWithFup:0 result:^(NSArray *forumsList, NSError *error) {
         
@@ -424,6 +426,7 @@
                 [weakSelf requestData];
             }];
             [self.commonArray removeAllObjects];
+            [self.stickArray removeAllObjects];
             [self.allForumArray removeAllObjects];
             [self.forumTableView reloadData];
         }

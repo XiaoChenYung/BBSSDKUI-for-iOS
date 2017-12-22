@@ -52,6 +52,12 @@
     
 }
 
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    [self.navigationController setNavigationBarHidden:NO animated:YES];
+}
+
 - (void)dealloc
 {
     self.webView.delegate = nil;
@@ -154,6 +160,11 @@
 {
     __weak typeof(self) theWebController = self;
     UIAlertController *alert = [UIAlertController alertControllerWithTitle:nil message:nil preferredStyle:UIAlertControllerStyleActionSheet];
+    
+    UIPopoverPresentationController *popoverController = alert.popoverPresentationController;
+    popoverController.sourceView = self.view;
+    popoverController.sourceRect = CGRectMake(DZSUIScreen_width/2,DZSUIScreen_height,1.0,1.0);
+    
     [self addActionTarget:alert title:@"用其他应用打开" color:[UIColor blackColor] action:^(UIAlertAction *action) {
         
         theWebController.documentInteractionController = [UIDocumentInteractionController
@@ -172,7 +183,7 @@
 -(void)addCancelActionTarget:(UIAlertController*)alertController title:(NSString *)title
 {
     UIAlertAction *action = [UIAlertAction actionWithTitle:title style:UIAlertActionStyleCancel handler:^(UIAlertAction *action) {
-        
+        NSLog(@"啊啊啊啊啊啊");
     }];
     [action setValue:DZSUIColorFromHex(0x89BD6A) forKey:@"_titleTextColor"];
     [alertController addAction:action];

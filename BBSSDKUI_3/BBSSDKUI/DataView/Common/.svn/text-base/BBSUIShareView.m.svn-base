@@ -7,8 +7,9 @@
 //
 
 #import "BBSUIShareView.h"
-#import <ShareSDK/ShareSDK.h>
 #import <BBSSDK/BBSThread.h>
+#import <ShareSDK/IMOBFShareComponent.h>
+#import <MOBFoundation/MOBFComponentManager.h>
 
 //分享item高度
 #define  ItemWH                 48
@@ -54,6 +55,8 @@
     self.frame = [[UIScreen mainScreen] bounds];
     
     self.shareContent = content;
+    NSLog(@"______ %@",content);
+    
     self.needAnimation = animation;
     
     [self configure];
@@ -65,8 +68,8 @@
     self.tag = ShareViewTag;
     
     self.backgroundColor = [UIColor whiteColor];[UIColor colorWithWhite:0 alpha:0.3];// 设置背景透明度
-    self.imageArr = [NSMutableArray arrayWithArray:@[@"Share/weixin.png", @"Share/pengyouquan.png",@"Share/QQ.png",@"Share/weibo.png",@"Share/QQzone.png"]];
-    self.titleArr=[NSMutableArray arrayWithArray:@[@"微信好友", @"微信朋友圈",@"QQ",@"微博",@"QQ空间"]] ;
+    self.imageArr = [NSMutableArray arrayWithArray:@[@"Share/weixin.png", @"Share/pengyouquan.png",@"Share/QQ.png",@"Share/QQzone.png"]];// ,@"Share/weibo.png"
+    self.titleArr=[NSMutableArray arrayWithArray:@[@"微信好友", @"微信朋友圈",@"QQ",@"QQ空间"]] ;// ,@"微博"
     // 加载Tap手势
     UITapGestureRecognizer *tapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(hide)];
     tapRecognizer.delegate = self;
@@ -78,7 +81,7 @@
  */
 - (void)loadShareRegion {
     
-    CGFloat itemHeight = (DZSUIScreen_width - 72*Row) / 3;
+    CGFloat itemHeight = 62;
     
     self.shareRegionHeight = 304;
     
@@ -160,7 +163,7 @@
 
     
     CGFloat itemWidth = _contentView.frame.size.width/3;;
-    CGFloat itemHeight = (DZSUIScreen_width - 72*Row) / 3;
+    CGFloat itemHeight = 62;
     
     CGFloat duration = 0.0;
     if (_needAnimation == YES)
@@ -219,7 +222,7 @@
     NSLog(@"%@",thread.threadurl);
     
     if (thread.images.count == 0) {
-        
+
         if (thread.forumPic)
         {
             thread.images = @[thread.forumPic];
@@ -231,61 +234,62 @@
         
     }
     
-    //分享操作
-    //1、创建分享参数
-        NSMutableDictionary *shareParams = [NSMutableDictionary dictionary];
-        [shareParams SSDKSetupShareParamsByText:thread.summary
+    NSLog(@"%@_____",thread.threadurl);
+    
+    NSArray *components = [[MOBFComponentManager defaultManager] getComponents:@protocol(IMOBFShareComponent)];
+    if (components.count > 0) {
+        id<IMOBFShareComponent>  ShareComponent = components[0];
+        //分享操作
+        //1、创建分享参数
+        NSMutableDictionary *shareParams = [ShareComponent SSDKSetupShareParamsByText:thread.summary
                                          images:thread.images
                                             url:[NSURL URLWithString:thread.threadurl]
                                           title:thread.subject
-                                           type:SSDKContentTypeWebPage];
-    
-//    NSArray *components = [[MOBFComponentManager defaultManager] getComponents:@protocol(IMOBFShareComponent)];
-//    if (components.count > 0) {
-//        Class<IMOBFShareComponent> ShareRECSocial = components[0];
-//        [ShareRECSocial SSDKSetupSinaWeiboShareParamsByText】
-//
-//         NSArray * = 【ShareRECSociall platforms]
-//    }
-    
-    
-//    [ShareSDK share:klfaskldf:kjasdkfj:]
-        //有的平台要客户端分享需要加此方法，例如微博
-        [shareParams SSDKEnableUseClientShare];
+                                           type:3
+                                 dataDictionary:nil];
         
-        SSDKPlatformType platformType;
+        //有的平台要客户端分享需要加此方法，例如微博
+//        [shareParams SSDKEnableUseClientShare];
+        
+        NSUInteger platformType;
         switch (sender.tag) {
             case 0:
-                platformType = SSDKPlatformSubTypeWechatSession;
+                platformType = 22;
                 break;
             case 1:
-                platformType = SSDKPlatformSubTypeWechatTimeline;
+                platformType = 23;
                 break;
             case 2:
-                platformType = SSDKPlatformSubTypeQQFriend;
+                platformType = 24;
                 break;
+                //            case 3:
+                //                platformType = SSDKPlatformTypeSinaWeibo;
+                //                break;
             case 3:
-                platformType = SSDKPlatformTypeSinaWeibo;
-                break;
-            case 4:
-                platformType = SSDKPlatformSubTypeQZone;
+                platformType = 6;
                 break;
             default:
-                platformType = SSDKPlatformTypeUnknown;
+                platformType = 0;
                 break;
         }
         
-        [ShareSDK share:platformType parameters:shareParams onStateChanged:^(SSDKResponseState state, NSDictionary *userData, SSDKContentEntity *contentEntity, NSError *error) {
-            
-            if (error) {
-                NSLog(@"error = %@",error);
-            }
-            
-//            NSLog(@"分享成功");
-        }];
+        if (ShareComponent && [ShareComponent conformsToProtocol:@protocol(IMOBFShareComponent)])
+        {
+            [ShareComponent share:platformType parameters:shareParams onStateChanged:nil];
+        }
+    }
+    
+    
+    //    [ShareSDK share:klfaskldf:kjasdkfj:]
     
     [self hide];
 }
+
+- (void)shareHandle:(BBSThread *)thread
+{
+    
+}
+
 
 - (UIViewController *)viewController {
     UIResponder *responder = self.superview;

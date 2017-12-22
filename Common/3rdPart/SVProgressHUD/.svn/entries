@@ -1,8 +1,8 @@
 10
 
 dir
-27403
-svn://chux@svn.code.mob.com/ios/project/BBSSDK/tags/v2.0.0/BBSSDK/Common/3rdPart/SVProgressHUD
+29112
+svn://chux@svn.code.mob.com/ios/project/BBSSDK/trunk/BBSSDK/Common/3rdPart/SVProgressHUD
 svn://chux@svn.code.mob.com
 
 
@@ -32,7 +32,7 @@ file
 
 
 
-2017-10-25T07:57:05.000000Z
+2017-11-24T09:27:19.000000Z
 8b1e69c2e4aef1e6f8dc1d1d93f0440b
 2017-05-05T11:20:54.168181Z
 22962
@@ -66,7 +66,7 @@ file
 
 
 
-2017-10-25T07:57:05.000000Z
+2017-11-24T09:27:19.000000Z
 0a46e9e546bad0fca43d88ce9813e8a0
 2017-05-05T11:20:54.168181Z
 22962

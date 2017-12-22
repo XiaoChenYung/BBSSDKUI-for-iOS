@@ -135,7 +135,7 @@
 - (void)setupTitleLabel {
     
     UILabel *titleLabel = [[UILabel alloc] init];
-    
+    titleLabel.font = [UIFont fontWithName:@"Arial-BoldMT" size:18];
     titleLabel.hidden = YES;
     
     _titleLabel = titleLabel;

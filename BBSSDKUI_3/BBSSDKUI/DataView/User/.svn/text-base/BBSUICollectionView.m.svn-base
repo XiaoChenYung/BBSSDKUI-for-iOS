@@ -339,6 +339,12 @@
                 [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationLeft];
                 
                 _isDeleting = NO;
+                
+                if (self.deleteCellBlock)
+                {
+                    self.deleteCellBlock();
+                }
+                
             }else{
                 _isDeleting = NO;
             }

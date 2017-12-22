@@ -22,6 +22,8 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
+		3A3326501FC5509F002867DB /* BBSUIBindAccountViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A33264E1FC5509F002867DB /* BBSUIBindAccountViewController.h */; };
+		3A3326511FC5509F002867DB /* BBSUIBindAccountViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3A33264F1FC5509F002867DB /* BBSUIBindAccountViewController.m */; };
 		3A6750461F6A6A5A002582DF /* BBSUIThreadSummaryCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3A6750451F6A6A5A002582DF /* BBSUIThreadSummaryCell.m */; };
 		3AB955C31F60234C008D8D58 /* BBSUIUserHomeViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AB955C11F60234C008D8D58 /* BBSUIUserHomeViewController.h */; };
 		3AB955C41F60234C008D8D58 /* BBSUIUserHomeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3AB955C21F60234C008D8D58 /* BBSUIUserHomeViewController.m */; };
@@ -221,6 +223,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		3A33264E1FC5509F002867DB /* BBSUIBindAccountViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BBSUIBindAccountViewController.h; sourceTree = "<group>"; };
+		3A33264F1FC5509F002867DB /* BBSUIBindAccountViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BBSUIBindAccountViewController.m; sourceTree = "<group>"; };
 		3A51C2AE1F73FA4D0016EEE8 /* History.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = History.h; sourceTree = "<group>"; };
 		3A51C2AF1F73FA4D0016EEE8 /* History.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = History.m; sourceTree = "<group>"; };
 		3A6750451F6A6A5A002582DF /* BBSUIThreadSummaryCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BBSUIThreadSummaryCell.m; sourceTree = "<group>"; };
@@ -365,6 +369,19 @@
 		3AB9570D1F65527D008D8D58 /* BBSUIEmailSendViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BBSUIEmailSendViewController.m; sourceTree = "<group>"; };
 		3AB957101F655293008D8D58 /* BBSUIEmailSendView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BBSUIEmailSendView.h; sourceTree = "<group>"; };
 		3AB957111F655293008D8D58 /* BBSUIEmailSendView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BBSUIEmailSendView.m; sourceTree = "<group>"; };
+		3ADCBD0C1F98B6C80035EE46 /* BBSUIExpressionCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BBSUIExpressionCell.h; sourceTree = "<group>"; };
+		3ADCBD0D1F98B6C80035EE46 /* BBSUIExpressionCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BBSUIExpressionCell.m; sourceTree = "<group>"; };
+		3ADCBD0E1F98B6C80035EE46 /* BBSUIExpressionSelectKindButton.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BBSUIExpressionSelectKindButton.h; sourceTree = "<group>"; };
+		3ADCBD0F1F98B6C80035EE46 /* BBSUIExpressionSelectKindButton.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BBSUIExpressionSelectKindButton.m; sourceTree = "<group>"; };
+		3ADCBD101F98B6C80035EE46 /* BBSUIExpressionTextAttachment.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BBSUIExpressionTextAttachment.h; sourceTree = "<group>"; };
+		3ADCBD111F98B6C80035EE46 /* BBSUIExpressionTextAttachment.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BBSUIExpressionTextAttachment.m; sourceTree = "<group>"; };
+		3ADCBD121F98B6C80035EE46 /* BBSUIExpressionTextView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BBSUIExpressionTextView.h; sourceTree = "<group>"; };
+		3ADCBD131F98B6C80035EE46 /* BBSUIExpressionTextView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BBSUIExpressionTextView.m; sourceTree = "<group>"; };
+		3ADCBD141F98B6C80035EE46 /* BBSUIExpressionTool.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BBSUIExpressionTool.h; sourceTree = "<group>"; };
+		3ADCBD151F98B6C80035EE46 /* BBSUIExpressionTool.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BBSUIExpressionTool.m; sourceTree = "<group>"; };
+		3ADCBD161F98B6C80035EE46 /* BBSUIExpressionView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BBSUIExpressionView.h; sourceTree = "<group>"; };
+		3ADCBD171F98B6C80035EE46 /* BBSUIExpressionView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BBSUIExpressionView.m; sourceTree = "<group>"; };
+		3ADCBD181F98B6C80035EE46 /* BBSUIExpressionViewConfiguration.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BBSUIExpressionViewConfiguration.h; sourceTree = "<group>"; };
 		6B1E10831F6152DA00E2A648 /* UINavigationBar+Awesome.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UINavigationBar+Awesome.h"; sourceTree = "<group>"; };
 		6B1E10841F6152DA00E2A648 /* UINavigationBar+Awesome.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UINavigationBar+Awesome.m"; sourceTree = "<group>"; };
 		6B1E10871F6176FC00E2A648 /* NSString+ThreadOrderType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+ThreadOrderType.h"; sourceTree = "<group>"; };
@@ -707,6 +724,27 @@
 				3AB956DB1F6033FE008D8D58 /* BBSUIThreadBanner.m */,
 			);
 			path = Banner;
+			sourceTree = "<group>";
+		};
+		3ADCBD0B1F98B6C80035EE46 /* Expression */ = {
+			isa = PBXGroup;
+			children = (
+				3ADCBD0C1F98B6C80035EE46 /* BBSUIExpressionCell.h */,
+				3ADCBD0D1F98B6C80035EE46 /* BBSUIExpressionCell.m */,
+				3ADCBD0E1F98B6C80035EE46 /* BBSUIExpressionSelectKindButton.h */,
+				3ADCBD0F1F98B6C80035EE46 /* BBSUIExpressionSelectKindButton.m */,
+				3ADCBD101F98B6C80035EE46 /* BBSUIExpressionTextAttachment.h */,
+				3ADCBD111F98B6C80035EE46 /* BBSUIExpressionTextAttachment.m */,
+				3ADCBD121F98B6C80035EE46 /* BBSUIExpressionTextView.h */,
+				3ADCBD131F98B6C80035EE46 /* BBSUIExpressionTextView.m */,
+				3ADCBD141F98B6C80035EE46 /* BBSUIExpressionTool.h */,
+				3ADCBD151F98B6C80035EE46 /* BBSUIExpressionTool.m */,
+				3ADCBD161F98B6C80035EE46 /* BBSUIExpressionView.h */,
+				3ADCBD171F98B6C80035EE46 /* BBSUIExpressionView.m */,
+				3ADCBD181F98B6C80035EE46 /* BBSUIExpressionViewConfiguration.h */,
+			);
+			name = Expression;
+			path = ../../../../Common/CustomView/Expression;
 			sourceTree = "<group>";
 		};
 		6B1E10821F6152DA00E2A648 /* Category */ = {
@@ -1423,6 +1461,8 @@
 				3AB955D81F60254B008D8D58 /* BBSUILoginViewController.m */,
 				3AB956AD1F603100008D8D58 /* BBSUIRegistViewController.h */,
 				3AB956AE1F603100008D8D58 /* BBSUIRegistViewController.m */,
+				3A33264E1FC5509F002867DB /* BBSUIBindAccountViewController.h */,
+				3A33264F1FC5509F002867DB /* BBSUIBindAccountViewController.m */,
 				3AB956CD1F6032FE008D8D58 /* BBSUIUserEditViewController.h */,
 				3AB956CE1F6032FE008D8D58 /* BBSUIUserEditViewController.m */,
 				3AB955C11F60234C008D8D58 /* BBSUIUserHomeViewController.h */,
@@ -1475,6 +1515,7 @@
 		6B74502E1F5D86810081EE4E /* Common */ = {
 			isa = PBXGroup;
 			children = (
+				3ADCBD0B1F98B6C80035EE46 /* Expression */,
 				6B6C18A81F66BD10002DC31C /* CommentImageView */,
 				6B6C18841F654065002DC31C /* BBSUIRichTextEditor.h */,
 				6B6C18851F654065002DC31C /* BBSUIRichTextEditor.m */,
@@ -1671,6 +1712,7 @@
 				3AB955F41F602690008D8D58 /* BBSUICollectionViewController.h in Headers */,
 				6B1E10851F6152DA00E2A648 /* UINavigationBar+Awesome.h in Headers */,
 				3AB957061F6551E6008D8D58 /* BBSUIRetrievePasswordView.h in Headers */,
+				3A3326501FC5509F002867DB /* BBSUIBindAccountViewController.h in Headers */,
 				3AB956141F602784008D8D58 /* BBSUIZoomImageView.h in Headers */,
 				3AB956831F602F85008D8D58 /* BBSUIViewsRepliesView.h in Headers */,
 				3AB955D61F6024B2008D8D58 /* BBSSDKUI.pch in Headers */,
@@ -1773,7 +1815,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# Sets the target folders and the final framework product.\nFMK_NAME=${PROJECT_NAME}\n\n# Install dir will be the final output to the framework.\n# The following line create it in the root folder of the current project.\nINSTALL_BASE_DIR=${SRCROOT}/../release\nINSTALL_DIR=${INSTALL_BASE_DIR}/${FMK_NAME}.framework\n\n# Working dir will be deleted after the framework creation.\nWRK_DIR=build\nDEVICE_DIR=${WRK_DIR}/Release-iphoneos/${FMK_NAME}.framework\nSIMULATOR_DIR=${WRK_DIR}/Release-iphonesimulator/${FMK_NAME}.framework\n\n# -configuration ${CONFIGURATION}\n# Clean and Building both architectures.\nxcodebuild -arch \"armv7s\" -arch \"armv7\" -arch \"arm64\" -configuration \"Release\" -target \"${FMK_NAME}\" -sdk iphoneos clean build\nxcodebuild -arch \"i386\" -arch \"x86_64\" -configuration \"Release\" -target \"${FMK_NAME}\" -sdk iphonesimulator clean build\n\n# Cleaning the oldest.\nif [ -d \"${INSTALL_DIR}\" ]\nthen\nrm -rf \"${INSTALL_DIR}\"\nfi\n\nmkdir -p \"${INSTALL_DIR}\"\n\ncp -R \"${DEVICE_DIR}/\" \"${INSTALL_DIR}/\"\n\n# Uses the Lipo Tool to merge both binary files (i386 + armv6/armv7) into one Universal final product.\nlipo -create \"${DEVICE_DIR}/${FMK_NAME}\" \"${SIMULATOR_DIR}/${FMK_NAME}\" -output \"${INSTALL_DIR}/${FMK_NAME}\"\n\nrm -r \"${WRK_DIR}\"";
+			shellScript = "# Sets the target folders and the final framework product.\nFMK_NAME=${PROJECT_NAME}\n\n# Install dir will be the final output to the framework.\n# The following line create it in the root folder of the current project.\nINSTALL_BASE_DIR=${SRCROOT}/../release\nINSTALL_DIR=${INSTALL_BASE_DIR}/${FMK_NAME}.framework\n\n# Working dir will be deleted after the framework creation.\nWRK_DIR=build\nDEVICE_DIR=${WRK_DIR}/Release-iphoneos/${FMK_NAME}.framework\nSIMULATOR_DIR=${WRK_DIR}/Release-iphonesimulator/${FMK_NAME}.framework\n\n# -configuration ${CONFIGURATION}\n# Clean and Building both architectures.\nxcodebuild BITCODE_GENERATION_MODE=bitcode OTHER_CFLAGS=\"-fembed-bitcode\" -arch \"armv7s\" -arch \"armv7\" -arch \"arm64\" -configuration \"Release\" -target \"${FMK_NAME}\" -sdk iphoneos clean build\nxcodebuild BITCODE_GENERATION_MODE=bitcode OTHER_CFLAGS=\"-fembed-bitcode\" -arch \"i386\" -arch \"x86_64\" -configuration \"Release\" -target \"${FMK_NAME}\" -sdk iphonesimulator clean build\n\n# Cleaning the oldest.\nif [ -d \"${INSTALL_DIR}\" ]\nthen\nrm -rf \"${INSTALL_DIR}\"\nfi\n\nmkdir -p \"${INSTALL_DIR}\"\n\ncp -R \"${DEVICE_DIR}/\" \"${INSTALL_DIR}/\"\n\n# Uses the Lipo Tool to merge both binary files (i386 + armv6/armv7) into one Universal final product.\nlipo -create \"${DEVICE_DIR}/${FMK_NAME}\" \"${SIMULATOR_DIR}/${FMK_NAME}\" -output \"${INSTALL_DIR}/${FMK_NAME}\"\n\nrm -r \"${WRK_DIR}\"";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -1844,6 +1886,7 @@
 				3AB956211F60279E008D8D58 /* BBSUIPickerView.m in Sources */,
 				3AB9564B1F602D8C008D8D58 /* BBSUIThreadDetailViewController.m in Sources */,
 				6B1E108A1F6176FC00E2A648 /* NSString+ThreadOrderType.m in Sources */,
+				3A3326511FC5509F002867DB /* BBSUIBindAccountViewController.m in Sources */,
 				6B6C18661F62B31B002DC31C /* BBSUIWebViewController.m in Sources */,
 				6B6C18B81F66C282002DC31C /* BBSUIImagePickerView.m in Sources */,
 				6B6C18AE1F66BD10002DC31C /* QZCountNumTextView.m in Sources */,
@@ -1984,6 +2027,7 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(PROJECT_DIR)/../release",
 					"\"$(SRCROOT)/../ShareSDK\"",
+					"\"$(SRCROOT)/../MobLink\"",
 				);
 				GCC_PREFIX_HEADER = "$(SRCROOT)/BBSSDKUI/BBSSDKUI.pch";
 				HEADER_SEARCH_PATHS = "\"$(SRCROOT)/../ShareSDK\"";
@@ -2007,6 +2051,7 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(PROJECT_DIR)/../release",
 					"\"$(SRCROOT)/../ShareSDK\"",
+					"\"$(SRCROOT)/../MobLink\"",
 				);
 				GCC_PREFIX_HEADER = "$(SRCROOT)/BBSSDKUI/BBSSDKUI.pch";
 				HEADER_SEARCH_PATHS = "\"$(SRCROOT)/../ShareSDK\"";

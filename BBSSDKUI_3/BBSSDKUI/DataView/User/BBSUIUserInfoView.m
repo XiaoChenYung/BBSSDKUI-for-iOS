@@ -22,6 +22,7 @@
 #import "BBSUIZoomImageView.h"
 #import "BBSUIUserOtherInfoViewController.h"
 #import "BBSUIPickerView.h"
+#import "NSString+Paragraph.h"
 
 #define BBSUIAvatarImageViewWidth 50
 #define BBSUIUserTableViewHeaderViewHeight 180
@@ -159,6 +160,7 @@
                 [getter removeImageObserver:self.verifyImgObserver];
                 theUserInfoView.avatarImageView.image = [UIImage BBSImageNamed:@"/User/AvatarDefault3.png"];
                 NSString *urlString = [NSString stringWithFormat:@"%@&timestamp=%f", _currentUser.avatar,[[NSDate date] timeIntervalSince1970]];
+                
                 theUserInfoView.verifyImgObserver = [getter getImageWithURL:[NSURL URLWithString:urlString] result:^(UIImage *image, NSError *error) {
                     
                     if (error) {
@@ -214,6 +216,12 @@
     NSString *userInfoCellIdentifier = @"UserInfoCellIdentifier";
     BBSUIUserInfoTableViewCell *userInfoCell = [[BBSUIUserInfoTableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:userInfoCellIdentifier];
     
+    CGFloat right = - 15;
+    if ([self isIpad])
+    {
+        right = - 50;
+    }
+    
     switch (indexPath.row) {
         // 头像、用户名
         case 0:
@@ -240,7 +248,7 @@
                 [userInfoCell.contentView addSubview:nickNamelabel];
                 [nickNamelabel mas_makeConstraints:^(MASConstraintMaker *make) {
                     make.centerY.mas_equalTo(userInfoCell.mas_centerY);
-                    make.right.equalTo(userInfoCell.contentView).with.offset(-15);
+                    make.right.equalTo(userInfoCell.contentView).with.offset(right);
                     make.left.equalTo(@80);
                 }];
                 [nickNamelabel setFont:[UIFont systemFontOfSize:15]];
@@ -285,7 +293,6 @@
         case 2:
         {
             UILabel *signatureLabel = [UILabel new];
-            signatureLabel.textAlignment = NSTextAlignmentRight;
             signatureLabel.lineBreakMode = NSLineBreakByTruncatingTail;
             [userInfoCell.contentView addSubview:signatureLabel];
             [signatureLabel mas_makeConstraints:^(MASConstraintMaker *make) {
@@ -293,9 +300,9 @@
                 make.right.equalTo(@0);
                 make.left.equalTo(@80);
             }];
-            [signatureLabel setFont:[UIFont systemFontOfSize:15]];
-            [signatureLabel setTextColor:DZSUIColorFromHex(0x3C3C3C)];
-            [signatureLabel setText:self.currentUser.sightml];
+            
+            signatureLabel.attributedText = [NSString stringWithString:self.currentUser.sightml fontSize:15 defaultColorValue:@"3C3C3C" lineSpace:0 wordSpace:0];
+            signatureLabel.textAlignment = NSTextAlignmentRight;
             [userInfoCell setTitle:@"个性签名"];
             userInfoCell.selectionStyle = UITableViewCellSelectionStyleNone;
             userInfoCell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
@@ -357,7 +364,7 @@
             [userInfoCell.contentView addSubview:emailLabel];
             [emailLabel mas_makeConstraints:^(MASConstraintMaker *make) {
                 make.centerY.mas_equalTo(userInfoCell.mas_centerY);
-                make.right.equalTo(userInfoCell.contentView).with.offset(-15);
+                make.right.equalTo(userInfoCell.contentView).with.offset(right);
             }];
             [emailLabel setFont:[UIFont systemFontOfSize:15]];
             [emailLabel setTextColor:DZSUIColorFromHex(0x3C3C3C)];
@@ -373,7 +380,7 @@
             [userInfoCell.contentView addSubview:groupLabel];
             [groupLabel mas_makeConstraints:^(MASConstraintMaker *make) {
                 make.centerY.mas_equalTo(userInfoCell.mas_centerY);
-                make.right.equalTo(userInfoCell.contentView).with.offset(-15);
+                make.right.equalTo(userInfoCell.contentView).with.offset(right);
             }];
             [groupLabel setFont:[UIFont systemFontOfSize:15]];
             [groupLabel setTextColor:DZSUIColorFromHex(0x3C3C3C)];
@@ -389,7 +396,7 @@
             [userInfoCell.contentView addSubview:activeButton];
             [activeButton mas_makeConstraints:^(MASConstraintMaker *make) {
                 make.centerY.mas_equalTo(userInfoCell.mas_centerY);
-                make.right.equalTo(userInfoCell.contentView).with.offset(-15);
+                make.right.equalTo(userInfoCell.contentView).with.offset(right);
                 make.height.mas_equalTo(25);
             }];
             [activeButton.layer setCornerRadius:3];
@@ -451,7 +458,8 @@
         __weak typeof(self) weakSelf = self;
         vc.SightmlBlock = ^(NSString *sightml){
             [weakSelf editUserInfoWithGender:-1 birthday:nil residence:nil sightml:sightml token:_currentUser.token avatarBigUrl:nil avatarMiddleUrl:nil avatarSmallUrl:nil success:^{
-                weakSelf.signatureLabel.text = sightml;
+                weakSelf.signatureLabel.attributedText = [NSString stringWithString:sightml fontSize:15 defaultColorValue:@"3C3C3C" lineSpace:0 wordSpace:0];
+                weakSelf.signatureLabel.textAlignment = NSTextAlignmentRight;
                 
                 _currentUser.sightml = sightml;
                 [BBSUIContext shareInstance].currentUser = _currentUser;
@@ -522,6 +530,10 @@
     
     if ([[UIDevice currentDevice].systemVersion floatValue] >= 8.0){
         UIAlertController * alertVC = [UIAlertController alertControllerWithTitle:nil message:nil preferredStyle:UIAlertControllerStyleActionSheet];
+        
+        UIPopoverPresentationController *popoverController = alertVC.popoverPresentationController;
+        popoverController.sourceView = self;
+        popoverController.sourceRect = CGRectMake(DZSUIScreen_width/2,DZSUIScreen_height,1.0,1.0);
         
         [titles enumerateObjectsUsingBlock:^(NSString * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
             
@@ -784,5 +796,10 @@
 
 }
 
+#pragma mark - tool
+
+- (BOOL)isIpad {
+    return (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad);
+}
 
 @end

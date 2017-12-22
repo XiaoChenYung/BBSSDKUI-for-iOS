@@ -33,19 +33,22 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
+    CGFloat Height;
     if (_forumType == BBSUIForumViewControllerTypeSelectForum)
     {
         self.title = @"选择版块";
+        Height= 0;
     }
     else
     {
         self.title = @"全部版块";
+        Height = NavigationBar_Height;
     }
     
     // Do any additional setup after loading the view.
     
     self.forumView = [[BBSUIForumView alloc] initWithFrame:CGRectMake(0,
-                                                                      NavigationBar_Height,
+                                                                      Height,
                                                                       CGRectGetWidth(self.view.frame),
                                                                       CGRectGetHeight(self.view.frame) - NavigationBar_Height)
                                                  forumType:self.forumType

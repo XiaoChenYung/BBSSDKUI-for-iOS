@@ -1,8 +1,8 @@
 10
 
 dir
-27403
-svn://chux@svn.code.mob.com/ios/project/BBSSDK/tags/v2.0.0/BBSSDK/BBSSDKUI_3/BBSSDKUI.xcodeproj/xcshareddata/xcschemes
+29112
+svn://chux@svn.code.mob.com/ios/project/BBSSDK/trunk/BBSSDK/BBSSDKUI_3/BBSSDKUI.xcodeproj/xcshareddata/xcschemes
 svn://chux@svn.code.mob.com
 
 
@@ -32,7 +32,7 @@ file
 
 
 
-2017-10-25T07:57:04.000000Z
+2017-11-24T09:27:07.000000Z
 ed42ba344a2fec3321617cbd605de954
 2017-09-22T08:39:14.243189Z
 26949

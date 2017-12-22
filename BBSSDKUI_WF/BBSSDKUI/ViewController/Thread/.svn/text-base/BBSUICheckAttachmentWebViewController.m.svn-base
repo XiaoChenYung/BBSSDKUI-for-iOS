@@ -154,6 +154,10 @@
 {
     __weak typeof(self) theWebController = self;
     UIAlertController *alert = [UIAlertController alertControllerWithTitle:nil message:nil preferredStyle:UIAlertControllerStyleActionSheet];
+    UIPopoverPresentationController *popoverController = alert.popoverPresentationController;
+    popoverController.sourceView = self.view;
+    popoverController.sourceRect = CGRectMake(DZSUIScreen_width/2,self.view.frame.size.height,1.0,1.0);
+    
     [self addActionTarget:alert title:@"用其他应用打开" color:[UIColor blackColor] action:^(UIAlertAction *action) {
         
         theWebController.documentInteractionController = [UIDocumentInteractionController

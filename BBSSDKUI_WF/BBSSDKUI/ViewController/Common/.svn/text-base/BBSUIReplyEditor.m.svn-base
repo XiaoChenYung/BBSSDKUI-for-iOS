@@ -10,14 +10,17 @@
 #import "Masonry.h"
 #import "BBSUIMacro.h"
 #import "BBSUIImagePickerView.h"
+#import "BBSUIExpressionViewConfiguration.h"
+#import "BBSUIExpressionTextField.h"
 
-@interface BBSUIReplyEditor ()<iBBSUIImagePickerViewDelegate>
+@interface BBSUIReplyEditor ()<iBBSUIImagePickerViewDelegate, BBSUIExpressionViewDelegate, UITextViewDelegate>
 {
     NSTimeInterval _animationDuration;
 }
 
 @property (nonatomic ,strong) UIView *editorView;
-@property (nonatomic ,strong) UITextField *textEditor ;
+//@property (nonatomic ,strong) BBSUIExpressionTextField *textEditor ;
+@property (nonatomic, strong) BBSUIExpressionTextView *textEditor;
 @property (nonatomic ,strong) UIButton *sendBtn;
 @property (nonatomic ,strong) UIView *imagePickBar;
 @property (nonatomic ,strong) UIButton *imagePickBtn;
@@ -27,6 +30,9 @@
 @property (nonatomic ,copy) FinishEditHandler handler ;
 @property (nonatomic ,strong) UIButton *badge;
 @property (nonatomic, strong) UIView *backGroundView;
+
+@property (nonatomic, strong) BBSUIExpressionView *expView;
+@property (nonatomic, assign) CGFloat keyboardHeight;
 
 @end
 
@@ -53,6 +59,7 @@
     [self.view endEditing:YES];
     
     [self.window resignKeyWindow];
+    [_expView removeFromSuperview];
     [_backGroundView removeFromSuperview];
     self.window = nil;
     self.view = nil;
@@ -130,16 +137,17 @@
     
     self.textEditor =
     ({
-        UITextField *textEditor = [[UITextField alloc] init];
-        textEditor.placeholder = [@"回复: " stringByAppendingFormat:@"%@",_userName];
+        BBSUIExpressionTextView *textEditor = [[BBSUIExpressionTextView alloc] init];
+//        textEditor.placeholder = [@"回复: " stringByAppendingFormat:@"%@",_userName];
+        textEditor.delegate = self;
         
         [textFieldContainer addSubview:textEditor];
         
         [textEditor mas_makeConstraints:^(MASConstraintMaker *make) {
             make.left.equalTo(textFieldContainer).offset(15);
             make.right.equalTo(_sendBtn.mas_left).offset(-15);
-            make.centerY.equalTo(textFieldContainer);
-            make.height.equalTo(@49);
+            make.top.equalTo(textFieldContainer).offset(10);
+            make.height.equalTo(@39);
         }];
         
         textEditor ;
@@ -173,6 +181,17 @@
     [_imagePickBar addSubview:imagePickBtn];
     [imagePickBtn mas_makeConstraints:^(MASConstraintMaker *make) {
         make.right.equalTo(_imagePickBar).offset(-10);
+        make.centerY.equalTo(_imagePickBar);
+        make.height.with.width.equalTo(@30);
+    }];
+
+    // 表情
+    UIButton *faceButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    [faceButton setImage:[UIImage BBSImageNamed:@"/Thread/Face@2x.png"] forState:UIControlStateNormal];
+    [faceButton addTarget:self action:@selector(_faceButtonHandler:) forControlEvents:UIControlEventTouchUpInside];
+    [_imagePickBar addSubview:faceButton];
+    [faceButton mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.right.equalTo(imagePickBtn.mas_left).offset(-10);
         make.centerY.equalTo(_imagePickBar);
         make.height.with.width.equalTo(@30);
     }];
@@ -210,6 +229,8 @@
         
         imagePickerView ;
     });
+    
+    
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -244,10 +265,19 @@
     NSDictionary *userInfo = [aNotification userInfo];
     NSValue *aValue = [userInfo objectForKey:UIKeyboardFrameEndUserInfoKey];
     CGFloat height = [aValue CGRectValue].size.height;
+    _keyboardHeight = height;
     
     [self.editorView mas_updateConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(self.view.mas_bottom).offset(-(50+45+height));
     }];
+    
+    //表情
+//    if (!_expView)
+//    {
+//        _expView = [[BBSUIExpressionView alloc] initWithFrame:CGRectMake(0, DZSUIScreen_height - _keyboardHeight - 44, DZSUIScreen_width, _keyboardHeight+44)];
+//        _expView.delegate = self;
+////        [self.view addSubview:_expView];
+//    }
     
     NSValue *animationDurationValue = [userInfo objectForKey:UIKeyboardAnimationDurationUserInfoKey];
     NSTimeInterval animationDuration;
@@ -275,9 +305,11 @@
 
 - (void)send:(id)sender
 {
+    NSString *string = [self.textEditor parseAttributeTextToNormalString:self.textEditor.textStorage];
+    
     if (self.handler)
     {
-        self.handler(NO, [_imagePickerView selectedImages], _textEditor.text);
+        self.handler(NO, [_imagePickerView selectedImages], string);
     }
     
     [self.window resignKeyWindow];
@@ -287,19 +319,33 @@
 - (void)pickImages:(id)sender
 {
     [_imagePickerView pickImages];
+    [_expView removeFromSuperview];
+}
+
+- (void)_faceButtonHandler:(UIButton *)button
+{
+    [self.textEditor resignFirstResponder];
+
+    if (!_expView)
+    {
+        _expView = [[BBSUIExpressionView alloc] initWithFrame:CGRectMake(0, DZSUIScreen_height - _keyboardHeight, DZSUIScreen_width, _keyboardHeight)];
+        _expView.delegate = self;
+    }
+    
+    [self.view addSubview:_expView];
 }
 
 #pragma mark - iBBSUIImagePickerViewDelegate 
 
 - (void)didBeginPickImages
 {
-    [self.textEditor setEnabled:NO];
+    [self.textEditor setUserInteractionEnabled:NO];
     [self.textEditor resignFirstResponder];
 }
 
 - (void)didEndPickImages
 {
-    [self.textEditor setEnabled:YES];
+    [self.textEditor setUserInteractionEnabled:YES];
 }
 
 - (void)didResetAutolayout
@@ -336,4 +382,17 @@
     [self.badge setTitle:[NSString stringWithFormat:@"%zd",badge] forState:UIControlStateDisabled];
 }
 
+#pragma mark BBSUIExpressionViewDelegate
+
+- (void)expressionView:(BBSUIExpressionView *)expressionView didSelectImageName:(NSString *)imageName
+{
+    [_textEditor setExpressionWithImageName:imageName fontSize:14];
+}
+
+- (BOOL)textViewShouldBeginEditing:(UITextView *)textView
+{
+    [_expView removeFromSuperview];
+    
+    return YES;
+}
 @end

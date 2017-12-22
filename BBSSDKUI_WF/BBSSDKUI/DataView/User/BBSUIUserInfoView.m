@@ -23,6 +23,8 @@
 #import "BBSUIZoomImageView.h"
 #import "BBSUIUserOtherInfoViewController.h"
 #import "BBSUIPickerView.h"
+#import "NSString+Paragraph.h"
+#import "BBSUICoreDataManage.h"
 
 #define BBSUIAvatarImageViewWidth 50
 #define BBSUIUserTableViewHeaderViewHeight 180
@@ -36,7 +38,8 @@
                                  UINavigationControllerDelegate,
                                  UIPickerViewDataSource,
                                  UIPickerViewDelegate,
-                                 UIActionSheetDelegate>
+                                 UIActionSheetDelegate,
+                                 UIAlertViewDelegate>
 
 @property (nonatomic, strong) UITableView *userInfoTableView;
 
@@ -57,6 +60,8 @@
 @property (nonatomic, strong) UILabel *addressLabel;
 
 @property (nonatomic, strong) UILabel *signatureLabel;
+
+@property (nonatomic, strong) UILabel *clearCacheLabel;
 
 @property (nonatomic, strong) UIDatePicker *datePicker;
 
@@ -160,6 +165,14 @@
                 [getter removeImageObserver:self.verifyImgObserver];
                 theUserInfoView.avatarImageView.image = [UIImage BBSImageNamed:@"/User/AvatarDefault.png"];
                 NSString *urlString = [NSString stringWithFormat:@"%@&timestamp=%f", _currentUser.avatar,[[NSDate date] timeIntervalSince1970]];
+                
+                NSLog(@"++++++++++ urlstring = %@",urlString);
+                
+                if (![_currentUser.avatar containsString:@"?"])
+                {
+                    urlString = _currentUser.avatar;
+                }
+                
                 theUserInfoView.verifyImgObserver = [getter getImageWithURL:[NSURL URLWithString:urlString] result:^(UIImage *image, NSError *error) {
                     
                     if (error) {
@@ -207,13 +220,19 @@
         return 1;
     }
     
-    return 8;
+    return 9;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     NSString *userInfoCellIdentifier = @"UserInfoCellIdentifier";
     BBSUIUserInfoTableViewCell *userInfoCell = [[BBSUIUserInfoTableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:userInfoCellIdentifier];
+    
+    CGFloat right = - 15;
+    if ([self isIpad])
+    {
+        right = - 50;
+    }
     
     switch (indexPath.row) {
         // 头像、用户名
@@ -241,7 +260,7 @@
                 [userInfoCell.contentView addSubview:nickNamelabel];
                 [nickNamelabel mas_makeConstraints:^(MASConstraintMaker *make) {
                     make.centerY.mas_equalTo(userInfoCell.mas_centerY);
-                    make.right.equalTo(userInfoCell.contentView).with.offset(-15);
+                    make.right.equalTo(userInfoCell.contentView).with.offset(right);
                     make.left.equalTo(@80);
                 }];
                 [nickNamelabel setFont:[UIFont systemFontOfSize:15]];
@@ -294,9 +313,9 @@
                 make.right.equalTo(@0);
                 make.left.equalTo(@90);
             }];
-            [signatureLabel setFont:[UIFont systemFontOfSize:15]];
-            [signatureLabel setTextColor:DZSUIColorFromHex(0x3C3C3C)];
-            [signatureLabel setText:self.currentUser.sightml];
+
+            signatureLabel.attributedText = [NSString stringWithString:self.currentUser.sightml fontSize:15 defaultColorValue:@"3C3C3C" lineSpace:0 wordSpace:0];
+            signatureLabel.textAlignment = NSTextAlignmentRight;
             [userInfoCell setTitle:@"个性签名"];
             userInfoCell.selectionStyle = UITableViewCellSelectionStyleNone;
             userInfoCell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
@@ -358,7 +377,7 @@
             [userInfoCell.contentView addSubview:emailLabel];
             [emailLabel mas_makeConstraints:^(MASConstraintMaker *make) {
                 make.centerY.mas_equalTo(userInfoCell.mas_centerY);
-                make.right.equalTo(userInfoCell.contentView).with.offset(-15);
+                make.right.equalTo(userInfoCell.contentView).with.offset(right);
             }];
             [emailLabel setFont:[UIFont systemFontOfSize:15]];
             [emailLabel setTextColor:DZSUIColorFromHex(0x3C3C3C)];
@@ -374,7 +393,7 @@
             [userInfoCell.contentView addSubview:groupLabel];
             [groupLabel mas_makeConstraints:^(MASConstraintMaker *make) {
                 make.centerY.mas_equalTo(userInfoCell.mas_centerY);
-                make.right.equalTo(userInfoCell.contentView).with.offset(-15);
+                make.right.equalTo(userInfoCell.contentView).with.offset(right);
             }];
             [groupLabel setFont:[UIFont systemFontOfSize:15]];
             [groupLabel setTextColor:DZSUIColorFromHex(0x3C3C3C)];
@@ -390,7 +409,7 @@
             [userInfoCell.contentView addSubview:activeButton];
             [activeButton mas_makeConstraints:^(MASConstraintMaker *make) {
                 make.centerY.mas_equalTo(userInfoCell.mas_centerY);
-                make.right.equalTo(userInfoCell.contentView).with.offset(-15);
+                make.right.equalTo(userInfoCell.contentView).with.offset(right);
                 make.height.mas_equalTo(25);
             }];
             [activeButton.layer setCornerRadius:3];
@@ -410,6 +429,38 @@
             [activeButton.titleLabel setFont:[UIFont systemFontOfSize:15]];
             [activeButton setContentEdgeInsets:UIEdgeInsetsMake(0, 10, 0, 0)];
             [userInfoCell setTitle:@"状态"];
+            break;
+        }
+            
+        // 清理缓存
+        case 8:
+        {
+            UILabel *groupLabel = [UILabel new];
+            self.clearCacheLabel = groupLabel;
+            [userInfoCell.contentView addSubview:groupLabel];
+            [groupLabel mas_makeConstraints:^(MASConstraintMaker *make) {
+                make.centerY.mas_equalTo(userInfoCell.mas_centerY);
+                make.right.equalTo(userInfoCell.contentView).with.offset(right);
+            }];
+            [groupLabel setFont:[UIFont systemFontOfSize:15]];
+            [groupLabel setTextColor:DZSUIColorFromHex(0x3C3C3C)];
+            CGFloat dataSize = [[BBSUICoreDataManage shareManager] getDataSize];
+            
+            if (dataSize < 0)
+            {
+                dataSize = 0;
+            }
+            
+            groupLabel.text = [NSString stringWithFormat:@"%fM",dataSize];
+            
+            if (dataSize < 1)
+            {
+                dataSize = dataSize *1024;
+                groupLabel.text = [NSString stringWithFormat:@"%.2fK",dataSize];
+            }
+            
+            [userInfoCell setTitle:@"清理缓存"];
+            userInfoCell.selectionStyle = UITableViewCellSelectionStyleNone;
             break;
         }
         
@@ -452,7 +503,8 @@
         __weak typeof(self) weakSelf = self;
         vc.SightmlBlock = ^(NSString *sightml){
             [weakSelf editUserInfoWithGender:-1 birthday:nil residence:nil sightml:sightml token:_currentUser.token avatarBigUrl:nil avatarMiddleUrl:nil avatarSmallUrl:nil success:^{
-                weakSelf.signatureLabel.text = sightml;
+                weakSelf.signatureLabel.attributedText = [NSString stringWithString:sightml fontSize:15 defaultColorValue:@"3C3C3C" lineSpace:0 wordSpace:0];
+                weakSelf.signatureLabel.textAlignment = NSTextAlignmentRight;
                 
                 _currentUser.sightml = sightml;
                 [BBSUIContext shareInstance].currentUser = _currentUser;
@@ -493,6 +545,12 @@
         [[MOBFViewController currentViewController].navigationController pushViewController:emailSendVC animated:YES];
     }
 
+    // 清理缓存
+    if (indexPath.row == 8)
+    {
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"确定清空缓存数据？" message:nil delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"确定", nil];
+        [alert show];
+    }
 }
 
 #pragma mark - ui handler
@@ -526,6 +584,10 @@
     
     if ([[UIDevice currentDevice].systemVersion floatValue] >= 8.0){
         UIAlertController * alertVC = [UIAlertController alertControllerWithTitle:nil message:nil preferredStyle:UIAlertControllerStyleActionSheet];
+        
+        UIPopoverPresentationController *popoverController = alertVC.popoverPresentationController;
+        popoverController.sourceView = self;
+        popoverController.sourceRect = CGRectMake(DZSUIScreen_width/2,DZSUIScreen_height,1.0,1.0);
         
         [titles enumerateObjectsUsingBlock:^(NSString * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
             
@@ -788,5 +850,19 @@
 
 }
 
+#pragma mark - Alert Delegate
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
+{
+    if (buttonIndex == 1)
+    {
+        [[BBSUICoreDataManage shareManager] clearCache];
+        self.clearCacheLabel.text = @"0K";
+    }
+}
 
+#pragma mark - tool
+
+- (BOOL)isIpad {
+    return (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad);
+}
 @end

@@ -1,8 +1,8 @@
 10
 
 dir
-27403
-svn://chux@svn.code.mob.com/ios/project/BBSSDK/tags/v2.0.0/BBSSDK/Common/3rdPart/LBSegmentControlKit/LBSegmentControlConst
+29112
+svn://chux@svn.code.mob.com/ios/project/BBSSDK/trunk/BBSSDK/Common/3rdPart/LBSegmentControlKit/LBSegmentControlConst
 svn://chux@svn.code.mob.com
 
 
@@ -32,7 +32,7 @@ file
 
 
 
-2017-10-25T07:57:05.000000Z
+2017-11-24T09:27:19.000000Z
 c2fb8ae52b7ce6f48e3de884774231f8
 2017-04-19T02:49:07.973802Z
 22599
@@ -66,7 +66,7 @@ file
 
 
 
-2017-10-25T07:57:05.000000Z
+2017-11-24T09:27:19.000000Z
 29244ae3b095d8ee05336180f6da34e7
 2017-04-19T02:49:07.973802Z
 22599

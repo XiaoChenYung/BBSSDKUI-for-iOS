@@ -34,6 +34,8 @@
 #import "BBSUICommentTextView.h"
 #import <MOBFoundation/MOBFImage.h>
 #import "BBSUICacheManager.h"
+#import <MobLink/IMOBFLinkComponent.h>
+#import <MOBFoundation/MOBFComponentManager.h>
 
 @interface BBSUIThreadDetailViewController ()
 
@@ -53,6 +55,24 @@
 @end
 
 @implementation BBSUIThreadDetailViewController
+
++ (NSString *)MLSDKPath
+{
+    return @"/thread/detail";
+}
+
+- (instancetype)initWithMobLinkScene:(id<IMOBFScene>)scene;
+{
+    self = [super init];
+    if (self)
+    {
+        NSDictionary *sceneDict = [scene getParams];
+        self.fid = [sceneDict[@"fid"] integerValue];
+        self.tid = [sceneDict[@"tid"] integerValue];
+    }
+    return self;
+}
+
 
 - (instancetype)initWithFid:(NSInteger)fid tid:(NSInteger)tid
 {
@@ -96,11 +116,11 @@
 - (void)setup
 {
     self.webView.delegate = self ;
+    self.webView.backgroundColor = [UIColor whiteColor];
     [self setBarButtonItem];
 //    self.replyEditor = [[BBSUIReplyEditor alloc] init];
     [self configBottomBar];
     [self loadWeb];
-    
 }
 
 - (void)setBarButtonItem
@@ -255,7 +275,7 @@
     NSString *htmlCont = [NSString stringWithContentsOfFile:path
                                                    encoding:NSUTF8StringEncoding
                                                       error:nil];
-    [self.webView loadHTMLString:htmlCont baseURL:[NSURL URLWithString:path]];
+    [self.webView loadHTMLString:htmlCont baseURL:[NSURL fileURLWithPath:[path stringByDeletingLastPathComponent]]];
 }
 
 - (void)registerNativeMethods
@@ -455,7 +475,7 @@
 }
 
 /**
- 打开附件
+ 打开附件、下载附件
  */
 - (void)registerOpenAttachment
 {
@@ -555,6 +575,11 @@
         }
         
         UIAlertController *vc = [UIAlertController alertControllerWithTitle:nil message:nil preferredStyle:UIAlertControllerStyleActionSheet];
+        
+        UIPopoverPresentationController *popoverController = vc.popoverPresentationController;
+        popoverController.sourceView = self.view;
+        popoverController.sourceRect = CGRectMake(DZSUIScreen_width/2,DZSUIScreen_height,1.0,1.0);
+        
         UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:nil];
         UIAlertAction *save = [UIAlertAction actionWithTitle:@"保存到手机相册" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
             
@@ -661,17 +686,24 @@
 {
     __weak typeof(self) theWebController = self;
     [self.jsContext registerJSMethod:@"openAuthor" block:^(NSArray *arguments) {
-        
-        NSInteger authorId = -1;
-        
-        if (arguments.count > 0 && [arguments[0] isKindOfClass:[NSNumber class]])
+        if (![BBSUIContext shareInstance].currentUser)
         {
-            authorId = [arguments[0] integerValue];
-            
-            BBSUIUserOtherInfoViewController *vc = [[BBSUIUserOtherInfoViewController alloc] initWithAuthorid:authorId];
-            [theWebController.navigationController pushViewController:vc animated:YES];
+            BBSUILoginViewController *vc = [[BBSUILoginViewController alloc] init];
+            UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
+            [self.navigationController presentViewController:nav animated:YES completion:nil];
         }
-        
+        else
+        {
+            NSInteger authorId = -1;
+            
+            if (arguments.count > 0 && [arguments[0] isKindOfClass:[NSNumber class]])
+            {
+                authorId = [arguments[0] integerValue];
+                
+                BBSUIUserOtherInfoViewController *vc = [[BBSUIUserOtherInfoViewController alloc] initWithAuthorid:authorId];
+                [theWebController.navigationController pushViewController:vc animated:YES];
+            }
+        }
         //进入其他用户详情入口
     }];
 
@@ -846,10 +878,15 @@
         [HUD showAnimated:YES];
         [HUD hideAnimated:YES afterDelay:2];
         if (!error) {
+            [self.webView stringByEvaluatingJavaScriptFromString:@"BBSSDKNative.likeThread()"];
+            
+            NSLog(@"————————————————————");
+            
             HUD.label.text = @"赞成功";
             NSInteger likeCount = [_likeButton.titleLabel.text integerValue];
             [_likeButton setTitle:[NSString stringWithFormat:@"%zd", likeCount + 1] forState:UIControlStateNormal];
             [self _saveLikedThread];
+            
         }else{
             HUD.label.text = error.userInfo[@"description"];
             
@@ -875,8 +912,16 @@
 
 - (void)shareButtonHandler:(UIButton *)button
 {
-    if(self.threadModel)
+//    if (![BBSUIContext shareInstance].currentUser)
+//    {
+//        BBSUILoginViewController *vc = [[BBSUILoginViewController alloc] init];
+//        UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
+//        [self.navigationController presentViewController:nav animated:YES completion:nil];
+//    }
+//    else if(self.threadModel)
+//    {
         [[BBSUIShareView sharedInstance] createShareViewWithContent:self.threadModel animation:YES];
+//    }
     
     return;
 }
@@ -996,7 +1041,7 @@
                     }
                     else
                     {
-                        NSLog(@"%@",comment);
+                        NSLog(@"_____________ %@",comment);
                         
                         [self postCommentWithHTML:comment pid:pid];
                     }
@@ -1050,7 +1095,7 @@
     [HUD showAnimated:YES];
     [HUD hideAnimated:YES afterDelay:2];
     
-    post.message = comment;
+//    post.message = comment;
     [self updateComment:post prePid:pid];
     if (self.commentTextView) {
         if (self.commentTextView.superview) {

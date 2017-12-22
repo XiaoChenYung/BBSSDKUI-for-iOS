@@ -143,7 +143,7 @@
 - (void)setupTitleLabel {
     
     UILabel *titleLabel = [[UILabel alloc] init];
-    
+    titleLabel.font = [UIFont fontWithName:@"Arial-BoldMT" size:18];
     titleLabel.hidden = YES;
     titleLabel.numberOfLines = 2;
     [titleLabel setContentMode:UIViewContentModeBottomLeft];
@@ -252,6 +252,10 @@
     
 //    _centerImageView.image =
 //    [UIImage imageNamed:_picDataArray[self.currentImageIndex]];
+    
+    [SDWebImageDownloader.sharedDownloader setValue:@"text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8"
+                                 forHTTPHeaderField:@"Accept"];
+    
     [_centerImageView sd_setImageWithURL:[NSURL URLWithString:_picDataArray[self.currentImageIndex]] placeholderImage:[UIImage BBSImageNamed:@""]];
     
     _currentImageName = _picDataArray[self.currentImageIndex];

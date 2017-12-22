@@ -20,6 +20,10 @@
 
 - (NSArray *)queryHistoryWithTid:(NSInteger)tid limit:(NSInteger)limit;
 
+- (CGFloat)getDataSize;
+
+- (void)clearCache;
+
 @property (nonatomic, assign) NSInteger historyCount;
 
 @end

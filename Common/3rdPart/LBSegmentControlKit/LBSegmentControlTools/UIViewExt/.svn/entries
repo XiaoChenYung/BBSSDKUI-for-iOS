@@ -1,8 +1,8 @@
 10
 
 dir
-27403
-svn://chux@svn.code.mob.com/ios/project/BBSSDK/tags/v2.0.0/BBSSDK/Common/3rdPart/LBSegmentControlKit/LBSegmentControlTools/UIViewExt
+29112
+svn://chux@svn.code.mob.com/ios/project/BBSSDK/trunk/BBSSDK/Common/3rdPart/LBSegmentControlKit/LBSegmentControlTools/UIViewExt
 svn://chux@svn.code.mob.com
 
 
@@ -32,7 +32,7 @@ file
 
 
 
-2017-10-25T07:57:05.000000Z
+2017-11-24T09:27:19.000000Z
 f832fe2915ef6f53170af33f13481bbf
 2017-04-17T06:08:11.660989Z
 22537
@@ -66,7 +66,7 @@ file
 
 
 
-2017-10-25T07:57:05.000000Z
+2017-11-24T09:27:19.000000Z
 a94c1aba4818f0460ac810e44703eeb5
 2017-04-17T06:08:11.660989Z
 22537

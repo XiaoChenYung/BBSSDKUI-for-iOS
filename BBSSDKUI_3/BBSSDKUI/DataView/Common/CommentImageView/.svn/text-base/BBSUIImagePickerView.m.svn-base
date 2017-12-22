@@ -71,6 +71,9 @@
     if([self selectedImages].count>=8)
     {
         UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"提示" message:@"最多只能上传8张图片哦..." preferredStyle:UIAlertControllerStyleAlert];
+        UIPopoverPresentationController *popoverController = alert.popoverPresentationController;
+        popoverController.sourceView = self;
+        popoverController.sourceRect = CGRectMake(DZSUIScreen_width/2,self.frame.size.height,1.0,1.0);
         
         UIAlertAction *ok = [UIAlertAction actionWithTitle:@"知道了" style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
             if (_delegate && [_delegate respondsToSelector:@selector(didEndPickImages)])
@@ -88,6 +91,11 @@
     }
     
     UIAlertController * alertVC = [UIAlertController alertControllerWithTitle:nil message:nil preferredStyle:UIAlertControllerStyleActionSheet];
+    
+    UIPopoverPresentationController *popoverController = alertVC.popoverPresentationController;
+    popoverController.sourceView = self;
+    popoverController.sourceRect = CGRectMake(DZSUIScreen_width/2,self.frame.size.height,1.0,1.0);
+    
     UIAlertAction * takePhoto = [UIAlertAction actionWithTitle:@"拍摄" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
         [self takePhoto];
     }];

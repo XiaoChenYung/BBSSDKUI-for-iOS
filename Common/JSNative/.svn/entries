@@ -1,8 +1,8 @@
 10
 
 dir
-27403
-svn://chux@svn.code.mob.com/ios/project/BBSSDK/tags/v2.0.0/BBSSDK/Common/JSNative
+29112
+svn://chux@svn.code.mob.com/ios/project/BBSSDK/trunk/BBSSDK/Common/JSNative
 svn://chux@svn.code.mob.com
 
 
@@ -32,7 +32,7 @@ file
 
 
 
-2017-10-25T07:57:05.000000Z
+2017-11-24T09:27:19.000000Z
 8817578443b46bab378749064af20782
 2017-04-27T09:42:20.829286Z
 22758
@@ -66,7 +66,7 @@ file
 
 
 
-2017-10-25T07:57:05.000000Z
+2017-11-24T09:27:19.000000Z
 3111fb811236104cc110f9e89f18545e
 2017-09-22T07:40:37.373999Z
 26941

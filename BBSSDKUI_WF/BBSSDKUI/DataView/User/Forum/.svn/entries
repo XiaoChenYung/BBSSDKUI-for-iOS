@@ -1,8 +1,8 @@
 10
 
 dir
-27403
-svn://chux@svn.code.mob.com/ios/project/BBSSDK/tags/v2.0.0/BBSSDK/BBSSDKUI_WF/BBSSDKUI/DataView/User/Forum
+29112
+svn://chux@svn.code.mob.com/ios/project/BBSSDK/trunk/BBSSDK/BBSSDKUI_WF/BBSSDKUI/DataView/User/Forum
 svn://chux@svn.code.mob.com
 
 
@@ -32,7 +32,7 @@ file
 
 
 
-2017-10-25T07:56:40.000000Z
+2017-11-24T09:26:56.000000Z
 9b00c8dab1bcdf8372f82ac674838988
 2017-04-25T04:46:55.016877Z
 22694
@@ -66,7 +66,7 @@ file
 
 
 
-2017-10-25T07:56:40.000000Z
+2017-11-24T09:26:56.000000Z
 6717636857fc481d526622a199008261
 2017-04-25T04:46:55.016877Z
 22694

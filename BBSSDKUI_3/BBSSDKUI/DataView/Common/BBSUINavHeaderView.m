@@ -49,8 +49,8 @@ const CGFloat BBSLimitValue = 200;
             if (tableViewoffsetY < BBSLimitValue){
                 
                 [UIView animateWithDuration:0.25 animations:^{
-                    self.backButton.hidden = NO;
-                    self.backButton.alpha = 1-alpha;
+//                    self.backButton.hidden = NO;
+//                    self.backButton.alpha = 1-alpha;
                     self.titleLabel.alpha = alpha;
                     [self.rightButotnArray enumerateObjectsUsingBlock:^(UIButton * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
                         obj.hidden = NO;
@@ -61,7 +61,7 @@ const CGFloat BBSLimitValue = 200;
             } else if (tableViewoffsetY >= BBSLimitValue){
                 
                 [UIView animateWithDuration:0.25 animations:^{
-                    self.backButton.hidden = YES;
+//                    self.backButton.hidden = YES;
                     [self.rightButotnArray enumerateObjectsUsingBlock:^(UIButton * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
                         obj.hidden = YES;
                     }];

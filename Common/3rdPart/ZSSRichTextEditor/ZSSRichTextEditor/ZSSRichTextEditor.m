@@ -14,6 +14,7 @@
 #import "ZSSTextView.h"
 #import "UIImage+BBSFunction.h"
 #import "NSBundle+BBSSDKUI.h"
+#import "BBSUIExpressionViewConfiguration.h"
 
 @import JavaScriptCore;
 
@@ -85,8 +86,9 @@ static Class hackishFixClass = Nil;
 
 @end
 
+static BOOL keyBoardHidden = NO;
 
-@interface ZSSRichTextEditor ()
+@interface ZSSRichTextEditor ()<BBSUIExpressionViewDelegate>
 
 /*
  *  Scroll view containing the toolbar
@@ -178,6 +180,14 @@ static Class hackishFixClass = Nil;
 @property (nonatomic, strong) UIButton *imagePickButton;//图片选择按钮
 @property (nonatomic, strong) UIButton *keyboardButton;//键盘按钮
 @property (nonatomic, strong) UIButton *arrowButton;//箭头按钮
+@property (nonatomic, strong) UIBarButtonItem *expressionItem;//表情按钮
+
+@property (nonatomic, strong) BBSUIExpressionView *expView;
+@property (nonatomic, assign) BOOL showExpView;
+@property (nonatomic, assign) BOOL keyboardIsAppear;
+@property (nonatomic, assign) BOOL isInputExpression;
+
+@property (nonatomic, assign) CGFloat keyboardHeight;
 
 /*
  *  Array for custom bar button items
@@ -279,11 +289,13 @@ static CGFloat kDefaultScale = 0.5;
     [self createParentHoldingView];
     
     //Hide Keyboard
-    if (![self isIpad]) {
+    if (1) {
+        
+        CGFloat toolbarCropperW = 140;
         
         if (self.uiStyleType == BBSUIStyleTypeTwo) {
             // Toolbar holder used to crop and position toolbar
-            UIView *toolbarCropper = [[UIView alloc] initWithFrame:CGRectMake(self.view.frame.size.width-132, 0, 132, 44)];
+            UIView *toolbarCropper = [[UIView alloc] initWithFrame:CGRectMake(self.view.frame.size.width-toolbarCropperW, 0, toolbarCropperW, 44)];
             toolbarCropper.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin;
             toolbarCropper.clipsToBounds = YES;
             
@@ -302,52 +314,87 @@ static CGFloat kDefaultScale = 0.5;
 //            [self.arrowButton setImage:[UIImage BBSImageNamed:@"/3rdParty/ZSSRichEditor/ZSSArrowDown.png"] forState:UIControlStateNormal];
 //            [toolbarCropper addSubview:self.arrowButton];
             
-            UIToolbar *keyboardToolbar = [[UIToolbar alloc] initWithFrame:CGRectMake(-7, -1, 132, 44)];
-            [toolbarCropper addSubview:keyboardToolbar];
+//            UIToolbar *keyboardToolbar = [[UIToolbar alloc] initWithFrame:CGRectMake(0, -1, toolbarCropperW, 44)];
+//            [toolbarCropper addSubview:keyboardToolbar];
+            
+            UIView *keyboardTollbarView = [[UIView alloc] initWithFrame:CGRectMake(0, -1, toolbarCropperW, 44)];
+            [toolbarCropper addSubview:keyboardTollbarView];
+            
+            // 表情
+            UIButton *faceButton = [UIButton buttonWithType:UIButtonTypeCustom];
+            [faceButton setFrame:CGRectMake(0, 7, 30, 30)];
+            [faceButton setImageEdgeInsets:UIEdgeInsetsMake(0, 0, 0, 0)];
+            [faceButton setImage:[UIImage BBSImageNamed:@"/Thread/Face@2x.png"] forState:UIControlStateNormal];
+            [faceButton addTarget:self action:@selector(faceButtonHandler:) forControlEvents:UIControlEventTouchUpInside];
+            self.expressionItem = [[UIBarButtonItem alloc] initWithCustomView:faceButton];
+            
             
             UIButton *imagePickButton = [UIButton buttonWithType:UIButtonTypeCustom];
-            [imagePickButton setFrame:CGRectMake(0, 0, 30, 30)];
+            [imagePickButton setFrame:CGRectMake(30, 7, 30, 30)];
             [imagePickButton setImage:[UIImage BBSImageNamed:@"/3rdParty/ZSSRichEditor/PictureSelect@2x.png"] forState:UIControlStateNormal];
             [imagePickButton addTarget:self action:@selector(pickImages:) forControlEvents:UIControlEventTouchUpInside];
             self.imagePickItem = [[UIBarButtonItem alloc] initWithCustomView:imagePickButton];
             
             UIButton *keyboardButton = [UIButton buttonWithType:UIButtonTypeCustom];
-            [keyboardButton setFrame:CGRectMake(0, 0, 30, 30)];
+            [keyboardButton setFrame:CGRectMake(60, 7, 30, 30)];
             [keyboardButton setImage:[UIImage BBSImageNamed:@"/3rdParty/ZSSRichEditor/KeyboardButton@2x.png"] forState:UIControlStateNormal];
             [keyboardButton addTarget:self action:@selector(keyboardButtonHandler:) forControlEvents:UIControlEventTouchUpInside];
             self.keyboardItem = [[UIBarButtonItem alloc] initWithCustomView:keyboardButton];
             
-            
             UIButton *arrowButton = [UIButton buttonWithType:UIButtonTypeCustom];
-            [arrowButton setFrame:CGRectMake(0, 0, 44, 44)];
+            [arrowButton setFrame:CGRectMake(96, 0, 44, 44)];
             [arrowButton setImage:[UIImage BBSImageNamed:@"/3rdParty/ZSSRichEditor/ZSSArrowDown@2x.png"] forState:UIControlStateNormal];
             [arrowButton addTarget:self action:@selector(arrowButtonHandler:) forControlEvents:UIControlEventTouchUpInside];
             self.arrowItem = [[UIBarButtonItem alloc] initWithCustomView:arrowButton];
             
-            keyboardToolbar.items = @[self.imagePickItem, self.keyboardItem, self.arrowItem];
+//            keyboardToolbar.items = @[self.expressionItem, self.imagePickItem, self.keyboardItem, self.arrowItem];
+            [keyboardTollbarView addSubview:self.expressionItem.customView];
+            [keyboardTollbarView addSubview:self.imagePickItem.customView];
+            [keyboardTollbarView addSubview:self.keyboardItem.customView];
+            [keyboardTollbarView addSubview:self.arrowItem.customView];
             
             [self.toolbarHolder addSubview:toolbarCropper];
             
         }else{
+            CGFloat toolbarCropperW = 100;
+            
             // Toolbar holder used to crop and position toolbar
-            UIView *toolbarCropper = [[UIView alloc] initWithFrame:CGRectMake(self.view.frame.size.width-88, 0, 88, 44)];
+            UIView *toolbarCropper = [[UIView alloc] initWithFrame:CGRectMake(self.view.frame.size.width-toolbarCropperW, 0, toolbarCropperW, 44)];
             toolbarCropper.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin;
             toolbarCropper.clipsToBounds = YES;
             
             // Use a toolbar so that we can tint
-            UIToolbar *keyboardToolbar = [[UIToolbar alloc] initWithFrame:CGRectMake(-7, -1, 88, 44)];
-            [toolbarCropper addSubview:keyboardToolbar];
+            UIView *keyboardTollbarView = [[UIView alloc] initWithFrame:CGRectMake(0, -1, toolbarCropperW, 44)];
+            [toolbarCropper addSubview:keyboardTollbarView];
             
-            self.imagePickItem = [[UIBarButtonItem alloc] initWithImage:[UIImage BBSImageNamed:@"/Common/selectImage@2x.png"] style:UIBarButtonItemStylePlain target:self action:@selector(pickImages:)];
+            // 表情
+            UIButton *faceButton = [UIButton buttonWithType:UIButtonTypeCustom];
+            [faceButton setFrame:CGRectMake(0, 7, 30, 30)];
+            [faceButton setImageEdgeInsets:UIEdgeInsetsMake(0, 0, 0, 0)];
+            [faceButton setImage:[UIImage BBSImageNamed:@"/Thread/Face@2x.png"] forState:UIControlStateNormal];
+            [faceButton addTarget:self action:@selector(faceButtonHandler:) forControlEvents:UIControlEventTouchUpInside];
+            self.expressionItem = [[UIBarButtonItem alloc] initWithCustomView:faceButton];
+            
+            UIButton *imagePickButton = [UIButton buttonWithType:UIButtonTypeCustom];
+            [imagePickButton setFrame:CGRectMake(30, 7, 30, 30)];
+            [imagePickButton setImage:[UIImage BBSImageNamed:@"/Common/selectImage@2x.png"] forState:UIControlStateNormal];
+            [imagePickButton addTarget:self action:@selector(pickImages:) forControlEvents:UIControlEventTouchUpInside];
+            self.imagePickItem = [[UIBarButtonItem alloc] initWithCustomView:imagePickButton];
+            
+//            self.imagePickItem = [[UIBarButtonItem alloc] initWithImage:[UIImage BBSImageNamed:@"/Common/selectImage@2x.png"] style:UIBarButtonItemStylePlain target:self action:@selector(pickImages:)];
             
             UIButton *keyboardItem = [UIButton buttonWithType:UIButtonTypeCustom];
-            keyboardItem.frame = CGRectMake(0, 0, 30 , 30);
+            keyboardItem.frame = CGRectMake(60, 7, 30 , 30);
             [keyboardItem setImage:[UIImage BBSImageNamed:@"/3rdParty/ZSSRichEditor/ZSSkeyboard@2x.png"] forState:UIControlStateNormal];
             [keyboardItem addTarget:self action:@selector(dismissKeyboard) forControlEvents:UIControlEventTouchUpInside];
             
             self.keyboardItem = [[UIBarButtonItem alloc] initWithCustomView:keyboardItem];
             
-            keyboardToolbar.items = @[self.imagePickItem,self.keyboardItem];
+//            keyboardToolbar.items = @[self.expressionItem, self.imagePickItem,self.keyboardItem];
+            [keyboardTollbarView addSubview:self.expressionItem.customView];
+            [keyboardTollbarView addSubview:self.imagePickItem.customView];
+            [keyboardTollbarView addSubview:self.keyboardItem.customView];
+//            [keyboardTollbarView addSubview:self.arrowItem.customView];
             
             [self.toolbarHolder addSubview:toolbarCropper];
             
@@ -394,6 +441,12 @@ static CGFloat kDefaultScale = 0.5;
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillShowNotification object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillHideNotification object:nil];
     
+}
+
+- (void)viewDidDisappear:(BOOL)animated
+{
+    [super viewDidDisappear:YES];
+    keyBoardHidden = NO;
 }
 
 #pragma mark - Set Up View Section
@@ -969,7 +1022,7 @@ static CGFloat kDefaultScale = 0.5;
         item.tintColor = [self barButtonItemDefaultColor];
     }
     
-    self.toolbar.frame = CGRectMake(0, 0, toolbarWidth, 44);
+    self.toolbar.frame = CGRectMake(0, 0, toolbarWidth + 50, 44);
     self.toolBarScroll.contentSize = CGSizeMake(self.toolbar.frame.size.width, 44);
 }
 
@@ -1084,19 +1137,23 @@ static CGFloat kDefaultScale = 0.5;
 
 - (void)dismissKeyboard {
     
-    static BOOL keyBoardHidden = NO;
-    
-    if (keyBoardHidden)
+    if (_showExpView)
     {
+        _showExpView = NO;
+        [_expView removeFromSuperview];
+        
         UIButton *btn = self.keyboardItem.customView;
         
         [UIView animateWithDuration:0.25 animations:^{
-            btn.imageView.transform = CGAffineTransformMakeRotation(M_PI);
+            btn.imageView.transform = CGAffineTransformIdentity;
         }];
         
         [self focusTextEditor];//可能
+        
+        keyBoardHidden = NO;
     }
-    else
+    
+    else if (keyBoardHidden)
     {
         UIButton *btn = self.keyboardItem.customView;
         
@@ -1104,31 +1161,52 @@ static CGFloat kDefaultScale = 0.5;
             btn.imageView.transform = CGAffineTransformIdentity;
         }];
         
+        [self focusTextEditor];//可能
+        
+        keyBoardHidden = NO;
+    }
+    else
+    {
+        UIButton *btn = self.keyboardItem.customView;
+        
+        [UIView animateWithDuration:0.25 animations:^{
+            btn.imageView.transform = CGAffineTransformMakeRotation(M_PI);
+        }];
+        
         [self.parentViewController.view endEditing:YES];
         [self.view endEditing:YES];
+        
+        [self _fallingToolbarHolder];
+        
+        keyBoardHidden = YES;
     }
     
-    keyBoardHidden = !keyBoardHidden;
+//    keyBoardHidden = !keyBoardHidden;
 }
 
 - (void)keyboardButtonHandler:(UIButton *)button
 {
+    keyBoardHidden = NO;
+    
+    [self removeExpView];
     [self focusTextEditor];
 }
 
 - (void)arrowButtonHandler:(UIButton *)button
 {
+ 
+    [self removeExpView];
     
-    static BOOL keyBoardHidden = NO;
-    
-    if (keyBoardHidden)
-    {
-        [self focusTextEditor];//可能
-    }
-    else
+    if (!keyBoardHidden || _keyboardIsAppear)
     {
         [self.parentViewController.view endEditing:YES];
         [self.view endEditing:YES];
+        [self _fallingToolbarHolder];
+    }
+    
+    else
+    {
+        [self focusTextEditor];//可能
     }
     
     keyBoardHidden = !keyBoardHidden;
@@ -2046,18 +2124,57 @@ static CGFloat kDefaultScale = 0.5;
     //Checks if IOS8, gets correct keyboard height
     CGFloat keyboardHeight = UIInterfaceOrientationIsLandscape(orientation) ? ([[[UIDevice currentDevice] systemVersion] floatValue] >= 8.000000) ? keyboardEnd.size.height : keyboardEnd.size.width : keyboardEnd.size.height;
     
+//    _keyboardHeight = keyboardHeight;
+    
     // Correct Curve
     UIViewAnimationOptions animationOptions = curve << 16;
     
     const int extraHeight = 10;
     
     if ([notification.name isEqualToString:UIKeyboardWillShowNotification]) {
+        _keyboardIsAppear = YES;
+        
+        if (_isInputExpression)
+        {
+            _isInputExpression = NO;
+        }else
+        {
+            _showExpView = NO;
+            [_expView removeFromSuperview];
+        }
+        
+        
+        if (self.uiStyleType == BBSUIStyleTypeOne)
+        {
+            UIButton *btn = self.keyboardItem.customView;
+            
+            [UIView animateWithDuration:0.25 animations:^{
+                btn.imageView.transform = CGAffineTransformIdentity;
+            }];
+//            [self focusTextEditor];//可能
+            keyBoardHidden = NO;
+        }
+        
+        
+        // 存储键盘高度
+        NSDictionary *info = [notification userInfo];
+        NSValue *value = [info objectForKey:UIKeyboardFrameEndUserInfoKey];
+        CGSize keyboardSize = [value CGRectValue].size;
+        _keyboardHeight = keyboardSize.height;
         
         [UIView animateWithDuration:duration delay:0 options:animationOptions animations:^{
             
             // Toolbar
             CGRect frame = self.toolbarHolder.frame;
-            frame.origin.y = self.view.frame.size.height - (keyboardHeight + sizeOfToolbar);
+            if (_expView)
+            {
+                frame.origin.y = _expView.frame.origin.y - sizeOfToolbar;
+            }
+            else
+            {
+                frame.origin.y = self.view.frame.size.height - (keyboardHeight + sizeOfToolbar);
+            }
+            
             self.toolbarHolder.frame = frame;
             
             // Editor View
@@ -2080,18 +2197,25 @@ static CGFloat kDefaultScale = 0.5;
         } completion:nil];
         
     } else {
-        
+        _keyboardIsAppear = NO;
+       
         [UIView animateWithDuration:duration delay:0 options:animationOptions animations:^{
             
-            CGRect frame = self.toolbarHolder.frame;
-            
-            if (_alwaysShowToolbar) {
-                frame.origin.y = self.view.frame.size.height - sizeOfToolbar;
-            } else {
-                frame.origin.y = self.view.frame.size.height + keyboardHeight;
+//            CGRect frame = self.toolbarHolder.frame;
+
+            if (!_showExpView && !_isInputExpression)
+            {
+                [self hideKeyboard];
             }
-            
-            self.toolbarHolder.frame = frame;
+
+////            else
+//            if (_alwaysShowToolbar) {
+//                frame.origin.y = self.view.frame.size.height - sizeOfToolbar;
+//            } else {
+//                frame.origin.y = self.view.frame.size.height + keyboardHeight;
+//            }
+//
+//            self.toolbarHolder.frame = frame;
             
             // Editor View
             CGRect editorFrame = self.editorView.frame;
@@ -2193,8 +2317,102 @@ static CGFloat kDefaultScale = 0.5;
 // 设置父控制器并实现pickImage 否则崩溃
 - (void)pickImages:(id)sender
 {
+    [self removeExpView];
+    keyBoardHidden = YES;
+    [self _fallingToolbarHolder];
+    
     [self.parentViewController performSelector:@selector(pickImages) withObject:nil];
 }
 
+- (void)faceButtonHandler:(id)sender
+{
+    _showExpView = YES;
+    keyBoardHidden = NO;
+    
+    if (!_expView)
+    {
+        _expView = [[BBSUIExpressionView alloc] initWithFrame:CGRectMake(0, self.view.frame.size.height - _keyboardHeight, self.view.frame.size.width, _keyboardHeight)];
+        _expView.delegate = self;
+    }
+    
+    if (self.uiStyleType == BBSUIStyleTypeOne)
+    {
+        UIButton *btn = self.keyboardItem.customView;
+        
+        [UIView animateWithDuration:0.25 animations:^{
+            btn.imageView.transform = CGAffineTransformIdentity;
+        }];
+    }
+    
+    [self.parentViewController.view endEditing:YES];
+    [self.view endEditing:YES];
+    
+    CGRect toolBarFrame = self.toolbarHolder.frame;
+    toolBarFrame.origin.y = self.view.frame.size.height - _keyboardHeight - toolBarFrame.size.height;
+    
+    self.toolbarHolder.frame = toolBarFrame;
+    
+    [self.view addSubview:_expView];
+    
+//    [self.parentViewController performSelector:@selector(faceButtonHandler) withObject:nil withObject:nil];
+}
+
+- (void)removeExpView
+{
+    [_expView removeFromSuperview];
+    _showExpView = NO;
+}
+
+- (void)_fallingToolbarHolder
+{
+    
+    CGRect frame = self.toolbarHolder.frame;
+    
+    //            if (_showExpView)
+    //            {
+    //                frame.origin.y = self.view.frame.size.height - _keyboardHeight - sizeOfToolbar;
+    //                _showExpView = NO;
+    //            }
+    //            else
+    if (_alwaysShowToolbar) {
+        frame.origin.y = self.view.frame.size.height - frame.size.height;
+    } else {
+        frame.origin.y = self.view.frame.size.height + _keyboardHeight;
+    }
+    
+    self.toolbarHolder.frame = frame;
+}
+
+#pragma mark BBSUIExpressionViewDelegate
+
+- (void)expressionView:(BBSUIExpressionView *)expressionView didSelectImageName:(NSString *)imageName
+{
+    _isInputExpression = YES;
+//    if ([self.editorView isFirstResponder])
+//    {
+//        <#statements#>
+//    }
+    [self.parentViewController performSelector:@selector(expressionView:didSelectImageName:) withObject:expressionView withObject:imageName];
+//    [self.parentViewController performSelector:@selector(faceButtonHandlerWithImageName:) withObject:imageName withObject:@"14"];
+//    [_countNumTextView setExpressionWithImageName:imageName fontSize:_countNumTextView.defaultFontSize];
+}
+
+- (void)hideKeyboard
+{
+    if (self.uiStyleType == BBSUIStyleTypeOne)
+    {
+        if (keyBoardHidden == NO || !_showExpView)
+        {
+            [self dismissKeyboard];
+        }
+    }
+    else
+    {
+        if (!keyBoardHidden || _keyboardIsAppear)
+        {
+            [self keyboardButtonHandler:nil];
+        }
+    }
+}
 
 @end

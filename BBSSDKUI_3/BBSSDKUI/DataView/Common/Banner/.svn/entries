@@ -1,15 +1,15 @@
 10
 
 dir
-27403
-svn://chux@svn.code.mob.com/ios/project/BBSSDK/tags/v2.0.0/BBSSDK/BBSSDKUI_3/BBSSDKUI/DataView/Common/Banner
+29112
+svn://chux@svn.code.mob.com/ios/project/BBSSDK/trunk/BBSSDK/BBSSDKUI_3/BBSSDKUI/DataView/Common/Banner
 svn://chux@svn.code.mob.com
 
 
 
-2017-09-21T06:27:34.280084Z
-26877
-liyc
+2017-11-23T07:13:59.430471Z
+28061
+chux
 
 
 
@@ -32,7 +32,7 @@ file
 
 
 
-2017-10-25T07:57:04.000000Z
+2017-11-24T09:27:07.000000Z
 f2e8cdf8f8abd3ebd10fa4cbdb53fa14
 2017-09-20T03:59:17.374230Z
 26814
@@ -62,20 +62,15 @@ liyc
 
 BBSUIThreadBanner.m
 file
+29113
 
 
 
-
-2017-10-25T07:57:04.000000Z
-77c6c2eaf29b2710a12b080d51e501db
-2017-09-21T06:27:34.280084Z
-26877
-liyc
-
-
-
-
-
+2017-12-18T06:42:22.000000Z
+cf0936c64b20631e9a98e650b9dd052a
+2017-12-22T07:56:04.032163Z
+29113
+chux
 
 
 
@@ -92,5 +87,10 @@ liyc
 
 
 
-12715
+
+
+
+
+
+12983
 

@@ -169,7 +169,7 @@ static NSInteger    BBSUIPageSize = 10;
                                  initWithFrame:CGRectMake(0, 0, [UIScreen mainScreen].bounds.size.width,
                                                           247)];
     [headerView addSubview:self.bannerView];
-    __weak typeof(self) theView = self;
+
     //加载广告条
     self.maskImage = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, BBS_WIDTH(self.bannerView), BBS_HEIGHT(self.bannerView))];
     
@@ -234,7 +234,14 @@ static NSInteger    BBSUIPageSize = 10;
 
 - (void)searchAction:(UIButton *)sender {
     BBSUISearchViewController *vc = [BBSUISearchViewController new];
-    [[MOBFViewController currentViewController].navigationController pushViewController:vc animated:YES];
+    
+    id controller = [MOBFViewController currentViewController];
+    if ([controller isKindOfClass:[UITabBarController class]] && ((UITabBarController *)controller).selectedViewController)
+    {
+        controller = ((UITabBarController *)controller).selectedViewController;
+    }
+    
+    [((UIViewController *)controller).navigationController pushViewController:vc animated:YES];
 }
 
 - (void)login:(id)sender
@@ -362,6 +369,10 @@ static NSInteger    BBSUIPageSize = 10;
             [getter removeImageObserver:self.verifyImgObserver];
             [self.loginButton setImage:[UIImage BBSImageNamed:@"/User/AvatarDefault3.png"] forState:UIControlStateNormal];
             NSString *urlString = [NSString stringWithFormat:@"%@&timestamp=%f", [BBSUIContext shareInstance].currentUser.avatar,[[NSDate date] timeIntervalSince1970]];
+            if (![[BBSUIContext shareInstance].currentUser.avatar containsString:@"?"])
+            {
+                urlString = [BBSUIContext shareInstance].currentUser.avatar;
+            }
             self.verifyImgObserver = [getter getImageWithURL:[NSURL URLWithString:urlString] result:^(UIImage *image, NSError *error){
                 
                 if (image) {
@@ -463,6 +474,8 @@ static NSInteger    BBSUIPageSize = 10;
         
         if (bannnerList.count > 0) {
             
+            theHomeVC.maskImage.hidden = YES;
+            
             theHomeVC.bannerArray = bannnerList;
             
             NSMutableArray *titleArray = [NSMutableArray array];
@@ -492,6 +505,8 @@ static NSInteger    BBSUIPageSize = 10;
             theHomeVC.bannerView.titleLabelTextColor = [UIColor whiteColor];
             
         }else{
+            
+            theHomeVC.maskImage.hidden = NO;
             [theHomeVC.maskImage setImage:[UIImage BBSImageNamed:@"/Home/bannerDefault@2x.png"]];
         }
         
@@ -697,17 +712,42 @@ static NSInteger    BBSUIPageSize = 10;
     if ([banner.btype isEqualToString:@"link"]) {
         BBSUIBannerPreviewViewController *previewVC = [[BBSUIBannerPreviewViewController alloc] initWithTitle:banner.title];
         [previewVC setUrlString:banner.link];
-        if ([MOBFViewController currentViewController].navigationController) {
-            [[MOBFViewController currentViewController].navigationController pushViewController:previewVC animated:YES];
+        
+        id controller;
+        if ([controller isKindOfClass:[UITabBarController class]] && ((UITabBarController *)controller).selectedViewController)
+        {
+            controller = ((UITabBarController *)controller).selectedViewController;
         }
+        else if ([MOBFViewController currentViewController].navigationController)
+        {
+            controller = [MOBFViewController currentViewController];
+        }
+        else
+        {
+            return;
+        }
+        
+        [((UIViewController *)controller).navigationController pushViewController:previewVC animated:YES];
+
     }else if ([banner.btype isEqualToString:@"thread"])
     {
         BBSUIThreadDetailViewController *detailVC = [[BBSUIThreadDetailViewController alloc] initWithFid:banner.fid tid:banner.tid];
         
-        if ([MOBFViewController currentViewController].navigationController)
+        id controller;
+        if ([controller isKindOfClass:[UITabBarController class]] && ((UITabBarController *)controller).selectedViewController)
         {
-            [[MOBFViewController currentViewController].navigationController pushViewController:detailVC animated:YES];
+            controller = ((UITabBarController *)controller).selectedViewController;
         }
+        else if ([MOBFViewController currentViewController].navigationController)
+        {
+            controller = [MOBFViewController currentViewController];
+        }
+        else
+        {
+            return;
+        }
+        
+        [((UIViewController *)controller).navigationController pushViewController:detailVC animated:YES];
     }
 }
 

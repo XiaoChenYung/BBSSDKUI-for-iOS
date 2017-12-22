@@ -33,6 +33,8 @@
 #import "MBProgressHUD.h"
 #import "BBSUICoreDataManage.h"
 #import "BBSUIShareView.h"
+#import <MobLink/IMOBFLinkComponent.h>
+#import <MOBFoundation/MOBFComponentManager.h>
 
 @interface BBSUIThreadDetailViewController ()
 
@@ -50,6 +52,23 @@
 @end
 
 @implementation BBSUIThreadDetailViewController
+
++ (NSString *)MLSDKPath
+{
+    return @"/thread/detail";
+}
+
+- (instancetype)initWithMobLinkScene:(id<IMOBFScene>)scene;
+{
+    self = [super init];
+    if (self)
+    {
+        NSDictionary *sceneDict = [scene getParams];
+        self.fid = [sceneDict[@"fid"] integerValue];
+        self.tid = [sceneDict[@"tid"] integerValue];
+    }
+    return self;
+}
 
 - (instancetype)initWithFid:(NSInteger)fid tid:(NSInteger)tid
 {
@@ -75,6 +94,7 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    
     [self registerNativeMethods];//注册本地native方法
     [self setup];
 }
@@ -107,6 +127,7 @@
 
 - (void)setup
 {
+    self.webView.backgroundColor = [UIColor whiteColor];
     self.title = @"帖子详情";
     self.webView.delegate = self ;
     [self setBarButtonItem];
@@ -233,7 +254,7 @@
     NSString *htmlCont = [NSString stringWithContentsOfFile:path
                                                    encoding:NSUTF8StringEncoding
                                                       error:nil];
-    [self.webView loadHTMLString:htmlCont baseURL:[NSURL URLWithString:path]];
+    [self.webView loadHTMLString:htmlCont baseURL:[NSURL fileURLWithPath:[path stringByDeletingLastPathComponent]]];
 }
 
 - (void)registerNativeMethods
@@ -258,8 +279,8 @@
 - (void)registerGetForumThreadDetails
 {
     __weak typeof(self) theWebController = self;
+    
     [self.jsContext registerJSMethod:@"getForumThreadDetails" block:^(NSArray *arguments) {
-        
         NSString *callback = nil;
         if (arguments.count > 0 && [arguments[0] isKindOfClass:[NSString class]]) {
             callback = arguments[0];
@@ -280,8 +301,6 @@
             }
             else
             {
-                NSLog(@"getDetail error: %@",error);
-                
                 if (self.isViewLoaded && self.view.window)
                 {
                     BBSUIAlert(@"获取详情失败:%@,code:%zd",error.userInfo[@"description"],error.code);
@@ -496,7 +515,6 @@
             {
                 return ;
             }
-            
             [theController uploadCommentWithImages:images content:content prePid:pid];
         }];
     }];
@@ -518,6 +536,10 @@
         }
         
         UIAlertController *vc = [UIAlertController alertControllerWithTitle:nil message:nil preferredStyle:UIAlertControllerStyleActionSheet];
+        UIPopoverPresentationController *popoverController = vc.popoverPresentationController;
+        popoverController.sourceView = self.view;
+        popoverController.sourceRect = CGRectMake(DZSUIScreen_width/2,self.view.frame.size.height,1.0,1.0);
+        
         UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:nil];
         UIAlertAction *save = [UIAlertAction actionWithTitle:@"保存到手机相册" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
             
@@ -625,14 +647,23 @@
     __weak typeof(self) theWebController = self;
     [self.jsContext registerJSMethod:@"openAuthor" block:^(NSArray *arguments) {
         
-        NSInteger authorId = -1;
-        
-        if (arguments.count > 0 && [arguments[0] isKindOfClass:[NSNumber class]])
+        if (![BBSUIContext shareInstance].currentUser)
         {
-            authorId = [arguments[0] integerValue];
+            BBSUILoginViewController *vc = [[BBSUILoginViewController alloc] init];
+            UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
+            [self.navigationController presentViewController:nav animated:YES completion:nil];
+        }
+        else
+        {
+            NSInteger authorId = -1;
             
-            BBSUIUserOtherInfoViewController *vc = [[BBSUIUserOtherInfoViewController alloc] initWithAuthorid:authorId];
-            [theWebController.navigationController pushViewController:vc animated:YES];
+            if (arguments.count > 0 && [arguments[0] isKindOfClass:[NSNumber class]])
+            {
+                authorId = [arguments[0] integerValue];
+                
+                BBSUIUserOtherInfoViewController *vc = [[BBSUIUserOtherInfoViewController alloc] initWithAuthorid:authorId];
+                [theWebController.navigationController pushViewController:vc animated:YES];
+            }
         }
         
         //进入其他用户详情入口
@@ -793,9 +824,17 @@
 
 - (void)shareButtonHandler:(UIButton *)button
 {
-    if(self.threadModel)
+//    if (![BBSUIContext shareInstance].currentUser)
+//    {
+//        BBSUILoginViewController *vc = [[BBSUILoginViewController alloc] init];
+//        UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
+//        [self.navigationController presentViewController:nav animated:YES completion:nil];
+//    }
+//
+//    else if(self.threadModel)
+//    {
         [[BBSUIShareView alloc] init:self.threadModel];
-    
+//    }
     return;
 }
 
@@ -964,7 +1003,7 @@
     [HUD showAnimated:YES];
     [HUD hideAnimated:YES afterDelay:2];
     
-    post.message = comment;
+//    post.message = comment;
     [self updateComment:post prePid:pid];
     [self.replyEditor dismiss];
     self.replyEditor = nil;

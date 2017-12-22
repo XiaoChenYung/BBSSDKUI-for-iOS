@@ -95,8 +95,9 @@ const CGFloat HeaderHeight = 360;
     {
         _needRequestData = YES;
     }
-    
+
     [self.navigationController setNavigationBarHidden:YES animated:YES];
+
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
@@ -194,6 +195,7 @@ const CGFloat HeaderHeight = 360;
         [self.view addSubview:self.headerView];
         [self.view addSubview:self.segmentScrollView];
         [self.view addSubview:self.navHeaderView];
+        self.bottomScrollView.contentOffset = CGPointMake(DZSUIScreen_width, 0);
         
     }
     return self;
@@ -312,6 +314,7 @@ const CGFloat HeaderHeight = 360;
 
 #pragma -mark Lazy Load
 
+//TODO: 加载所有的tableview
 - (UIScrollView *)bottomScrollView {
     
     if (!_bottomScrollView) {
@@ -323,6 +326,13 @@ const CGFloat HeaderHeight = 360;
         for (int index = 0; index < CATEGORY.count; index ++)
         {
             BBSUICollectionViewController *collectionVC = [[BBSUICollectionViewController alloc] init];
+            
+            // cell删除操作
+            __weak typeof (self) weakSelf = self;
+            collectionVC.deleteCellBlock = ^(){
+                [weakSelf _deleteCellAction];
+            };
+            
             
             if (index == 0)
             {
@@ -378,8 +388,10 @@ const CGFloat HeaderHeight = 360;
             }];
         }
         
-        self.currentTableView = self.tableViews[0];
+        // 首个展示页
+        self.currentTableView = self.tableViews[1];
         self.bottomScrollView.contentSize = CGSizeMake(DZSUIScreen_width, 0);
+        
         
     }
     return _bottomScrollView;
@@ -444,8 +456,8 @@ const CGFloat HeaderHeight = 360;
             
             [_segmentScrollView addSubview:self.currentSelectedItemView];
             //contentSize 等于按钮长度叠加
-            //默认选中第一个按钮
-            if (i == 0) {
+            //默认选中第二个按钮
+            if (i == 1) {
                 
                 btn.selected = YES;
                 _previousButton = btn;
@@ -588,5 +600,21 @@ const CGFloat HeaderHeight = 360;
     [[MOBFViewController currentViewController].navigationController pushViewController:vc animated:YES];
 }
 
+- (void)_deleteCellAction
+{
+    NSInteger index = [self.tableViews indexOfObject:self.currentTableView];
+    if (index == 0)
+    {
+        _currentUser.favorites = [NSNumber numberWithInt:_currentUser.favorites.intValue - 1];
+        [BBSUIContext shareInstance].currentUser = _currentUser;
+        [self setSegmentButton];
+    }
+    if (index == 1)
+    {
+        _currentUser.threads = [NSNumber numberWithInt:_currentUser.threads.intValue - 1];
+        [BBSUIContext shareInstance].currentUser = _currentUser;
+        [self setSegmentButton];
+    }
+}
 
 @end

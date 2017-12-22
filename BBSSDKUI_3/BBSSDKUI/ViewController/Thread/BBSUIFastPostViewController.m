@@ -18,6 +18,7 @@
 #import "BBSUIContext.h"
 #import "BBSUIThreadDraft.h"
 #import "UIImageView+WebCache.h"
+#import "BBSUIExpressionViewConfiguration.h"
 
 @interface BBSUIFastPostViewController ()<UINavigationControllerDelegate,UIImagePickerControllerDelegate,UITextFieldDelegate>
 {
@@ -37,6 +38,7 @@
 @property(nonatomic, strong) UIView *forumSelectView;
 @property(nonatomic, strong) UIImageView *forumImageView;
 @property(nonatomic, strong) UILabel *forumNameLabel;
+@property(nonatomic, strong) NSMutableDictionary <NSString *, NSString *>*mdicExpression;
 
 @end
 
@@ -59,6 +61,7 @@
     if (self)
     {
         _delegates = [NSMutableArray array];
+        _mdicExpression = [NSMutableDictionary dictionary];
     }
     return self;
 }
@@ -225,12 +228,18 @@
 
 - (void)pickImages
 {
+    [self.view endEditing:YES];
+    
     if (!_isRichTextEditor)
     {
         return;
     }
     
     UIAlertController *alertVC = [UIAlertController alertControllerWithTitle:nil message:nil preferredStyle:UIAlertControllerStyleActionSheet];
+    UIPopoverPresentationController *popoverController = alertVC.popoverPresentationController;
+    popoverController.sourceView = self.view;
+    popoverController.sourceRect = CGRectMake(DZSUIScreen_width/2,DZSUIScreen_height - 112,1.0,1.0);
+    
     UIAlertAction *takePhoto = [UIAlertAction actionWithTitle:@"拍摄" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
         [self takePhoto];
     }];
@@ -271,6 +280,32 @@
     [self presentViewController:cameraVc animated:YES completion:nil];
 }
 
+- (void)expressionView:(BBSUIExpressionView *)expressionView didSelectImageName:(NSString *)imageName
+{
+    NSString *originHtml = [self.editor getHTML];
+    
+    NSString *expKey = [BBSUIExpressionTool getExpressionStringWithImageName:imageName];
+    
+    NSString *name = imageName;
+    if ([name hasSuffix:@".gif"])
+    {
+        name = [imageName substringToIndex:imageName.length - 4];
+    }
+    name = [NSString stringWithFormat:@"BBSSDKUI.bundle/Emoji/%@",name];
+    
+    NSString *path = [[NSBundle mainBundle] pathForResource:name ofType:@"gif"];
+    
+    NSString *trigger = [NSString stringWithFormat:@"<img src=\"%@\" alt=\"%@\" style=\"max-width:%fpx;\"/>",path,@"emoji",20.0];
+    
+    [self.editor focusTextEditor];
+    [self.editor insertHTML:trigger];
+    [self.view endEditing:YES];
+    
+    NSString *nowHtml = [self.editor getHTML];
+    
+    [_mdicExpression setObject:[nowHtml substringFromIndex:originHtml.length] forKey:expKey];
+}
+
 #pragma mark - click event
 
 - (void)selectForum:(id)sender
@@ -292,26 +327,28 @@
 
 - (void)publishButtonHandler:(UIButton *)button
 {
+    [self.editor hideKeyboard];
+    
     if (!_forum)
     {
         [BBSUIProcessHUD showFailInfo:@"请选择版块" delay:2];
         return;
     }
-    
+
     if (_titleTextField.text.length < 2)
     {
         [BBSUIProcessHUD showFailInfo:@"标题不少于2个字" delay:2];
         return;
     }
-    
+
     NSString *originHtml = [self.editor getHTML];
-    
+
     if (originHtml.length < 5 || [originHtml isEqualToString:@"<br />"])
     {
         [BBSUIProcessHUD showFailInfo:@"内容不少于5个字" delay:2];
         return;
     }
-    
+
     [self.view endEditing:YES];
     
     for (id<iBBSUIFastPostViewControllerDelegate> obj in _delegates)
@@ -321,16 +358,58 @@
             [obj didBeginPostThread];
         }
     }
-    
+
     [self dismissViewControllerAnimated:YES completion:nil];
     
     [self postThread];
     
  }
 
+- (NSString *)_replaceExpressionWithUrl:(NSMutableString *)url key:(NSString *)key obj:(NSString *)obj
+{
+    NSMutableString *urlHtml = url;
+    
+    NSRange range = [urlHtml rangeOfString:obj];
+    if (range.location != NSNotFound) {
+        [urlHtml replaceOccurrencesOfString:obj withString:key options:NSLiteralSearch  range:range];
+        
+        [self _replaceExpressionWithUrl:urlHtml key:key obj:obj];
+    }
+    
+    return urlHtml;
+}
+
 - (void)postThread
 {
-    NSMutableString *urlHtml = [self.editor getHTML].mutableCopy;
+    __block NSMutableString *urlHtml = [self.editor getHTML].mutableCopy;
+    
+//    NSLog(@"---------------------------------------");
+//    NSLog(@"  %@",_mdicExpression);
+    
+    [_mdicExpression enumerateKeysAndObjectsUsingBlock:^(NSString * _Nonnull key, NSString * _Nonnull obj, BOOL * _Nonnull stop) {
+
+//        [urlHtml stringByReplacingOccurrencesOfString:obj withString:key];
+        
+        urlHtml.string = [self _replaceExpressionWithUrl:urlHtml.mutableCopy key:key obj:obj];
+        
+//        NSRange range = [urlHtml rangeOfString:obj];
+//        if (range.location != NSNotFound) {
+//            [urlHtml replaceOccurrencesOfString:obj withString:key options:NSLiteralSearch  range:range];
+//
+//            [_mdicExpression removeObjectForKey:key];
+//        }
+        
+        NSString *obj2 = [obj substringFromIndex:1];
+        urlHtml.string = [self _replaceExpressionWithUrl:urlHtml.mutableCopy key:key obj:obj2];
+        
+//        NSRange range2 = [urlHtml rangeOfString:[obj substringFromIndex:2]];
+//        if (range2.location != NSNotFound) {
+//            [urlHtml replaceOccurrencesOfString:obj withString:key options:NSLiteralSearch  range:range2];
+//            [_mdicExpression removeObjectForKey:key];
+//        }
+    }];
+    
+    NSLog(@"   =====  ®%@",urlHtml);
     
     NSString *title = self.titleTextField.text;
     
@@ -483,6 +562,10 @@
     NSString *des = [NSString stringWithFormat:@"前一个发帖失败，失败原因:%@",error.userInfo[@"description"]];
     UIAlertController *vc = [UIAlertController alertControllerWithTitle:@"提示" message:des preferredStyle:UIAlertControllerStyleAlert];
     
+    UIPopoverPresentationController *popoverController = vc.popoverPresentationController;
+    popoverController.sourceView = self.view;
+    popoverController.sourceRect = CGRectMake(DZSUIScreen_width/2,DZSUIScreen_height,1.0,1.0);
+    
     UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:nil];
     [vc addAction:cancel];
     
@@ -521,6 +604,8 @@
     if (_forum)
     {
         [self.forumNameLabel setText:forum.name];
+        [SDWebImageDownloader.sharedDownloader setValue:@"text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8"
+                                     forHTTPHeaderField:@"Accept"];
         
         if (forum.forumPic && forum.forumPic.length > 0) {
             [self.forumImageView sd_setImageWithURL:[NSURL URLWithString:forum.forumPic] placeholderImage:[UIImage BBSImageNamed:@"/Thread/seletForum.png"]];
@@ -581,4 +666,5 @@
         [self.delegates removeObject:observer];
     }
 }
+
 @end

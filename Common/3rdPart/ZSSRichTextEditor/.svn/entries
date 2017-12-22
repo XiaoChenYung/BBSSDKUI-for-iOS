@@ -1,15 +1,15 @@
 10
 
 dir
-27403
-svn://chux@svn.code.mob.com/ios/project/BBSSDK/tags/v2.0.0/BBSSDK/Common/3rdPart/ZSSRichTextEditor
+29112
+svn://chux@svn.code.mob.com/ios/project/BBSSDK/trunk/BBSSDK/Common/3rdPart/ZSSRichTextEditor
 svn://chux@svn.code.mob.com
 
 
 
-2017-09-21T08:28:41.425419Z
-26892
-liyc
+2017-11-23T07:13:59.430471Z
+28061
+chux
 
 
 
@@ -32,7 +32,7 @@ file
 
 
 
-2017-10-25T07:57:05.000000Z
+2017-11-24T09:27:19.000000Z
 473c7afc2ad6356d8dbc978bad8dc749
 2017-04-19T02:14:46.080125Z
 22598
@@ -69,7 +69,7 @@ file
 
 
 
-2017-10-25T07:57:05.000000Z
+2017-11-24T09:27:19.000000Z
 a3b4e81a23b3268b0d7c4690cda61548
 2017-04-19T02:14:46.080125Z
 22598

@@ -12,6 +12,7 @@
 #import "BBSUIUserInfoViewController.h"
 #import "Masonry.h"
 #import <BBSSDK/BBSSDK.h>
+#import "NSString+Paragraph.h"
 
 #define THEMEBACKGROUNDCOLOR DZSUIColorFromHex(0x6285F6)
 
@@ -268,6 +269,11 @@
         MOBFImageGetter *getter = [MOBFImageGetter sharedInstance];
         [getter removeImageObserver:self.verifyImgObserver];
         NSString *urlString = [NSString stringWithFormat:@"%@&timestamp=%f", currentUser.avatar,[[NSDate date] timeIntervalSince1970]];
+        if (![currentUser.avatar containsString:@"?"])
+        {
+            urlString = currentUser.avatar;
+        }
+        
         self.verifyImgObserver = [getter getImageWithURL:[NSURL URLWithString:urlString] result:^(UIImage *image, NSError *error) {
             
             if (error) {
@@ -284,7 +290,16 @@
     
     
     self.nameLabel.text = currentUser.userName;
-    self.originLabel.text = currentUser.sightml;
+    if (_userType == UserTypeMe)
+    {
+        self.originLabel.attributedText = [NSString stringWithString:currentUser.sightml fontSize:12 defaultColorValue:@"4E4F57" lineSpace:0 wordSpace:0];
+    }
+    else
+    {
+        self.originLabel.attributedText = [NSString stringWithString:currentUser.sightml fontSize:12 defaultColorValue:@"FFFFFF" lineSpace:0 wordSpace:0];
+    }
+    
+    self.originLabel.textAlignment = NSTextAlignmentCenter;
     
     if (currentUser.sightml.length == 0)
     {

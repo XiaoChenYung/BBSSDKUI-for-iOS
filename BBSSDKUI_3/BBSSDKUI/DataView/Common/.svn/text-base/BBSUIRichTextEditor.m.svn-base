@@ -36,7 +36,7 @@
 //                                  ZSSRichTextEditorToolbarH3,
 //                                  ZSSRichTextEditorToolbarH4
                                   ZSSRichTextEditorToolbarStrikeThrough,
-                                  ZSSRichTextEditorToolbarUnorderedList
+//                                  ZSSRichTextEditorToolbarUnorderedList
                                   ];
     
     self.toolbarItemTintColor = [UIColor darkGrayColor];

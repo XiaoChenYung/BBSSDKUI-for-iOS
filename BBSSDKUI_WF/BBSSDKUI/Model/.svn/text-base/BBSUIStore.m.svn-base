@@ -67,13 +67,14 @@
         return _managedObjectContext;
     }
     
-    NSArray *components = [[MOBFComponentManager defaultManager] getComponents:@protocol(IShareRECSocial)];
-    if (components.count > 0) {
-        Class<> shareSDK = components[0];
-        shareSDK sha
-        
-        
-    }
+//    NSArray *components = [[MOBFComponentManager defaultManager] getComponents:@protocol(IShareRECSocial)];
+//    if (components.count > 0) {
+//        Class<> shareSDK = components[0];
+//        shareSDK sha
+//
+//
+//    }
+    
     NSPersistentStoreCoordinator *coordinator = [self persistentStoreCoordinator];
     if (!coordinator) {
         return nil;

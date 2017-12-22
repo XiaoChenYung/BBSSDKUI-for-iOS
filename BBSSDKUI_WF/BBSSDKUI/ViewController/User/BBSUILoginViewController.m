@@ -15,8 +15,13 @@
 #import "BBSUIContext.h"
 #import "BBSUIEmailSendViewController.h"
 #import "BBSUIRetrievePasswordViewController.h"
+#import "BBSUIBindAccountViewController.h"
+#import <ShareSDK/IMOBFShareComponent.h>
+#import <MOBFoundation/MOBFComponentManager.h>
+#import <ShareSDK/IMOBFSocialUser.h>
 
 #define THEMEBACKGROUNDCOLOR DZSUIColorFromHex(0x6285F6)
+#define TYPELOGIN self.loginType == BBSLoginTypeLogin
 
 @interface BBSUILoginViewController ()<UITextFieldDelegate,UIPickerViewDelegate,UIPickerViewDataSource>
 
@@ -55,18 +60,63 @@
     [self configUI];
 }
 
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:YES];
+    if (self.loginType == BBSLoginTypeBindAccount)
+    {
+        self.title = @"绑定账号";
+        [self.navigationController setNavigationBarHidden:NO animated:YES];
+    }
+    
+}
+
+- (void)viewWillDisappear:(BOOL)animated
+{
+    [super viewWillDisappear:YES];
+    if (self.loginType == BBSLoginTypeBindAccount)
+    {
+        [self.navigationController setNavigationBarHidden:YES animated:YES];
+    }
+}
+
 - (void)configUI
 {
-    self.view.backgroundColor = THEMEBACKGROUNDCOLOR;
+    UILabel *label = [UILabel new];
+    if (self.loginType == BBSLoginTypeLogin)
+    {
+        self.view.backgroundColor = THEMEBACKGROUNDCOLOR;
+    }
+    else
+    {
+        self.view.backgroundColor = DZSUIColorFromHex(0xEBEEF3);
+        label.numberOfLines = 0;
+        [label setContentHuggingPriority:UILayoutPriorityRequired forAxis:UILayoutConstraintAxisVertical];
+        label.textColor = DZSUIColorFromHex(0xACADB8);
+        label.font = [UIFont systemFontOfSize:14];
+        label.text = @"您如果已通过其他方式注册过本论坛的账号可输入注册的用户名和密码进行绑定";
+        label.textAlignment = NSTextAlignmentCenter;
+        [self.view addSubview:label];
+        
+        [label mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.left.equalTo(@50);
+            make.right.equalTo(@-50);
+            make.top.equalTo(@114);
+        }];
+    }
     
-    UIButton *cancel = [UIButton buttonWithType:UIButtonTypeCustom];
-    [cancel setImage:[UIImage BBSImageNamed:@"/Common/LoginClose@2x.png"] forState:UIControlStateNormal];
-    [cancel addTarget:self action:@selector(cancel:) forControlEvents:UIControlEventTouchUpInside];
-    [self.view addSubview:cancel];
-    [cancel mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.right.equalTo(self.view).offset(-7);
-        make.top.equalTo(self.titleLabel);
-    }];
+    
+    if (self.loginType == BBSLoginTypeLogin)
+    {
+        UIButton *cancel = [UIButton buttonWithType:UIButtonTypeCustom];
+        [cancel setImage:[UIImage BBSImageNamed:@"/Common/LoginClose@2x.png"] forState:UIControlStateNormal];
+        [cancel addTarget:self action:@selector(cancel:) forControlEvents:UIControlEventTouchUpInside];
+        [self.view addSubview:cancel];
+        [cancel mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.right.equalTo(self.view).offset(-7);
+            make.top.equalTo(self.titleLabel);
+        }];
+    }
     
     self.loginBackGround =
     ({
@@ -78,12 +128,25 @@
         loginBackGround.clipsToBounds = YES;
         [self.view addSubview:loginBackGround];
         
-        [loginBackGround mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.left.equalTo(self.view).offset(15);
-            make.right.equalTo(self.view).offset(-15);
-            make.top.equalTo(self.view).offset(95);
-            make.height.equalTo(@102);
-        }];
+        if (self.loginType == BBSLoginTypeLogin)
+        {
+            [loginBackGround mas_makeConstraints:^(MASConstraintMaker *make) {
+                make.left.equalTo(self.view).offset(15);
+                make.right.equalTo(self.view).offset(-15);
+                make.top.equalTo(self.view).offset(95);
+                make.height.equalTo(@102);
+            }];
+        }
+        else
+        {
+            [loginBackGround mas_makeConstraints:^(MASConstraintMaker *make) {
+                make.top.equalTo(label.mas_bottom).offset(23);
+                make.left.equalTo(@50);
+                make.right.equalTo(@-50);
+                make.height.equalTo(@101);
+            }];
+        }
+        
         loginBackGround ;
     });
 
@@ -140,16 +203,19 @@
             imageView;
         });
         
-        passwordTextField.rightViewMode = UITextFieldViewModeAlways;
-        passwordTextField.rightView =
-        ({
-            UIButton *button = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 65, 30)];
-            [button setTitleColor:DZSUIColorFromHex(0xABAFBA) forState:UIControlStateNormal];
-            [button setTitle:@"忘记密码？" forState:UIControlStateNormal];
-            button.titleLabel.font = [UIFont systemFontOfSize:12];
-            [button addTarget:self action:@selector(forgetPassword:) forControlEvents:UIControlEventTouchUpInside];
-            button;
-        });
+        if (TYPELOGIN)
+        {
+            passwordTextField.rightViewMode = UITextFieldViewModeAlways;
+            passwordTextField.rightView =
+            ({
+                UIButton *button = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 65, 30)];
+                [button setTitleColor:DZSUIColorFromHex(0xABAFBA) forState:UIControlStateNormal];
+                [button setTitle:@"忘记密码？" forState:UIControlStateNormal];
+                button.titleLabel.font = [UIFont systemFontOfSize:12];
+                [button addTarget:self action:@selector(forgetPassword:) forControlEvents:UIControlEventTouchUpInside];
+                button;
+            });
+        }
         
         [_loginBackGround addSubview:passwordTextField];
         [passwordTextField mas_makeConstraints:^(MASConstraintMaker *make) {
@@ -249,18 +315,35 @@
     self.loginBtn =
     ({
         UIButton *loginBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-        [loginBtn setTitle:@"登录" forState:UIControlStateNormal];
-        [loginBtn setTitleColor:DZSUIColorFromHex(0x2D) forState:UIControlStateNormal];
-        loginBtn.titleLabel.font = [UIFont systemFontOfSize:16];
-        loginBtn.backgroundColor = [UIColor whiteColor];
-        loginBtn.layer.cornerRadius = 5.0;
-        [loginBtn addTarget:self action:@selector(login:) forControlEvents:UIControlEventTouchUpInside];
-        [self.view addSubview:loginBtn];
-        [loginBtn mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.left.right.equalTo(_loginBackGround);
-            make.top.equalTo(_loginBackGround.mas_bottom).offset(23);
-            make.height.equalTo(@45);
-        }];
+        if (TYPELOGIN)
+        {
+            [loginBtn setTitle:@"登录" forState:UIControlStateNormal];
+            [loginBtn setTitleColor:DZSUIColorFromHex(0x2D) forState:UIControlStateNormal];
+            loginBtn.titleLabel.font = [UIFont systemFontOfSize:16];
+            loginBtn.backgroundColor = [UIColor whiteColor];
+            loginBtn.layer.cornerRadius = 5.0;
+            [loginBtn addTarget:self action:@selector(login:) forControlEvents:UIControlEventTouchUpInside];
+            [self.view addSubview:loginBtn];
+            [loginBtn mas_makeConstraints:^(MASConstraintMaker *make) {
+                make.left.right.equalTo(_loginBackGround);
+                make.top.equalTo(_loginBackGround.mas_bottom).offset(23);
+                make.height.equalTo(@45);
+            }];
+        }
+        else
+        {
+            loginBtn.layer.cornerRadius = 7;
+            loginBtn.clipsToBounds = YES;
+            [loginBtn setTitle:@"立即绑定" forState:UIControlStateNormal];
+            [loginBtn setBackgroundColor:DZSUIColorFromHex(0x6285F6)];
+            [loginBtn addTarget:self action:@selector(_bindAccountAction) forControlEvents:UIControlEventTouchUpInside];
+            [self.view addSubview:loginBtn];
+            [loginBtn mas_makeConstraints:^(MASConstraintMaker *make) {
+                make.left.right.equalTo(_loginBackGround);
+                make.top.equalTo(_loginBackGround.mas_bottom).offset(54);
+                make.height.equalTo(@45);
+            }];
+        }
         loginBtn ;
     });
     
@@ -279,17 +362,34 @@
     self.registInterface =
     ({
         UIButton *registInterface = [UIButton buttonWithType:UIButtonTypeSystem];
-        [registInterface setTitle:@"注册新用户" forState:UIControlStateNormal];
-        [registInterface addTarget:self action:@selector(regist:) forControlEvents:UIControlEventTouchUpInside];
-        [registInterface setTitleColor:DZSUIColorFromHex(0xFFFFFF) forState:UIControlStateNormal];
-        registInterface.titleLabel.font = [UIFont systemFontOfSize:16];
-        [registInterface addTarget:self action:@selector(regist:) forControlEvents:UIControlEventTouchUpInside];
-        [self.view addSubview:registInterface];
-        [registInterface mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.centerX.equalTo(self.view);
-            make.bottom.equalTo(@-29);
-            make.size.mas_equalTo(CGSizeMake(100, 16));
-        }];
+        if (TYPELOGIN)
+        {
+            [registInterface setTitle:@"注册新用户" forState:UIControlStateNormal];
+            [registInterface addTarget:self action:@selector(regist:) forControlEvents:UIControlEventTouchUpInside];
+            [registInterface setTitleColor:DZSUIColorFromHex(0xFFFFFF) forState:UIControlStateNormal];
+            registInterface.titleLabel.font = [UIFont systemFontOfSize:16];
+            [registInterface addTarget:self action:@selector(regist:) forControlEvents:UIControlEventTouchUpInside];
+            [self.view addSubview:registInterface];
+            [registInterface mas_makeConstraints:^(MASConstraintMaker *make) {
+                make.centerX.equalTo(self.view);
+                make.top.equalTo(self.loginBtn.mas_bottom).offset(64);
+                make.size.mas_equalTo(CGSizeMake(100, 16));
+            }];
+        }
+        else
+        {
+            [registInterface setTitle:@"直接进入" forState:UIControlStateNormal];
+            [registInterface setTitleColor:DZSUIColorFromHex(0x6285F6) forState:UIControlStateNormal];
+            registInterface.titleLabel.font = [UIFont systemFontOfSize:14];
+            [registInterface addTarget:self action:@selector(_enterAction) forControlEvents:UIControlEventTouchUpInside];
+            [self.view addSubview:registInterface];
+            
+            [registInterface mas_makeConstraints:^(MASConstraintMaker *make) {
+                make.bottom.equalTo(@-85);
+                make.width.equalTo(@60);
+                make.centerX.equalTo(self.view);
+            }];
+        }
         registInterface ;
     });
     
@@ -348,6 +448,11 @@
         alertLabel ;
     });
     
+    if (self.loginType == BBSLoginTypeLogin)
+    {
+        [self _configThirdLogin];
+    }
+    
     self.questionPickerView =
     ({
         UIPickerView *questionPickerView = [[UIPickerView alloc] init];
@@ -363,6 +468,110 @@
         }];
         questionPickerView ;
     });
+    
+    
+}
+
+- (void)_configThirdLogin
+{
+    UILabel *title = [UILabel new];
+    title.text = @"其他登录方式";
+    title.font = [UIFont systemFontOfSize:12];
+    title.textColor = DZSUIColorFromHex(0xACADB8);
+    [title setContentHuggingPriority:UILayoutPriorityRequired forAxis:UILayoutConstraintAxisHorizontal];
+    
+    UIView *line1 = [UIView new];
+    line1.backgroundColor = DZSUIColorFromHex(0xACADB8);
+    
+    UIView *line2 = [UIView new];
+    line2.backgroundColor = DZSUIColorFromHex(0xACADB8);
+    
+    // qq、微信按钮
+    UIView *elementView = [UIView new];
+    
+    [self.view addSubview:title];
+    [self.view addSubview:line1];
+    [self.view addSubview:line2];
+    [self.view addSubview:elementView];
+    
+    [title mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.height.equalTo(@12);
+        make.centerX.equalTo(self.view);
+        make.bottom.equalTo(@-100);
+    }];
+    
+    [line1 mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.width.equalTo(@30);
+        make.height.equalTo(@0.5);
+        make.centerY.equalTo(title);
+        make.right.equalTo(title.mas_left).offset(-13);
+    }];
+    
+    [line2 mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.width.height.centerY.equalTo(line1);
+        make.left.equalTo(title.mas_right).offset(13);
+    }];
+    
+    CGFloat elementViewW = 0;
+    NSMutableArray <UIButton *>*marrButton = [NSMutableArray array];
+    
+    NSArray *components = [[MOBFComponentManager defaultManager] getComponents:@protocol(IMOBFShareComponent)];
+    if (components.count > 0) {
+        id<IMOBFShareComponent>  ShareComponent = components[0];
+        
+        if (ShareComponent && [ShareComponent conformsToProtocol:@protocol(IMOBFShareComponent)])
+        {
+            NSArray *arrPlatforms = [ShareComponent activePlatforms];
+            
+            NSLog(@"____ %@",arrPlatforms);
+            
+            if ([arrPlatforms containsObject:@998]
+                || [arrPlatforms containsObject:@6]
+                || [arrPlatforms containsObject:@24]) // qq
+            {
+                //                SSDKPlatformTypeQQ
+                
+                elementViewW += 92;
+                UIButton *qqBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+                [qqBtn setImage:[UIImage BBSImageNamed:@"/Login&Register/QQ_login.png"] forState:UIControlStateNormal];
+                [qqBtn addTarget:self action:@selector(_qqLoginAction) forControlEvents:UIControlEventTouchUpInside];
+                
+                [elementView addSubview:qqBtn];
+                [marrButton addObject:qqBtn];
+            }
+            if ([arrPlatforms containsObject:@997]
+                || [arrPlatforms containsObject:@22]
+                || [arrPlatforms containsObject:@23]) // 微信
+            {
+                elementViewW += 92;
+                UIButton *wxBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+                [wxBtn setImage:[UIImage BBSImageNamed:@"/Login&Register/weixin_login.png"] forState:UIControlStateNormal];
+                [wxBtn addTarget:self action:@selector(_wxLoginAction) forControlEvents:UIControlEventTouchUpInside];
+                
+                [elementView addSubview:wxBtn];
+                [marrButton addObject:wxBtn];
+            }
+        }
+    }
+    
+    [elementView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.width.mas_equalTo(elementViewW);
+        make.height.mas_equalTo(38);
+        make.centerX.equalTo(self.view);
+        make.top.equalTo(title.mas_bottom).offset(18);
+    }];
+    
+    __block CGFloat buttonL = 27;
+    CGFloat buttonWH = 38;
+    [marrButton enumerateObjectsUsingBlock:^(UIButton * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        [obj mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.top.equalTo(@0);
+            make.width.height.mas_equalTo(buttonWH);
+            make.left.mas_equalTo(buttonL);
+        }];
+        
+        buttonL += 92;
+    }];
 }
 
 #pragma mark - UITextFieldDelegate
@@ -550,6 +759,263 @@
         NSLog(@"LoginFailed:%@",error);
         
     }];
+}
+
+- (void)_qqLoginAction
+{
+    // type qq传1 微信传2
+    [self _authLoginWithType:1];
+}
+
+- (void)_wxLoginAction
+{
+    [self _authLoginWithType:2];
+}
+
+- (void)_authLoginWithType:(NSInteger)type
+{
+    NSInteger authType = 0;
+    NSString *authTypeName;
+    if (type == 1)
+    {
+        authType = 998;
+        authTypeName = @"qq";
+    }
+    else if (type == 2)
+    {
+        authType = 997;
+        authTypeName = @"wechat";
+    }
+    
+    NSArray *components = [[MOBFComponentManager defaultManager] getComponents:@protocol(IMOBFShareComponent)];
+    if (components.count > 0) {
+        id<IMOBFShareComponent>  ShareComponent = components[0];
+        
+        if (ShareComponent && [ShareComponent conformsToProtocol:@protocol(IMOBFShareComponent)])
+        {
+            [SVProgressHUD show];
+            
+            //            [ShareComponent authorize:authType settings:nil onStateChanged]
+            [ShareComponent authorize:authType settings:nil onStateChanged:^(NSInteger state, id<IMOBFSocialUser> user, NSError *error) {
+                if (error)
+                {
+                    NSLog(@"_________   %@", error);
+                    [SVProgressHUD dismiss];
+                    if (error.code == -1009)
+                    {
+                        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"暂无网络，请检查你的网络连接" message:nil delegate:nil cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
+                        [alert show];
+                    }
+                    else
+                    {
+                        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"授权失败" message:nil delegate:nil cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
+                        [alert show];
+                    }
+                    
+                    return;
+                }
+                else
+                {
+                    NSString *openID = user.uid;
+                    NSString *nickName = user.nickname;
+                    NSDictionary *rawData = user.rawData;
+                    
+                    if (!openID)
+                    {
+                        [SVProgressHUD dismiss];
+                        return;
+                    }
+                    
+                    NSLog(@"rawData = %@  %@",rawData, openID);
+                    [BBSSDK authLoginWithOpenid:openID
+                                        unionid:rawData[@"unionid"]
+                                       authType:authTypeName
+                                      createNew:nil
+                                       userName:nickName
+                                          email:nil
+                                       password:nil
+                                     questionId:nil
+                                         answer:nil
+                                         result:^(BBSUser *user, id res, NSError *error) {
+                                             
+                                             [SVProgressHUD dismiss];
+                                             if (!error)
+                                             {
+                                                 NSLog(@"login Sucess，token:%@",user.token);
+                                                 //登录成功，可以通过BBSUser 或者res拿到数据
+                                                 [BBSUIContext shareInstance].currentUser = user;
+
+                                                 [SVProgressHUD showSuccessWithStatus:@"登录成功"];
+                                                 [SVProgressHUD dismissWithDelay:2.5 completion:^{
+                                                     [self dismissViewControllerAnimated:YES completion:nil];
+                                                 }];
+                                                 return ;
+                                             }
+                                             else if (error.code == 900613)
+                                             {
+                                                 NSDictionary *params = @{@"openID": openID,
+                                                                          @"rawData": rawData,
+                                                                          @"nickName": nickName,
+                                                                          @"authTypeName": authTypeName
+                                                                          };
+                                                 
+                                                 // 绑定
+                                                 BBSUILoginViewController *bindVC = [BBSUILoginViewController new];
+                                                 bindVC.loginType = BBSLoginTypeBindAccount;
+                                                 bindVC.params = params;
+                                                 [self.navigationController pushViewController:bindVC animated:YES];
+                                             }
+                                             else
+                                             {
+                                                 [self showTopAlertWithText:error.userInfo[@"description"]];
+                                             }
+                                             
+                                         }];
+                    
+                }
+                
+            }];
+        }
+    }
+    else
+    {
+        NSLog(@"没有接入ShareSdk");
+    }
+}
+
+- (void)_bindAccountAction
+{
+    [self.view endEditing:YES];
+    
+    NSString *userName = nil;
+    NSString *email = nil;
+    
+    if ([_usernameTextField.text isUserName])
+    {
+        userName = _usernameTextField.text;
+    }
+    else if ([_usernameTextField.text isEmail])
+    {
+        email = _usernameTextField.text;
+    }
+    else
+    {
+        [self showBottomAlertWithText:@"用户名/邮箱格式错误"];
+        return ;
+    }
+    
+    if(![_passwordTextField.text isPassword])
+    {
+        [self showBottomAlertWithText:@"密码格式错误"];
+        return ;
+    }
+    
+    [SVProgressHUD show];
+    
+    [BBSSDK authLoginWithOpenid:_params[@"openID"]
+                        unionid:_params[@"rawData"][@"unionid"]
+                       authType:_params[@"authTypeName"]
+                      createNew:@0
+                       userName:userName
+                          email:email
+                       password:_passwordTextField.text
+                     questionId:@(_questionID)
+                         answer:_verifyAnswerTextField.text
+                         result:^(BBSUser *user, id res, NSError *error) {
+                             
+                             [SVProgressHUD dismiss];
+                             if (!error)
+                             {
+                                 NSLog(@"login Sucess，token:%@",user.token);
+                                 //登录成功，可以通过BBSUser 或者res拿到数据
+                                 [BBSUIContext shareInstance].currentUser = user;
+                                 
+                                 [SVProgressHUD showSuccessWithStatus:@"登录成功"];
+                                 [SVProgressHUD dismissWithDelay:2.5 completion:^{
+                                     [self dismissViewControllerAnimated:YES completion:nil];
+                                 }];
+                                 return ;
+                             }
+                             
+                             if (error.code == 9001205)
+                             {
+                                 [self showTopAlertWithText:@"请选择安全问题，并正确填写"];
+                                 if ([res isKindOfClass:NSArray.class])
+                                 {
+                                     self.questions = res;
+                                     
+                                     [self.questionPickerView reloadAllComponents];
+                                     
+                                     [_loginBackGround mas_updateConstraints:^(MASConstraintMaker *make) {
+                                         make.height.equalTo(@205);
+                                     }];
+                                     
+                                     [UIView animateWithDuration:0.25 animations:^{
+                                         [self.view layoutIfNeeded];
+                                     }];
+                                 }
+                                 return;
+                             }
+                             
+                             if (error.code == 9001206)
+                             {
+                                 BBSUIEmailSendViewController *vc = [[BBSUIEmailSendViewController alloc] initWithEmail:email userName:userName sendType:BBSUIEmailSendTypeNeedIdentity];
+                                 
+                                 [self.navigationController pushViewController:vc animated:YES];
+                                 
+                                 return;
+                             }
+                             
+                             if (error.code == -1009) {
+                                 [self showTopAlertWithText:@"网络超时"];
+                                 return;
+                             }
+                             
+                             [self showTopAlertWithText:error.userInfo[@"description"]];
+                             NSLog(@"LoginFailed:%@",error);
+                             
+                         }];
+    
+}
+
+- (void)_enterAction
+{
+    [SVProgressHUD show];
+    
+    [BBSSDK authLoginWithOpenid:_params[@"openID"]
+                        unionid:_params[@"rawData"][@"unionid"]
+                       authType:_params[@"authTypeName"]
+                      createNew:@1
+                       userName:nil
+                          email:nil
+                       password:nil
+                     questionId:nil
+                         answer:nil
+                         result:^(BBSUser *user, id res, NSError *error) {
+                             
+                             [SVProgressHUD dismiss];
+                             if (!error)
+                             {
+                                 NSLog(@"login Sucess，token:%@",user.token);
+                                 //登录成功，可以通过BBSUser 或者res拿到数据
+                                 [BBSUIContext shareInstance].currentUser = user;
+                                 
+                                 [SVProgressHUD showSuccessWithStatus:@"登录成功"];
+                                 [SVProgressHUD dismissWithDelay:2.5 completion:^{
+                                     [self dismissViewControllerAnimated:YES completion:nil];
+                                 }];
+                                 return ;
+                             }
+                             
+                             if (error.code == -1009) {
+                                 [self showTopAlertWithText:@"网络超时"];
+                                 return;
+                             }
+                             
+                             [self showTopAlertWithText:error.userInfo[@"description"]];
+                             NSLog(@"LoginFailed:%@",error);
+                             
+                         }];
 }
 
 - (void)regist:(id)sender

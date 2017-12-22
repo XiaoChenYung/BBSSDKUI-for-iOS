@@ -163,7 +163,16 @@ static NSString *BBSUIForumThreadIdentifier = @"BBSUIForumThreadIdentifier";
     UIView *headerView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, DZSUIScreen_width, 195)];
     UIImageView *backgroundImageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, BBS_WIDTH(headerView), 195)];
     [headerView addSubview:backgroundImageView];
-    [backgroundImageView sd_setImageWithURL:[NSURL URLWithString:self.currentForum.forumBigPic] placeholderImage:[UIImage BBSImageNamed:@"/Thread/Group.png"]];
+    
+    NSString *picURL = self.currentForum.forumBigPic;
+    if (!picURL)
+    {
+        picURL = self.currentForum.forumPic;
+    }
+    [SDWebImageDownloader.sharedDownloader setValue:@"text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8"
+                                 forHTTPHeaderField:@"Accept"];
+    
+    [backgroundImageView sd_setImageWithURL:[NSURL URLWithString:picURL] placeholderImage:[UIImage BBSImageNamed:@"/Thread/Group.png"]];
     
     _forumContentView = [[UIView alloc] initWithFrame:CGRectMake(DZSUIScreen_width, 117, DZSUIScreen_width, 43)];
     [headerView addSubview:_forumContentView];
@@ -213,6 +222,8 @@ static NSString *BBSUIForumThreadIdentifier = @"BBSUIForumThreadIdentifier";
                                                                        BBS_TOP(_forumNameButton),
                                                                        forumPicWidth,
                                                                        forumPicWidth)];
+    [SDWebImageDownloader.sharedDownloader setValue:@"text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8"
+                                 forHTTPHeaderField:@"Accept"];
     [_forumPicImageView sd_setImageWithURL:[NSURL URLWithString:self.currentForum.forumPic]
                           placeholderImage:[UIImage BBSImageNamed:@"/Forum/forumList3.png"]];
     [_forumPicImageView.layer setCornerRadius:forumPicWidth / 2];

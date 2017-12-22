@@ -213,7 +213,6 @@ static NSString *cellIdentifier = @"ThreadSummaryCell";
     cell.read = YES;
     
     BBSUIThreadDetailViewController *detailVC = [[BBSUIThreadDetailViewController alloc] initWithThreadModel:thread];
-    
     if ([MOBFViewController currentViewController].navigationController)
     {
         [[MOBFViewController currentViewController].navigationController pushViewController:detailVC animated:YES];
@@ -475,7 +474,11 @@ static NSString *cellIdentifier = @"ThreadSummaryCell";
                     [weakSelf.tableView.mj_header beginRefreshing];
                     [weakSelf requestData];
                     
-                    [weakSelf.tableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0] atScrollPosition:UITableViewScrollPositionTop animated:NO];
+                    if (weakSelf.threadListArray.count)
+                    {
+                        [weakSelf.tableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0] atScrollPosition:UITableViewScrollPositionTop animated:NO];
+                    }
+                    
                 }];
             }
         }
@@ -519,11 +522,14 @@ static NSString *cellIdentifier = @"ThreadSummaryCell";
             [weakSelf.tableView.mj_header beginRefreshing];
             [weakSelf requestData];
             
-            [self.tableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0] atScrollPosition:UITableViewScrollPositionTop animated:NO];
+            if (self.threadListArray.count)
+            {
+                [self.tableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0] atScrollPosition:UITableViewScrollPositionTop animated:NO];
+            }
+            
         }];
     }
     
-    NSLog(@"%@______________",array.firstObject);
 }
 
 - (NSString *)selectTypeStringFromSelectType:(BBSUIThreadSelectType)selectType

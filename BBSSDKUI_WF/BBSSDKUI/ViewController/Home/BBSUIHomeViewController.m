@@ -24,6 +24,7 @@
 @interface BBSUIHomeViewController ()<iBBSUIFastPostViewControllerDelegate>
 
 @property (nonatomic, strong) LBSegmentControl * segmentControl;
+@property (nonatomic, strong) MOBFImageObserver *verifyImgObserver;
 
 @end
 
@@ -87,7 +88,14 @@
 
 - (void)searchAction:(UIButton *)sender {
     BBSUISearchViewController *vc = [BBSUISearchViewController new];
-    [[MOBFViewController currentViewController].navigationController pushViewController:vc animated:YES];
+    
+    id controller = [MOBFViewController currentViewController];
+    if ([controller isKindOfClass:[UITabBarController class]] && ((UITabBarController *)controller).selectedViewController)
+    {
+        controller = ((UITabBarController *)controller).selectedViewController;
+    }
+    
+    [((UIViewController *)controller).navigationController pushViewController:vc animated:YES];
 }
 
 - (void)login:(id)sender
@@ -180,37 +188,88 @@
     
     [login.layer setMasksToBounds:YES];
     [login.layer setCornerRadius:15];
-    if ([BBSUIContext shareInstance].currentUser && [BBSUIContext shareInstance].currentUser.avatar) {
-        
-        NSString *avatarURLBig = [BBSUIContext shareInstance].currentUser.avatar;
-        NSString *avatarURLSmall = [avatarURLBig stringByReplacingOccurrencesOfString:@"big" withString:@"small"];
-        
-        NSString *avatarURL = [avatarURLSmall stringByAppendingFormat:@"&timestamp=%f", [NSDate date].timeIntervalSince1970];
+//    if ([BBSUIContext shareInstance].currentUser && [BBSUIContext shareInstance].currentUser.avatar) {
 //
-//        UIImage *scaleImage = [MOBFImage scaleImage:[UIImage BBSImageNamed:@"/Home/NoUser.png"] withSize:CGSizeMake(60, 60)];
+//        NSString *avatarURLBig = [BBSUIContext shareInstance].currentUser.avatar;
+//        NSString *avatarURLSmall = [avatarURLBig stringByReplacingOccurrencesOfString:@"big" withString:@"small"];
+//
+//        NSString *avatarURL = [avatarURLSmall stringByAppendingFormat:@"&timestamp=%f", [NSDate date].timeIntervalSince1970];
+//        if (![[BBSUIContext shareInstance].currentUser.avatar containsString:@"?"])
+//        {
+//            avatarURL = avatarURLSmall;
+//        }
+////
+////        UIImage *scaleImage = [MOBFImage scaleImage:[UIImage BBSImageNamed:@"/Home/NoUser.png"] withSize:CGSizeMake(60, 60)];
+////        [login setImage:scaleImage forState:UIControlStateNormal];
+////        login.contentMode = UIViewContentModeScaleAspectFill;
+////        [[MOBFImageGetter sharedInstance] getImageWithURL:[NSURL URLWithString:avatarURL] result:^(UIImage *image, NSError *error) {
+////
+////            UIImage *avatarImage = nil;
+////            if (error) {
+////                avatarImage = [UIImage BBSImageNamed:@"/Home/NoUser.png"];
+////            }else{
+////                avatarImage = image;
+////            }
+////            UIImage *scaleImage = [MOBFImage scaleImage:avatarImage withSize:CGSizeMake(60, 60)];
+////            [login setImage:scaleImage forState:UIControlStateNormal];
+////
+////        }];
+//
+//        NSLog(@"_____________   %@",avatarURL ? avatarURL : avatarURLBig);
+//
+//        [login sd_setBackgroundImageWithURL:[NSURL URLWithString:avatarURL ? avatarURL : avatarURLBig]
+//                                   forState:UIControlStateNormal
+//                           placeholderImage:[UIImage BBSImageNamed:@"/Home/NoUser@2x.png"]
+//                                    options:SDWebImageRefreshCached];//不使用缓存
+//
+//    }else{
+//        UIImage *scaleImage = [UIImage BBSImageNamed:@"/Home/NoUser@2x.png"];
 //        [login setImage:scaleImage forState:UIControlStateNormal];
-//        login.contentMode = UIViewContentModeScaleAspectFill;
-//        [[MOBFImageGetter sharedInstance] getImageWithURL:[NSURL URLWithString:avatarURL] result:^(UIImage *image, NSError *error) {
-//            
-//            UIImage *avatarImage = nil;
-//            if (error) {
-//                avatarImage = [UIImage BBSImageNamed:@"/Home/NoUser.png"];
-//            }else{
-//                avatarImage = image;
-//            }
-//            UIImage *scaleImage = [MOBFImage scaleImage:avatarImage withSize:CGSizeMake(60, 60)];
-//            [login setImage:scaleImage forState:UIControlStateNormal];
-//            
-//        }];
+//    }
+    
+
+    
+    if ([BBSUIContext shareInstance].currentUser) {
         
-        [login sd_setBackgroundImageWithURL:[NSURL URLWithString:avatarURL ? avatarURL : avatarURLBig]
-                                   forState:UIControlStateNormal 
-                           placeholderImage:[UIImage BBSImageNamed:@"/Home/NoUser@2x.png"]
-                                    options:SDWebImageRefreshCached];//不使用缓存
-        
+        if ([BBSUIContext shareInstance].currentUser.avatar) {
+            MOBFImageGetter *getter = [MOBFImageGetter sharedInstance];
+            [getter removeImageObserver:self.verifyImgObserver];
+            [login setImage:[UIImage BBSImageNamed:@"/Home/NoUser@2x.png"] forState:UIControlStateNormal];
+            NSString *urlString = [NSString stringWithFormat:@"%@&timestamp=%f", [BBSUIContext shareInstance].currentUser.avatar,[[NSDate date] timeIntervalSince1970]];
+            if (![[BBSUIContext shareInstance].currentUser.avatar containsString:@"?"])
+            {
+                urlString = [BBSUIContext shareInstance].currentUser.avatar;
+            }
+            self.verifyImgObserver = [getter getImageWithURL:[NSURL URLWithString:urlString] result:^(UIImage *image, NSError *error){
+                
+                if (image) {
+                    if ([UIDevice currentDevice].systemVersion.floatValue >= 9.0)
+                    {
+                        [login.widthAnchor constraintEqualToConstant:30].active = YES;
+                        [login.heightAnchor constraintEqualToConstant:30].active = YES;
+                        [login setImage:image forState:UIControlStateNormal];
+                    }
+                    else
+                    {
+                        UIImage *scaleImage = [MOBFImage scaleImage:image withSize:CGSizeMake(30, 30)];
+                        [login setImage:scaleImage forState:UIControlStateNormal];
+                    }
+                    
+                    
+                    UIImageView *img = [UIImageView new];
+                    [img setImage:image];
+                    [img setFrame:CGRectMake(0, 100, 100, 100)];
+                    //                    [self.view addSubview:img];
+                }
+                
+            }];
+            
+        }else{
+            [login setImage:[UIImage BBSImageNamed:@"/Home/NoUser@2x.png"] forState:UIControlStateNormal];
+        }
     }else{
-        UIImage *scaleImage = [UIImage BBSImageNamed:@"/Home/NoUser@2x.png"];
-        [login setImage:scaleImage forState:UIControlStateNormal];
+        
+        [login setImage:[UIImage BBSImageNamed:@"/Home/NoUser@2x.png"] forState:UIControlStateNormal];
     }
     
     [login addTarget:self action:@selector(login:) forControlEvents:UIControlEventTouchUpInside];

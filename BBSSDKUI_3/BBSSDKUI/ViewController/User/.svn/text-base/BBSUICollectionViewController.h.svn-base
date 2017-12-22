@@ -18,4 +18,6 @@
 
 @property (nonatomic, strong) BBSUICollectionView *collectionView;
 
+@property (nonatomic, copy) void (^deleteCellBlock)();
+
 @end

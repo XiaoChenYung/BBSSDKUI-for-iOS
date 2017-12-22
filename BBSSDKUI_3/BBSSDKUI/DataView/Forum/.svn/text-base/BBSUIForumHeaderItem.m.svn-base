@@ -58,7 +58,7 @@
     [_forumNameLabel mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(self.forumImageView.mas_bottom).with.offset(10);
         make.centerX.equalTo(self.mas_centerX);
-        make.size.mas_equalTo(CGSizeMake(51, 21));
+        make.size.mas_equalTo(CGSizeMake(self.frame.size.width, 21));
     }];
     _forumNameLabel.font = [UIFont fontWithName:@".PingFangSC-Regular" size:12];
     _forumNameLabel.textColor = [UIColor colorWithRed:78/255.0 green:79/255.0 blue:87/255.0 alpha:1/1.0];
@@ -80,6 +80,9 @@
         [_forumImageView setImage:[UIImage BBSImageNamed:@"/Home/moreForum.png"]];
     }else{
         [_forumNameLabel setText:forum.name];
+        [SDWebImageDownloader.sharedDownloader setValue:@"text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8"
+                                     forHTTPHeaderField:@"Accept"];
+        
         if (forum.fid == 0) {
             [_forumImageView sd_setImageWithURL:[NSURL URLWithString:forum.forumPic] placeholderImage:[UIImage BBSImageNamed:@"/Forum/AllFroum.png"]];
         }else{

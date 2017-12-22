@@ -1,14 +1,14 @@
 10
 
 dir
-27403
-svn://chux@svn.code.mob.com/ios/project/BBSSDK/tags/v2.0.0/BBSSDK/Common
+29112
+svn://chux@svn.code.mob.com/ios/project/BBSSDK/trunk/BBSSDK/Common
 svn://chux@svn.code.mob.com
 
 
 
-2017-09-22T07:40:37.373999Z
-26941
+2017-12-22T07:51:57.250000Z
+29112
 chux
 
 
@@ -47,10 +47,10 @@ file
 
 
 
-2017-10-25T07:57:05.000000Z
-929c8a4053902395a06f87dd4ccfd2ba
-2017-09-22T07:40:37.373999Z
-26941
+2017-12-22T07:52:12.000000Z
+481f18b025c98b2310970504e9f59d98
+2017-12-22T07:51:57.250000Z
+29112
 chux
 
 
@@ -73,7 +73,7 @@ chux
 
 
 
-1451
+1452
 
 Category
 dir

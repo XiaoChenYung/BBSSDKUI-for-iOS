@@ -36,6 +36,8 @@
 
 @property (nonatomic) BOOL isTxt;
 
+@property (nonatomic, strong) MOBFHttpService *service;
+
 @end
 
 @implementation BBSUIDownloadView
@@ -69,6 +71,8 @@
     self.stopButton = [UIButton buttonWithType:UIButtonTypeCustom];
     [self addSubview:self.stopButton];
     [self.stopButton setImage:[UIImage BBSImageNamed:@"/Common/no@2x.png"] forState:UIControlStateNormal];
+    [self.stopButton setImage:[UIImage BBSImageNamed:@"/Common/downloadStart@2x.png"] forState:UIControlStateSelected];
+    [self.stopButton addTarget:self action:@selector(_onPauseAction) forControlEvents:UIControlEventTouchUpInside];
     
     self.progressLabel = [[UILabel alloc] init];
     [self addSubview:self.progressLabel];
@@ -186,8 +190,8 @@
             //网页直接加载
             //        [self.webView loadRequest:request];
             __weak typeof(self) theView = self;
-            MOBFHttpService *service = [[MOBFHttpService alloc] initWithRequest:request];
-            [service sendRequestOnResult:^(NSHTTPURLResponse *response, NSData *responseData) {
+            _service = [[MOBFHttpService alloc] initWithRequest:request];
+            [_service sendRequestOnResult:^(NSHTTPURLResponse *response, NSData *responseData) {
                 
                 if (response.statusCode == 200) {
                     NSFileManager *fileManager=[NSFileManager defaultManager];
@@ -291,6 +295,12 @@
     }
     [self.controlButton setTitle:controlStr forState:UIControlStateNormal];
 
+}
+
+- (void)_onPauseAction
+{
+    [_service cancelRequest];
+    self.stopButton.selected = !self.stopButton.selected;
 }
 
 @end

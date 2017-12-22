@@ -29,6 +29,14 @@
     
     _collectionView = [[BBSUICollectionView alloc] initWithFrame: self.view.bounds type:self.collectionViewType];
     
+    __weak typeof (self) weakSelf = self;
+    _collectionView.deleteCellBlock = ^(){
+        if (weakSelf.deleteCellBlock)
+        {
+            weakSelf.deleteCellBlock();
+        }
+    };
+    
     [self.view addSubview:_collectionView];
 }
 

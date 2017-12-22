@@ -62,17 +62,16 @@
 
 -(void)viewWillAppear:(BOOL)animated
 {
-    [self.navigationController setNavigationBarHidden:YES animated:YES];
     [super viewWillAppear:animated];
+    [self.navigationController setNavigationBarHidden:YES animated:YES];
 }
 
 -(void)viewWillDisappear:(BOOL)animated
 {
+    [super viewWillDisappear:animated];
     if (self.sendType == BBSUIEmailSendTypeNeedIdentity) {
         [self.navigationController setNavigationBarHidden:NO animated:YES];
     }
-    
-    [super viewWillDisappear:animated];
 }
 
 - (void)didReceiveMemoryWarning {

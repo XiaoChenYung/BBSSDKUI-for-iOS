@@ -1,8 +1,8 @@
 10
 
 dir
-27403
-svn://chux@svn.code.mob.com/ios/project/BBSSDK/tags/v2.0.0/BBSSDK/Common/3rdPart/MJRefresh/MJRefresh.bundle
+29112
+svn://chux@svn.code.mob.com/ios/project/BBSSDK/trunk/BBSSDK/Common/3rdPart/MJRefresh/MJRefresh.bundle
 svn://chux@svn.code.mob.com
 
 
@@ -35,7 +35,7 @@ file
 
 
 
-2017-10-25T07:57:05.000000Z
+2017-11-24T09:27:19.000000Z
 8b20169d97f239982e638aaece665643
 2017-04-17T06:08:11.660989Z
 22537

@@ -591,7 +591,7 @@
             make.width.height.equalTo(@105);
         }];
         
-        [_line mas_remakeConstraints:^(MASConstraintMaker *make) {
+        [_line mas_makeConstraints:^(MASConstraintMaker *make) {
             make.left.right.equalTo(self.contentView).priorityHigh();
             make.height.mas_equalTo(3).priorityHigh();
             make.bottom.equalTo(self.contentView);

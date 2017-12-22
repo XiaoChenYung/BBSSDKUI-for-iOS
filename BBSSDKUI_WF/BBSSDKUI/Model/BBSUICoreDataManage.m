@@ -95,7 +95,6 @@
     
     long historyTime = [[NSDate date] timeIntervalSince1970];
     
-    NSLog(@"____________%zu",historyTime);
     threadHistory.historyTime   = @(historyTime);
     
     if ([self.store.managedObjectContext save:nil]) {
@@ -176,9 +175,7 @@
     if (transform)
     {
         _lastHistoryTime = [array.lastObject.historyTime integerValue];
-        
-        NSLog(@"____________ss %zu",_lastHistoryTime);
-        
+
         return [self arrayWithHistoryArray:array];
     }
     return array;
@@ -239,6 +236,41 @@
     request.entity = [NSEntityDescription entityForName:self.entityName inManagedObjectContext:self.store.managedObjectContext];
     request.predicate = [NSPredicate predicateWithFormat:@"uid == %lu",uid];
     return [self.store.managedObjectContext countForFetchRequest:request error:nil];
+}
+
+- (CGFloat)getDataSize
+{
+    NSURL *storeURL = [[self.store applicationDocumentsDirectory] URLByAppendingPathComponent:@"BBSSDKUI.sqlite"];
+    
+    NSString *path = [storeURL path];
+    
+    long long folderSize = [self fileSizeAtPath:path];
+    
+    return folderSize/(1024 * 1024.0);
+}
+
+// 计算 单个文件的大小
+- ( long long ) fileSizeAtPath:( NSString *) filePath{
+    NSFileManager * manager = [NSFileManager defaultManager];
+    if ([manager fileExistsAtPath :filePath]){
+        return [[manager attributesOfItemAtPath :filePath error : nil] fileSize];
+    }
+    return 0;
+}
+
+- (void)clearCache
+{
+    NSURL *storeURL = [[self.store applicationDocumentsDirectory] URLByAppendingPathComponent:@"BBSSDKUI.sqlite"];
+    NSError * error = nil ;
+    
+    NSString *filePath = [storeURL path];
+    if ([[NSFileManager defaultManager ] fileExistsAtPath :filePath])
+    {
+        [[NSFileManager defaultManager ] removeItemAtPath :filePath error :&error];
+    }
+    
+    [self.store.persistentStoreCoordinator removePersistentStore:self.store.persistentStoreCoordinator.persistentStores[0]error:nil];
+    [self.store.persistentStoreCoordinator addPersistentStoreWithType:NSSQLiteStoreType  configuration:nil URL:storeURL options:nil error:&error];
 }
 
 @end

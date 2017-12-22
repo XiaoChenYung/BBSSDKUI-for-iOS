@@ -17,6 +17,7 @@
 #import "BBSUIFansViewController.h"
 #import "BBSUICollectionView.h"
 #import "BBSUILoginViewController.h"
+#import "NSString+Paragraph.h"
 
 #define BBSUIInformationCellHeight 65
 #define BBSUIUserLogoutButtonHeight 50
@@ -176,12 +177,27 @@
     [self setCountButtonTitle];
     [_tableHeaderView.addressButton setTitle:[NSString stringWithFormat:@"%@ %@ %@",_currentUser.resideprovince,_currentUser.residecity,_currentUser.residedist] forState:UIControlStateNormal];
     _tableHeaderView.nameLabel.text = _currentUser.userName;
-    _tableHeaderView.originLabel.text = _currentUser.sightml;
+    
+    if (self.userType == UserTypeMe)
+    {
+        _tableHeaderView.originLabel.attributedText = [NSString stringWithString:_currentUser.sightml fontSize:12 defaultColorValue:@"6A7081" lineSpace:0 wordSpace:0];
+    }else
+    {
+        _tableHeaderView.originLabel.attributedText = [NSString stringWithString:_currentUser.sightml fontSize:12 defaultColorValue:@"FFFFFF" lineSpace:0 wordSpace:0];
+        _tableHeaderView.originLabel.textAlignment = NSTextAlignmentCenter;
+    }
+    
+    
     
     if (_currentUser.avatar) {
         MOBFImageGetter *getter = [MOBFImageGetter sharedInstance];
         [getter removeImageObserver:self.verifyImgObserver];
         NSString *urlString = [NSString stringWithFormat:@"%@&timestamp=%f", _currentUser.avatar,[[NSDate date] timeIntervalSince1970]];
+        if (![_currentUser.avatar containsString:@"?"])
+        {
+            urlString = _currentUser.avatar;
+        }
+        
         self.verifyImgObserver = [getter getImageWithURL:[NSURL URLWithString:urlString] result:^(UIImage *image, NSError *error) {
             
             if (error) {
@@ -216,6 +232,11 @@
             MOBFImageGetter *getter = [MOBFImageGetter sharedInstance];
             [getter removeImageObserver:self.verifyImgObserver];
             NSString *urlString = [NSString stringWithFormat:@"%@&timestamp=%f", _currentUser.avatar,[[NSDate date] timeIntervalSince1970]];
+            if (![_currentUser.avatar containsString:@"?"])
+            {
+                urlString = _currentUser.avatar;
+            }
+            
             self.verifyImgObserver = [getter getImageWithURL:[NSURL URLWithString:urlString] result:^(UIImage *image, NSError *error) {
                 
                 if (error) {
@@ -230,7 +251,14 @@
 
         
         _tableHeaderView.nameLabel.text = _currentUser.userName;
-        _tableHeaderView.originLabel.text = _currentUser.sightml;
+        if (self.userType == UserTypeMe)
+        {
+            _tableHeaderView.originLabel.attributedText = [NSString stringWithString:_currentUser.sightml fontSize:12 defaultColorValue:@"6A7081" lineSpace:0 wordSpace:0];
+        }else
+        {
+            _tableHeaderView.originLabel.attributedText = [NSString stringWithString:_currentUser.sightml fontSize:12 defaultColorValue:@"FFFFFF" lineSpace:0 wordSpace:0];
+            _tableHeaderView.originLabel.textAlignment = NSTextAlignmentCenter;
+        }
         [_tableHeaderView.addressButton setTitle:[NSString stringWithFormat:@"%@ %@ %@",_currentUser.resideprovince,_currentUser.residecity,_currentUser.residedist] forState:UIControlStateNormal];
         
         
