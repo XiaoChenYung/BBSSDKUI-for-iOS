@@ -1,6 +1,6 @@
 //
 //  History+CoreDataProperties.h
-//  
+//
 //
 //  Created by chuxiao on 2017/9/21.
 //
@@ -38,7 +38,31 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nullable, nonatomic, retain) NSNumber *uid;
 @property (nullable, nonatomic, retain) NSString *username;
 @property (nullable, nonatomic, retain) NSNumber *views;
+@property (nullable, nonatomic, retain) NSNumber *recommend_add;
+
+@property (nullable, nonatomic, retain) NSString *aid;
+@property (nullable, nonatomic, retain) NSString *title;
+@property (nullable, nonatomic, retain) NSNumber *authorid;
+@property (nullable, nonatomic, retain) NSNumber *dateline;
+@property (nullable, nonatomic, retain) NSNumber *viewnum;
+@property (nullable, nonatomic, retain) NSNumber *commentnum;
+@property (nullable, nonatomic, retain) NSNumber *sharetimes;
+@property (nullable, nonatomic, retain) NSNumber *favtimes;
+@property (nullable, nonatomic, retain) NSString *pic;
+@property (nullable, nonatomic, retain) NSNumber *click1;
+@property (nullable, nonatomic, retain) NSNumber *click2;
+@property (nullable, nonatomic, retain) NSNumber *click3;
+@property (nullable, nonatomic, retain) NSNumber *click4;
+@property (nullable, nonatomic, retain) NSNumber *click5;
+@property (nullable, nonatomic, retain) NSString *content;
+@property (nullable, nonatomic, retain) id related;
+@property (nullable, nonatomic, retain) NSNumber *allowcomment;
+@property (nullable, nonatomic, retain) NSString *type;
+@property (nullable, nonatomic, retain) NSString *catname;
+@property (nullable, nonatomic, retain) NSString *shareurl;
+@property (nullable, nonatomic, retain) NSNumber *originUid;
 
 @end
 
 NS_ASSUME_NONNULL_END
+

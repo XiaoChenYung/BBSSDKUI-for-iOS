@@ -262,11 +262,27 @@
         _avatarImageView.image = image;
     }];
     
+    if (_collectionViewType == CollectionViewTypeHistory && [collection.type isEqualToString:@"portal"])
+    {
+        _summaryLabel.attributedText = [self stringWithString:collection.summary lineSpace:6];
+    }
+    else
+    {
+        _summaryLabel.attributedText = [self stringWithString:collection.subject lineSpace:6];
+    }
     
-    _summaryLabel.attributedText = [self stringWithString:collection.subject lineSpace:6];
-    _repliesLabel.text = [NSString stringWithFormat:@"评论 %lu",(long)collection.replies];
-    _favoriteLabel.text = [NSString stringWithFormat:@"喜欢 %lu",(long)collection.recommend_add];
-    _viewsLabel.text = [NSString stringWithFormat:@"查看 %lu",(long)collection.views];
+    if (collection.aid)
+    {
+        _favoriteLabel.text = [NSString stringWithFormat:@"喜欢 %lu",(long)collection.click1];
+        _repliesLabel.text = [NSString stringWithFormat:@"评论 %lu",(long)collection.commentnum];
+        _viewsLabel.text = [NSString stringWithFormat:@"查看 %lu",(long)collection.viewnum];
+    }
+    else
+    {
+        _repliesLabel.text = [NSString stringWithFormat:@"评论 %lu",(long)collection.replies];
+        _favoriteLabel.text = [NSString stringWithFormat:@"喜欢 %lu",(long)collection.recommend_add];
+        _viewsLabel.text = [NSString stringWithFormat:@"查看 %lu",(long)collection.views];
+    }
     
     if (collection.images.count >= 2)
     {
@@ -280,9 +296,17 @@
     
     _authorLabel.text = collection.author;
     _timeLabel.text = [NSString timeTextWithTimesStamp:collection.createdOn];
+    if (collection.aid)
+    {
+        _timeLabel.text = [NSString timeTextWithTimesStamp:collection.dateline];
+    }
     
-    if (collection.images.count > 0) {
+    if (collection.images.count > 0 || collection.pic) {
         NSString * url = [collection.images firstObject];
+        if (!url)
+        {
+            url = collection.pic;
+        }
         _imagesView.image = [UIImage BBSImageNamed:@"/Home/wutu@2x.png"];
         [[MOBFImageGetter sharedInstance] getImageDataWithURL:[NSURL URLWithString:url] result:^(NSData *imageData, NSError *error) {
             if (error)
@@ -305,7 +329,11 @@
         [self setFrameForFavorites:collection];
     }
     
-
+    if ( (!collection.author || collection.author.length == 0) && collection.tid)
+    {
+        _avatarImageView.image = [UIImage BBSImageNamed:@"/Thread/bbs_login_account.png"];
+        _authorLabel.text = @"匿名用户";
+    }
 }
 
 // 收藏、历史记录
@@ -316,7 +344,7 @@
     
     CGFloat subjectlabelR;
     
-    if(collection.images.count)
+    if(collection.images.count || collection.pic)
     {
         _imagesView.hidden = NO;
         
@@ -341,7 +369,7 @@
         make.right.equalTo(@(subjectlabelR));
     }];
     
-    if(collection.images.count)
+    if(collection.images.count || collection.pic)
     {
         [_repliesLabel mas_makeConstraints:^(MASConstraintMaker *make) {
             make.left.equalTo(self.avatarImageView);
@@ -370,7 +398,7 @@
     
     CGFloat subjectlabelR;
     
-    if(collection.images.count)
+    if(collection.images.count || collection.pic)
     {
         _imagesView.hidden = NO;
         
@@ -401,7 +429,7 @@
         make.right.equalTo(@(subjectlabelR));
     }];
     
-    if(collection.images.count)
+    if(collection.images.count || collection.pic)
     {
         [_repliesLabel mas_makeConstraints:^(MASConstraintMaker *make) {
             make.left.equalTo(self.timeLabel);
@@ -422,6 +450,10 @@
 
 - (NSMutableAttributedString *)stringWithString:(NSString *)string lineSpace:(CGFloat)offset
 {
+    if (!string)
+    {
+        return nil;
+    }
     NSMutableAttributedString *str = [[NSMutableAttributedString alloc] initWithString:string];
     
     NSMutableParagraphStyle *paragrah = [[NSMutableParagraphStyle alloc] init];

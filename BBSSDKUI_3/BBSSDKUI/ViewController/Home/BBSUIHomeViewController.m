@@ -8,110 +8,146 @@
 
 #import "BBSUIHomeViewController.h"
 #import "LBSegmentControl.h"
-#import "BBSUIForumViewController.h"
-#import "BBSUILoginViewController.h"
-#import "BBSUISearchViewController.h"
+#import "BBSUIThreadListViewController.h"
+#import "BBSUIBaseView.h"
 #import "BBSUIContext.h"
-#import <MOBFoundation/MOBFImageGetter.h>
-#import "BBSUIMainStyleNavigationController.h"
-#import "BBSUIStatusBarTip.h"
+#import "BBSUILoginViewController.h"
 #import "BBSUIUserHomeViewController.h"
 #import "BBSUIFastPostViewController.h"
+#import "BBSUISearchViewController.h"
+#import <MOBFoundation/MOBFImageGetter.h>
 #import "UINavigationBar+Awesome.h"
-#import "BBSUIThreadBanner.h"
-#import <BBSSDK/BBSBanner.h>
-#import "UITableView+FDTemplateLayoutCell.h"
-#import "BBSUIThreadSummaryCell.h"
-#import "MJRefresh.h"
-#import <BBSSDK/BBSSDK.h>
-#import "UIView+TipView.h"
-#import "NSString+ThreadOrderType.h"
-#import "BBSUIForumHeader.h"
-#import "BBSUIThreadDetailViewController.h"
-#import <BBSSDK/BBSForum.h>
-#import "BBSUIForumThreadListViewController.h"
-#import "BBSUIBannerPreviewViewController.h"
-#import "BBSThread+BBSUI.h"
-#import "UIButton+WebCache.h"
+#import "BBSUIPortalViewController.h"
+#import "BBSUICoreDataManage.h"
+#import "BBSUILaunchConfig.h"
+#import "BBSUIStatusBarTip.h"
 
 static NSString *BBSUIHomeTableIdentifier = @"BBSUIHomeTableIdentifier";
 static NSInteger    BBSUIPageSize = 10;
 
 
-@interface BBSUIHomeViewController ()<iBBSUIFastPostViewControllerDelegate, UIScrollViewDelegate, UITableViewDelegate, UITableViewDataSource, CycleViewDelegate>
+@interface BBSUIHomeViewController ()<LBSegmentControlDelegate,iBBSUIFastPostViewControllerDelegate>
 
-@property (nonatomic, strong) UILabel           *titleLabel;
-
-@property (nonatomic, strong) UITableView       *homeTableView;
-
-@property (nonatomic, strong) NSArray           *bannerArray;
-
-@property (nonatomic, assign) NSInteger         currentIndex;
-
-@property (nonatomic, strong) NSMutableArray    *threadListArray;
-
-@property (nonatomic, strong) BBSUIForumHeader  *forumHeader;
-
-@property (nonatomic, strong) UIButton          *loginButton;
-
-@property (nonatomic, strong) UIButton          *searchButton;
-
-@property (nonatomic, strong) UIButton          *postButton;
-
-@property (nonatomic, strong) UILabel           *navTitleLabel;
-
+@property (nonatomic, strong) LBSegmentControl * segmentControl;
 @property (nonatomic, strong) BBSUIBaseView     *navView;
-
-@property (nonatomic, strong) UIImageView       *maskImage;
-
-@property (nonatomic, strong) BBSUIThreadBanner *bannerView;
-
+@property (nonatomic, strong) UIButton          *loginButton;
+@property (nonatomic, strong) UIButton          *postButton;
+@property (nonatomic, strong) UIButton          *searchButton;
+@property (nonatomic, strong) UILabel           *navTitleLabel;
 @property (nonatomic, assign) BOOL              stateStarted;//初始状态
-
 /**
  *  图片观察者
  */
 @property (nonatomic, strong) MOBFImageObserver *verifyImgObserver;
+@property (nonatomic, strong) NSArray *segments;
 
-@property (nonatomic, assign) NSInteger         currentUserId;
+@property (nonatomic, assign) CGFloat lastTableViewOffsetY;
+
+// 加锁操作
+@property (nonatomic) dispatch_queue_t queue;
+@property (nonatomic) dispatch_semaphore_t semaphore;
+
+@property (nonatomic, assign) CGFloat iphoneXTopPadding;
 
 @end
 
 @implementation BBSUIHomeViewController
+
+- (instancetype)init
+{
+    if (self = [super init])
+    {
+        [self _launchConfig];
+    }
+    
+    return self;
+}
+
+/**
+ 开屏策略
+ */
+- (void)_launchConfig
+{
+    self.semaphore = dispatch_semaphore_create(0);
+    self.queue = dispatch_queue_create("HomeViewControllerQueue", DISPATCH_QUEUE_SERIAL);
+    
+    dispatch_async(_queue, ^{
+        //阻塞线程，直到获取配置信息完成之后
+        dispatch_semaphore_wait(self.semaphore, DISPATCH_TIME_FOREVER);
+        
+    });
+    
+    [BBSSDK getGlobalSettings:^(NSDictionary *settings, NSError *error) {
+        if (!error && settings)
+        {
+            NSString *currentAppkey = settings[@"target"][@"appkey"];
+            NSDictionary *lastSettings = [BBSUIContext shareInstance].settings;
+            
+            [BBSUIContext shareInstance].settings = settings;
+            
+            if ((!lastSettings || !lastSettings[@"target"]) && currentAppkey)
+            {
+                /**
+                 进行key更新处理
+                 */
+                [self _updateKey];
+            }
+            
+            else if (lastSettings && lastSettings[@"target"])
+            {
+                NSDictionary *lastTarget = lastSettings[@"target"];
+                NSString *lastAppkey = lastTarget[@"appkey"];
+                
+                if (![lastAppkey isEqualToString:currentAppkey])
+                {
+                    /**
+                     进行key更新处理
+                     */
+                    [self _updateKey];
+                }
+            }
+            
+            dispatch_semaphore_signal(self.semaphore);
+        }
+    }];
+    
+    
+    //        //阻塞线程，直到获取配置信息完成之后
+    //        dispatch_semaphore_wait(self.semaphore, DISPATCH_TIME_FOREVER);
+}
+
+- (void)_updateKey
+{
+    NSLog(@"更新key相关操作");
+    [[BBSUILaunchConfig shareInstance] cleaerUserConfig];
+}
 
 - (void)viewDidLoad
 {
     [super viewDidLoad];
     
 //    [self _setupRightBarButton];
+    
+    [self.view.layer addObserver:self forKeyPath:@"sublayers" options:NSKeyValueObservingOptionOld|NSKeyValueObservingOptionNew context:nil];
+    
+    
     [self _configureUI];
-    [self _initData];
-//    [self _setCustomTitleView];
-    [self _requestData];
-    [self _createNavView];//自定义navview
+//    [self _createNavView];//自定义navview
 }
 
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
     [self.navigationController setNavigationBarHidden:YES];
+//    [self.navigationController.navigationBar setBackgroundImage:[UIImage new] forBarMetrics:UIBarMetricsDefault];
+
     [self _refreshUI];
     
-    if (self.homeTableView) {
-        [self.homeTableView setDelegate:self];
-    }
-    
-    //切换用户时，可能由于权限不同，可见版块需要重新刷新
-    if (self.currentUserId != [[BBSUIContext shareInstance].currentUser.uid integerValue]) {
-        [self _requestForumList];
-        self.currentUserId = [[BBSUIContext shareInstance].currentUser.uid integerValue];
-    }
 }
 
 - (void)viewWillDisappear:(BOOL)animated
 {
     [super viewWillDisappear:animated];
-    self.homeTableView.delegate = nil;
     [self.navigationController.navigationBar lt_reset];
     
     [[MOBFImageGetter sharedInstance] removeImageObserver:self.verifyImgObserver];
@@ -125,128 +161,242 @@ static NSInteger    BBSUIPageSize = 10;
 #pragma mark - private UI & UI handler
 -(void)_configureUI
 {
-    _homeTableView = [[UITableView alloc] initWithFrame:CGRectMake(0, -20, DZSUIScreen_width, DZSUIScreen_height + 20) style:UITableViewStylePlain];
-    _homeTableView.delegate = self;
-    _homeTableView.dataSource = self;
-    _homeTableView.backgroundColor = [UIColor clearColor];
-    _homeTableView.separatorStyle = UITableViewCellSeparatorStyleNone;
-    _homeTableView.fd_debugLogEnabled = YES;
-    [_homeTableView registerClass:[BBSUIThreadSummaryCell class] forCellReuseIdentifier:BBSUIHomeTableIdentifier];
-    _homeTableView.separatorStyle = UITableViewCellSeparatorStyleNone;
-    _homeTableView.estimatedRowHeight = 135;
-    _homeTableView.rowHeight = UITableViewAutomaticDimension;
-    [self.view addSubview:_homeTableView];
+    self.automaticallyAdjustsScrollViewInsets = false;
     
-    __weak typeof(self) theController = self;
-    _homeTableView.mj_header = [MJRefreshNormalHeader headerWithRefreshingBlock:^{
-        theController.currentIndex = 1;
-        [theController _requestData];
-    }];
-    
-
-    
-    _homeTableView.mj_footer = [MJRefreshBackNormalFooter footerWithRefreshingBlock:^{
-        theController.currentIndex++;
-        [theController _requestData];
-    }];
-    
-//    [_homeTableView.mj_header beginRefreshing];
-    
-    //设置tableheader
-    _homeTableView.tableHeaderView = [self _obtainHeaderView];
-}
-
-- (UIView *)_obtainHeaderView
-{
-    //计算版块点击高度
-//    CGFloat forumViewHeight = DZSUIScreen_height / 7;
-    CGFloat forumViewHeight = 105;
-    
-    UIView *headerView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, DZSUIScreen_width, 245 + forumViewHeight)];
-    [headerView setBackgroundColor:[UIColor blackColor]];
-    
-    self.bannerView = [[BBSUIThreadBanner alloc]
-                                 initWithFrame:CGRectMake(0, 0, [UIScreen mainScreen].bounds.size.width,
-                                                          247)];
-    [headerView addSubview:self.bannerView];
-
-    //加载广告条
-    self.maskImage = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, BBS_WIDTH(self.bannerView), BBS_HEIGHT(self.bannerView))];
-    
-    
-    __weak typeof(self) theController = self;
-    _forumHeader = [[BBSUIForumHeader alloc] initWithFrame:CGRectMake(0, BBS_BOTTOM(self.bannerView), DZSUIScreen_width, forumViewHeight)];
-    [_forumHeader setResultHandler:^(BBSForum *forum){
-        [theController _pushForumVC:forum];
-    }];
-    [headerView addSubview:_forumHeader];
-    
-    [self.maskImage setImage:[UIImage BBSImageNamed:@"/Home/BannerMask.png"]];
-    [headerView addSubview:self.maskImage];
-    
-    return headerView;
-}
-
-- (void)setCustomNavTitleView
-{
-    //首页所有帖子列表视图
-    
-    
+    __weak typeof (self) weakSelf = self;
+    dispatch_async(self.queue, ^{
+        
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [weakSelf setupVC];
+            dispatch_semaphore_signal(self.semaphore);
+        });
+    });
     
 }
 
-- (void)_pushForumVC:(BBSForum *)forum
+- (void)setupVC
 {
-    if (forum) {
-        
-        BBSUIForumThreadListViewController *threadListVC = [[BBSUIForumThreadListViewController alloc] initWithForum:forum];
-        [self.navigationController pushViewController:threadListVC animated:YES];
-        
-    }else{
-        
-        BBSUIForumViewController *form = [[BBSUIForumViewController alloc] init];
-        
-        [self.navigationController pushViewController:form animated:YES];
-    }
-
-}
-
-- (void)editThread:(id)sender
-{
-    if (![BBSUIContext shareInstance].currentUser)
+    NSLog(@"oooooooooooo  --2%@",[NSThread currentThread]);
+    
+    NSDictionary *settings = [BBSUIContext shareInstance].settings;
+    BOOL hidden = NO;
+    
+    if (settings[@"portal"] && [settings[@"portal"] integerValue] == 1)
     {
-        BBSUILoginViewController *vc = [[BBSUILoginViewController alloc] init];
-        
-        UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
-        
-        [self presentViewController:nav animated:YES completion:nil];
+        [self setupSegmentControlWithPortal];
+        hidden = YES;
     }
     else
     {
-        BBSUIFastPostViewController *editVC = [BBSUIFastPostViewController shareInstance];
-        [editVC addPostThreadObserver:self];
-        UINavigationController *mainStyleNav = [[UINavigationController alloc] initWithRootViewController:editVC];
-
-        
-        [self presentViewController:mainStyleNav animated:YES completion:nil];
+        [self setupSegmentControlWithNoPortal];
+        hidden = NO;
     }
+    
+    [self _createNavView:hidden];
+    
+    [self _refreshUI];
 }
 
-- (void)searchAction:(UIButton *)sender {
-    BBSUISearchViewController *vc = [BBSUISearchViewController new];
+- (void)setupSegmentControlWithNoPortal
+{
+    BBSUIThreadListViewController *vc = [[BBSUIThreadListViewController alloc] init];
+    vc.viewType = BBSUIThreadListViewTypeThread;
+    vc.offSetBlock = ^(CGFloat offset) {
+        [self setContentOffSet:offset];
+    };
+
+    self.segmentControl = [[LBSegmentControl alloc] initStaticTitlesWithFrame:CGRectMake((DZSUIScreen_width-80)/2, 15, 80, 42) titleFontSize:16 isIntegrated:YES];
+    //    self.segmentControl.tableViewY = - 20;
+    self.segmentControl.notScroll = YES;
     
-    id controller = [MOBFViewController currentViewController];
-    if ([controller isKindOfClass:[UITabBarController class]] && ((UITabBarController *)controller).selectedViewController)
+    self.segments = [self.segmentControl settingTitles:@[@"论坛"] ];
+    self.segmentControl.viewControllers = @[vc];
+    [self.segmentControl setBottomViewColor:DZSUIColorFromHex(0xFFAA42)];
+    [self.segmentControl setTitleNormalColor:[UIColor whiteColor]];
+    [self.segmentControl setTitleSelectColor:DZSUIColorFromHex(0xFFAA42)];
+    self.segmentControl.isTitleScale = NO;
+    self.segmentControl.isIntegrated = YES;
+    self.segmentControl.delegate = self;
+    self.segmentControl.bottomViewIsAlignment = YES;
+    
+    self.segmentControl.changeControllerBlock = ^(NSUInteger index) {
+        
+    };
+}
+
+- (void)setupSegmentControlWithPortal
+{
+    if ([BBSUIContext shareInstance].isIphoneX)
     {
-        controller = ((UITabBarController *)controller).selectedViewController;
+        self.iphoneXTopPadding = 30;
     }
     
-    [((UIViewController *)controller).navigationController pushViewController:vc animated:YES];
+    BBSUIThreadListViewController *vc = [[BBSUIThreadListViewController alloc] init];
+    vc.viewType = BBSUIThreadListViewTypeThread;
+    vc.offSetBlock = ^(CGFloat offset) {
+        [self setContentOffSet:offset];
+    };
+    
+    BBSUIPortalViewController *vc2 = [[BBSUIPortalViewController alloc] init];
+    vc2.offSetBlock = ^(CGFloat offset) {
+        [self setContentOffSet:offset];
+    };
+    
+    self.segmentControl = [[LBSegmentControl alloc] initStaticTitlesWithFrame:CGRectMake((DZSUIScreen_width-160)/2, 15, 160, 42) titleFontSize:16 isIntegrated:YES];
+    //    self.segmentControl.tableViewY = - 20;
+    self.segmentControl.notScroll = YES;
+    
+    self.segments = [self.segmentControl settingTitles:@[@"资讯", @"论坛"] ];
+    self.segmentControl.viewControllers = @[vc2, vc];
+    [self.segmentControl setBottomViewColor:DZSUIColorFromHex(0xFFAA42)];
+    [self.segmentControl setTitleNormalColor:[UIColor whiteColor]];
+    [self.segmentControl setTitleSelectColor:DZSUIColorFromHex(0xFFAA42)];
+    self.segmentControl.isTitleScale = NO;
+    self.segmentControl.isIntegrated = YES;
+    self.segmentControl.delegate = self;
+    self.segmentControl.bottomViewIsAlignment = YES;
+    //    self.navigationItem.titleView= self.segmentControl;
+    
+    //    [self.view addSubview:self.segmentControl];
+    
+    __weak typeof (self) weakSelf = self;
+    self.segmentControl.changeControllerBlock = ^(NSUInteger index) {
+        //        [weakSelf setContentOffSet:weakSelf.lastTableViewOffsetY];
+    };
+}
+
+-(void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSString *,id> *)change context:(void *)context
+{
+//    NSLog(@"aaaaaaaa");
+    if (self.navView)
+    {
+        [self.view bringSubviewToFront:self.navView];
+    }
+
+}
+
+
+- (void)_createNavView:(BOOL)hidden
+{
+//    return;
+    self.navView = [[BBSUIBaseView alloc] initWithFrame:CGRectMake(0, _iphoneXTopPadding, DZSUIScreen_width, NavigationBar_Height)];
+//    self.navView.layer.zPosition = 1.0f;
+    [self.view addSubview:self.navView];
+    
+    self.loginButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    [self.loginButton.layer setMasksToBounds:YES];
+    [self.loginButton.layer setCornerRadius:15];
+    //    [self.loginButton setImage:[UIImage BBSImageNamed:@"/Home/noUserWhite.png"] forState:UIControlStateNormal];
+    [self.loginButton addTarget:self action:@selector(login:) forControlEvents:UIControlEventTouchUpInside];
+    [self.loginButton setFrame:CGRectMake(7, 27, 30, 30)];
+//    self.loginButton.layer.zPosition = 1.0f;
+    [self.navView addSubview:self.loginButton];
+    
+    self.postButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    [self.postButton setImage:[UIImage BBSImageNamed:@"/Home/postThreadWhite@2x.png"] forState:UIControlStateNormal];
+    [self.postButton setFrame:CGRectMake(DZSUIScreen_width - 7 - 30, 27, 30, 30)];
+    [self.postButton addTarget:self action:@selector(editThread:) forControlEvents:UIControlEventTouchUpInside];
+    [self.navView addSubview:self.postButton];
+    
+    self.postButton.hidden = hidden;
+    
+    self.searchButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    [self.searchButton setImage:[UIImage BBSImageNamed:@"/Common/searchWhite@2x.png"] forState:UIControlStateNormal];
+    [self.searchButton setFrame:CGRectMake(BBS_LEFT(self.postButton) - 10 - 30, 27, 30, 30)];
+    [self.searchButton addTarget:self action:@selector(searchAction:) forControlEvents:UIControlEventTouchUpInside];
+    [self.navView addSubview:self.searchButton];
+    
+    self.searchButton.hidden = hidden;
+    
+    
+    self.navTitleLabel = [UILabel new];
+    [self.navTitleLabel setFrame:CGRectMake(0, 20, DZSUIScreen_width, 44)];
+    [self.navTitleLabel setFont: [UIFont fontWithName:@".PingFangSC-Regular" size:16]];
+    [self.navTitleLabel setTextColor: [UIColor colorWithRed:42/255.0 green:43/255.0 blue:48/255.0 alpha:1/1.0]];
+    [self.navTitleLabel setText:@"首页"];
+    [self.navTitleLabel setTextAlignment:NSTextAlignmentCenter];
+//    [self.navView addSubview:self.navTitleLabel];
+    
+    [self.navView addSubview:self.segmentControl];
+    
+    [self.navView setBackgroundColor:[UIColor colorWithWhite:0.f alpha:0]];
+    
+//    self.navView.layer.zPosition = 1.0f;
+    
+    
+//    dispatch_queue_t queue = dispatch_queue_create("me.tutuge.test.gcd", DISPATCH_QUEUE_SERIAL);
+//    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(5 * NSEC_PER_SEC)), queue, ^{
+//        dispatch_async(dispatch_get_main_queue(), ^{
+//            [self.view bringSubviewToFront:self.navView];
+//        });
+//    });
+
+    
+}
+
+- (void)_refreshUI
+{
+//    self.segmentControl.frame = CGRectMake(0, 0, 160, 42);
+    
+    if ([BBSUIContext shareInstance].currentUser) {
+        
+        
+        if ([BBSUIContext shareInstance].currentUser.avatar) {
+            MOBFImageGetter *getter = [MOBFImageGetter sharedInstance];
+            [getter removeImageObserver:self.verifyImgObserver];
+            [self.loginButton setImage:[UIImage BBSImageNamed:@"/User/AvatarDefault3.png"] forState:UIControlStateNormal];
+            NSString *urlString = [NSString stringWithFormat:@"%@&timestamp=%f", [BBSUIContext shareInstance].currentUser.avatar,[[NSDate date] timeIntervalSince1970]];
+            if (![[BBSUIContext shareInstance].currentUser.avatar containsString:@"?"])
+            {
+                urlString = [BBSUIContext shareInstance].currentUser.avatar;
+            }
+            self.verifyImgObserver = [getter getImageWithURL:[NSURL URLWithString:urlString] result:^(UIImage *image, NSError *error){
+                
+                if (image) {
+                    [self.loginButton setImage:image forState:UIControlStateNormal];
+                    
+                    UIImageView *img = [UIImageView new];
+                    [img setImage:image];
+                    [img setFrame:CGRectMake(0, 100, 100, 100)];
+                    //                    [self.view addSubview:img];
+                }
+                
+            }];
+            
+        }else{
+            [self.loginButton setImage:[UIImage BBSImageNamed:@"/Home/AvatarDefault3.png"] forState:UIControlStateNormal];
+        }
+    }else{
+        
+        if (self.stateStarted) {
+            [self.loginButton setImage:[UIImage BBSImageNamed:@"/Home/noUserWhite.png"] forState:UIControlStateNormal];
+        }else{
+            [self.loginButton setImage:[UIImage BBSImageNamed:@"/Home/noUserBlack.png"] forState:UIControlStateNormal];
+        }
+    }
+    
+}
+
+- (void)setContentOffSet:(CGFloat)offSetf
+{
+    if (offSetf >= 0 && offSetf <= 245-64)
+    {
+        CGFloat alpha = offSetf / 181.0;
+        [self.navView setBackgroundColor:[UIColor colorWithWhite:0.f alpha:alpha]];
+    }
+    else if (offSetf < 0)
+    {
+//        CGRect navFrame = self.navView.frame;
+//        navFrame.origin.y = -offSetf;
+//        self.navView.frame = navFrame;
+    }
+    
+    _lastTableViewOffsetY = offSetf;
 }
 
 - (void)login:(id)sender
 {
-
+    
     if (![BBSUIContext shareInstance].currentUser)
     {
         BBSUILoginViewController *vc = [[BBSUILoginViewController alloc] init];
@@ -271,7 +421,7 @@ static NSInteger    BBSUIPageSize = 10;
                 currentUser.notices    = user.notices;
                 
                 [BBSUIContext shareInstance].currentUser = currentUser;
-
+                
                 BBSUIUserHomeViewController *vc = [[BBSUIUserHomeViewController alloc] initWithUser:[BBSUIContext shareInstance].currentUser];
                 [weakSelf.navigationController pushViewController:vc animated:YES];
                 
@@ -296,6 +446,40 @@ static NSInteger    BBSUIPageSize = 10;
         
     }
 }
+
+- (void)editThread:(id)sender
+{
+    if (![BBSUIContext shareInstance].currentUser)
+    {
+        BBSUILoginViewController *vc = [[BBSUILoginViewController alloc] init];
+        
+        UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
+        
+        [self presentViewController:nav animated:YES completion:nil];
+    }
+    else
+    {
+        BBSUIFastPostViewController *editVC = [BBSUIFastPostViewController shareInstance];
+        [editVC addPostThreadObserver:self];
+        UINavigationController *mainStyleNav = [[UINavigationController alloc] initWithRootViewController:editVC];
+        
+        
+        [self presentViewController:mainStyleNav animated:YES completion:nil];
+    }
+}
+
+- (void)searchAction:(UIButton *)sender {
+    BBSUISearchViewController *vc = [BBSUISearchViewController new];
+    
+    id controller = [MOBFViewController currentViewController];
+    if ([controller isKindOfClass:[UITabBarController class]] && ((UITabBarController *)controller).selectedViewController)
+    {
+        controller = ((UITabBarController *)controller).selectedViewController;
+    }
+    
+    [((UIViewController *)controller).navigationController pushViewController:vc animated:YES];
+}
+
 
 //按钮初始状态
 - (void)_btnStartState
@@ -325,429 +509,17 @@ static NSInteger    BBSUIPageSize = 10;
     
 }
 
-- (void)_createNavView
+-(void)selectIndex:(NSInteger)index
 {
-    self.navView = [[BBSUIBaseView alloc] initWithFrame:CGRectMake(0, 0, DZSUIScreen_width, NavigationBar_Height)];
-    [self.view addSubview:self.navView];
-    
-    self.loginButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    [self.loginButton.layer setMasksToBounds:YES];
-    [self.loginButton.layer setCornerRadius:15];
-//    [self.loginButton setImage:[UIImage BBSImageNamed:@"/Home/noUserWhite.png"] forState:UIControlStateNormal];
-    [self.loginButton addTarget:self action:@selector(login:) forControlEvents:UIControlEventTouchUpInside];
-    [self.loginButton setFrame:CGRectMake(7, 27, 30, 30)];
-    [self.view addSubview:self.loginButton];
-    
-    self.postButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    [self.postButton setImage:[UIImage BBSImageNamed:@"/Home/postThreadWhite@2x.png"] forState:UIControlStateNormal];
-    [self.postButton setFrame:CGRectMake(DZSUIScreen_width - 7 - 30, 27, 30, 30)];
-    [self.postButton addTarget:self action:@selector(editThread:) forControlEvents:UIControlEventTouchUpInside];
-    [self.view addSubview:self.postButton];
-    
-    self.searchButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    [self.searchButton setImage:[UIImage BBSImageNamed:@"/Common/searchWhite@2x.png"] forState:UIControlStateNormal];
-    [self.searchButton setFrame:CGRectMake(BBS_LEFT(self.postButton) - 10 - 30, 27, 30, 30)];
-    [self.searchButton addTarget:self action:@selector(searchAction:) forControlEvents:UIControlEventTouchUpInside];
-    [self.view addSubview:self.searchButton];
-    
-    self.navTitleLabel = [UILabel new];
-    [self.navTitleLabel setFrame:CGRectMake(0, 20, DZSUIScreen_width, 44)];
-    [self.navTitleLabel setFont: [UIFont fontWithName:@".PingFangSC-Regular" size:16]];
-    [self.navTitleLabel setTextColor: [UIColor colorWithRed:42/255.0 green:43/255.0 blue:48/255.0 alpha:1/1.0]];
-    [self.navTitleLabel setText:@"首页"];
-    [self.navTitleLabel setTextAlignment:NSTextAlignmentCenter];
-    [self.navView addSubview:self.navTitleLabel];
-}
-
-- (void)_refreshUI
-{
-    if ([BBSUIContext shareInstance].currentUser) {
-        
-        
-        if ([BBSUIContext shareInstance].currentUser.avatar) {
-            MOBFImageGetter *getter = [MOBFImageGetter sharedInstance];
-            [getter removeImageObserver:self.verifyImgObserver];
-            [self.loginButton setImage:[UIImage BBSImageNamed:@"/User/AvatarDefault3.png"] forState:UIControlStateNormal];
-            NSString *urlString = [NSString stringWithFormat:@"%@&timestamp=%f", [BBSUIContext shareInstance].currentUser.avatar,[[NSDate date] timeIntervalSince1970]];
-            if (![[BBSUIContext shareInstance].currentUser.avatar containsString:@"?"])
-            {
-                urlString = [BBSUIContext shareInstance].currentUser.avatar;
-            }
-            self.verifyImgObserver = [getter getImageWithURL:[NSURL URLWithString:urlString] result:^(UIImage *image, NSError *error){
-                
-                if (image) {
-                    [self.loginButton setImage:image forState:UIControlStateNormal];
-                    
-                    UIImageView *img = [UIImageView new];
-                    [img setImage:image];
-                    [img setFrame:CGRectMake(0, 100, 100, 100)];
-//                    [self.view addSubview:img];
-                }
-                
-            }];
-
-        }else{
-            [self.loginButton setImage:[UIImage BBSImageNamed:@"/Home/AvatarDefault3.png"] forState:UIControlStateNormal];
-        }
-    }else{
-        
-        if (self.stateStarted) {
-            [self.loginButton setImage:[UIImage BBSImageNamed:@"/Home/noUserWhite.png"] forState:UIControlStateNormal];
-        }else{
-            [self.loginButton setImage:[UIImage BBSImageNamed:@"/Home/noUserBlack.png"] forState:UIControlStateNormal];
-        }
-    }
-
-}
-
-#pragma mark - private data
-- (void)_initData
-{
-    self.currentIndex = 1;
-    self.currentUserId = [[BBSUIContext shareInstance].currentUser.uid integerValue];
-    self.stateStarted = YES;
-}
-
-- (void)_requestData
-{
-    [self _requestThreadList];
-    [self _requestBannerList];
-    [self _requestForumList];
-}
-
-- (void)_requestThreadList
-{
-    __weak typeof(self) theController = self;
-    [BBSSDK getThreadListWithFid:0 orderType:[NSString orderTypeStringFromOrderType:BBSUIThreadOrderPostTime] selectType:[NSString selectTypeStringFromSelectType:BBSUIThreadSelectTypeLatest] pageIndex:self.currentIndex pageSize:BBSUIPageSize result:^(NSArray *threadList, NSError *error) {
-        
-        if (!error) {
-            
-            if (theController.currentIndex == 1) {
-                theController.threadListArray = [NSMutableArray arrayWithArray:threadList];
-            }else{
-                [theController.threadListArray addObjectsFromArray:threadList];
-            }
-            
-            [theController.homeTableView reloadData];
-            [theController.homeTableView.mj_footer setHidden:NO];
-            
-            if (threadList.count < BBSUIPageSize) {
-                [theController.homeTableView.mj_footer endRefreshingWithNoMoreData];
-            }
-            
-            if (theController.currentIndex == 1) {
-                
-                CGRect tipFrame = (CGRect){0,350,DZSUIScreen_width,DZSUIScreen_height - 350};
-                
-                [theController.homeTableView configureTipViewWithFrame:tipFrame tipMessage:@"暂无内容" noDataImage:nil hasData:theController.threadListArray.count != 0 hasError:YES reloadButtonBlock:^(id sender) {
-                    
-                    [theController.homeTableView.mj_header beginRefreshing];
-                    [theController _requestData];
-                    
-                }];
-        
-            }
-        }
-        else
-        {
-            NSLog(@"%@",error);
-            CGRect tipFrame = (CGRect){0,350,DZSUIScreen_width,DZSUIScreen_height - 350};
-            
-            [theController.homeTableView configureTipViewWithFrame:tipFrame tipMessage:@"网络不佳，请再次刷新" noDataImage:nil hasData:theController.threadListArray.count != 0 hasError:YES reloadButtonBlock:^(id sender) {
-                
-                [theController.homeTableView.mj_header beginRefreshing];
-                [theController _requestData];
-                
-            }];
-        }
-        
-        [theController.homeTableView.mj_header endRefreshing];
-        [theController.homeTableView.mj_footer endRefreshing];
-        
-    }];
-}
-
-- (void)_requestBannerList
-{
-    __weak typeof(self) theHomeVC = self;
-    [BBSSDK getBannerList:^(NSArray *bannnerList, NSError *error) {
-        
-        if (bannnerList.count > 0) {
-            
-            theHomeVC.maskImage.hidden = YES;
-            
-            theHomeVC.bannerArray = bannnerList;
-            
-            NSMutableArray *titleArray = [NSMutableArray array];
-            NSMutableArray *pictureArray = [NSMutableArray array];
-            [bannnerList enumerateObjectsUsingBlock:^(BBSBanner *  _Nonnull banner, NSUInteger idx, BOOL * _Nonnull stop) {
-                
-                [pictureArray addObject:banner.picture ? banner.picture : @""];
-                [titleArray addObject:banner.title ? banner.title : @""];
-                
-            }];
-            
-            theHomeVC.bannerView.picDataArray = [pictureArray copy];
-            theHomeVC.bannerView.titleDataArray = [titleArray copy];
-            
-            if (pictureArray.count > 1) {
-                theHomeVC.bannerView.isAutomaticScroll = YES;
-            }else{
-                theHomeVC.bannerView.isAutomaticScroll = NO;
-                theHomeVC.bannerView.scrollEnabled = NO;
-            }
-            
-            theHomeVC.bannerView.automaticScrollDelay = 5;
-            theHomeVC.bannerView.cycleViewStyle = CycleViewStyleBoth;
-            theHomeVC.bannerView.pageControlTintColor = [UIColor blackColor];
-            theHomeVC.bannerView.pageControlCurrentColor = [UIColor whiteColor];
-            theHomeVC.bannerView.delegate = theHomeVC;
-            theHomeVC.bannerView.titleLabelTextColor = [UIColor whiteColor];
-            
-        }else{
-            
-            theHomeVC.maskImage.hidden = NO;
-            [theHomeVC.maskImage setImage:[UIImage BBSImageNamed:@"/Home/bannerDefault@2x.png"]];
-        }
-        
-    }];
-
-}
-
-- (void)_requestForumList
-{
-    __weak typeof(self) theController = self;
-    [BBSSDK getForumListWithFup:0 result:^(NSArray *forumsList, NSError *error) {
-        
-        [theController.forumHeader setForumList:forumsList];
-        
-    }];
-}
-
-- (void)setupLeftBarButton
-{
-    UIButton *loginButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    loginButton.frame = CGRectMake(0, 0, 30, 30);
-    
-    [loginButton.layer setMasksToBounds:YES];
-    [loginButton.layer setCornerRadius:15];
-    if ([BBSUIContext shareInstance].currentUser) {
-        
-        
-        if ([BBSUIContext shareInstance].currentUser.avatar) {
-            NSString *avatarURLBig = [BBSUIContext shareInstance].currentUser.avatar;
-            NSString *avatarURLSmall = [avatarURLBig stringByReplacingOccurrencesOfString:@"big" withString:@"small"];
-            
-            //        NSString *avatarURL = [avatarURLSmall stringByAppendingFormat:@"&timestamp=%f", [NSDate date].timeIntervalSince1970];
-            //
-            //        UIImage *scaleImage = [MOBFImage scaleImage:[UIImage BBSImageNamed:@"/Home/NoUser.png"] withSize:CGSizeMake(60, 60)];
-            //        [login setImage:scaleImage forState:UIControlStateNormal];
-            //        login.contentMode = UIViewContentModeScaleAspectFill;
-            //        [[MOBFImageGetter sharedInstance] getImageWithURL:[NSURL URLWithString:avatarURL] result:^(UIImage *image, NSError *error) {
-            //
-            //            UIImage *avatarImage = nil;
-            //            if (error) {
-            //                avatarImage = [UIImage BBSImageNamed:@"/Home/NoUser.png"];
-            //            }else{
-            //                avatarImage = image;
-            //            }
-            //            UIImage *scaleImage = [MOBFImage scaleImage:avatarImage withSize:CGSizeMake(60, 60)];
-            //            [login setImage:scaleImage forState:UIControlStateNormal];
-            //
-            //        }];
-            
-            [loginButton sd_setBackgroundImageWithURL:[NSURL URLWithString:avatarURLSmall]
-                                             forState:UIControlStateNormal
-                                     placeholderImage:[MOBFImage scaleImage:[UIImage BBSImageNamed:@"/Home/NoUser.png"] withSize:CGSizeMake(60, 60)]
-                                              options:SDWebImageCacheMemoryOnly | SDWebImageRefreshCached];//不使用缓存
-        }else{
-            [loginButton setImage:[UIImage BBSImageNamed:@"/Home/AvatarDefault3.png"] forState:UIControlStateNormal];
-        }
-        
-        
-    }
-    self.loginButton = loginButton;
-    
-    [loginButton addTarget:self action:@selector(login:) forControlEvents:UIControlEventTouchUpInside];
-    self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:loginButton];
-}
-
-- (void)_setupRightBarButton
-{
-    UIButton *postThreadButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    postThreadButton.frame = CGRectMake(0, 0, 30, 30);
-    UIImage *editScaleImage = [MOBFImage scaleImage:[UIImage BBSImageNamed:@"/Home/postThreadWhite@2x.png"] withSize:CGSizeMake(60, 60)];
-    [postThreadButton setImage:editScaleImage forState:UIControlStateNormal];
-    [postThreadButton addTarget:self action:@selector(editThread:) forControlEvents:UIControlEventTouchUpInside];
-    UIBarButtonItem *postThreadBarButton = [[UIBarButtonItem alloc] initWithCustomView:postThreadButton];
-    
-    
-    UIBarButtonItem *spaceItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFixedSpace target:nil action:nil];
-    spaceItem.width = 15;
-    
-    UIButton *searchBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-    searchBtn.frame = CGRectMake(0, 0, 30, 30);
-    UIImage *searchScaleImage = [MOBFImage scaleImage:[UIImage BBSImageNamed:@"/Common/searchWhite@2x.png"] withSize:CGSizeMake(60, 60)];
-    [searchBtn setImage:searchScaleImage forState:UIControlStateNormal];
-    [searchBtn addTarget:self action:@selector(searchAction:) forControlEvents:UIControlEventTouchUpInside];
-    UIBarButtonItem *searchBarButton = [[UIBarButtonItem alloc] initWithCustomView:searchBtn];
-    
-    self.navigationItem.rightBarButtonItems = @[postThreadBarButton, spaceItem, searchBarButton];
-    
-    self.searchButton = searchBtn;
-    self.postButton = postThreadButton;
-}
-
-- (void)_setCustomTitleView
-{
-    _navTitleLabel = [UILabel new];
-    [_navTitleLabel setFrame:CGRectMake(0, 0, 60, 44)];
-    [_navTitleLabel setFont: [UIFont fontWithName:@".PingFangSC-Regular" size:16]];
-    [_navTitleLabel setTextColor: [UIColor colorWithRed:42/255.0 green:43/255.0 blue:48/255.0 alpha:1/1.0]];
-    [_navTitleLabel setText:@"首页"];
-    [_navTitleLabel setTextAlignment:NSTextAlignmentCenter];
-    [self.navigationItem setTitleView:_navTitleLabel];
-}
-
-#pragma mark - scrollview delegate
-- (void)scrollViewDidScroll:(UIScrollView *)scrollView
-{
-    UIColor * color = [UIColor whiteColor];
-    CGFloat offsetY = scrollView.contentOffset.y;
-//    CGFloat distance = offsetY + 64.0;
-    CGFloat screenW = DZSUIScreen_width;
-    CGFloat avatarW = screenW*250.0/1080.0;
-    
-    CGFloat oldY = - 20.0- (screenW*40.0/1080.0-44.0) ;
-    CGFloat offsetYL = avatarW - 64.0 - 44.0;
-    
-    if (offsetY > offsetYL + oldY) {
-        
-        //64的距离，alpha从0到1。
-        CGFloat alpha;
-        CGFloat btnAlpha;
-        if (offsetY-(offsetYL + oldY) < 64.0) {
-            alpha = (offsetY-(offsetYL + oldY))/64.0;
-            if (offsetY-(offsetYL + oldY) < 32.0) {
-                btnAlpha = 1 - (offsetY-(offsetYL + oldY))/32.0;
-                [self _btnStartState];
-            }else{
-                btnAlpha =  (offsetY-(offsetYL + oldY) - 32.0)/32.0;
-                [self _btnSwitchState];
-            }
-        }else{
-            alpha = 1.0;
-            btnAlpha = 1.0;
-            [self _btnSwitchState];
-        }
-        [self.navigationController.navigationBar lt_setBackgroundColor:[color colorWithAlphaComponent:alpha]];
-        self.loginButton.alpha = btnAlpha;
-        self.searchButton.alpha = btnAlpha;
-        self.postButton.alpha = btnAlpha;
-        self.navTitleLabel.alpha = alpha;
-        self.navView.alpha = alpha;
-        
-    }else{
-        
-//        [self.navigationController.navigationBar lt_setBackgroundColor:[color colorWithAlphaComponent:0]];
-        self.navView.alpha = 0;
-        [self _btnStartState];
-        self.loginButton.alpha = 1.0;
-        self.searchButton.alpha = 1.0;
-        self.postButton.alpha = 1.0;
-        self.navTitleLabel.alpha = 0;
-        
-    }
-}
-
-
-#pragma mark - tableview datasource
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
-{
-    return self.threadListArray.count;
-}
-
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    
-    BBSUIThreadSummaryCell *cell = [tableView dequeueReusableCellWithIdentifier:BBSUIHomeTableIdentifier];
-    
-    if (!cell) {
-        cell = [[BBSUIThreadSummaryCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:BBSUIHomeTableIdentifier];
-    }
-    
-    [self configureCell:cell atIndexPath:indexPath];
-
-    [cell setThreadModel:self.threadListArray[indexPath.row] cellType:BBSUIThreadSummaryCellTypeHomepage];
-    
-    return cell;
-}
-
-- (void)configureCell:(BBSUIThreadSummaryCell *)cell atIndexPath:(NSIndexPath *)indexPath {
-    cell.fd_enforceFrameLayout = NO; // Enable to use "-sizeThatFits:"
-}
-
-#pragma mark - tableview delegate
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    [tableView deselectRowAtIndexPath:indexPath animated:YES];
-    
-    BBSThread *threadModel = self.threadListArray[indexPath.row];
-    threadModel.select = YES;
-    
-    BBSUIThreadSummaryCell *cell = [tableView cellForRowAtIndexPath:indexPath];
-
-    cell.read = YES;
-    
-    BBSUIThreadDetailViewController *detailVC = [[BBSUIThreadDetailViewController alloc] initWithThreadModel:threadModel];
-    [self.navigationController pushViewController:detailVC animated:YES];
-}
-
-#pragma mark - cycleview delegate  广告条
--(void)bannerClick:(NSInteger)index
-{
-    BBSBanner *banner = self.bannerArray[index];
-    NSLog(@"link = %@, banner.title = %@, banner.picture = %@", banner.link, banner.title, banner.picture);
-    NSLog(@"bannner.btype = %@", banner.btype);
-    if ([banner.btype isEqualToString:@"link"]) {
-        BBSUIBannerPreviewViewController *previewVC = [[BBSUIBannerPreviewViewController alloc] initWithTitle:banner.title];
-        [previewVC setUrlString:banner.link];
-        
-        id controller;
-        if ([controller isKindOfClass:[UITabBarController class]] && ((UITabBarController *)controller).selectedViewController)
-        {
-            controller = ((UITabBarController *)controller).selectedViewController;
-        }
-        else if ([MOBFViewController currentViewController].navigationController)
-        {
-            controller = [MOBFViewController currentViewController];
-        }
-        else
-        {
-            return;
-        }
-        
-        [((UIViewController *)controller).navigationController pushViewController:previewVC animated:YES];
-
-    }else if ([banner.btype isEqualToString:@"thread"])
+    if (index == 1)
     {
-        BBSUIThreadDetailViewController *detailVC = [[BBSUIThreadDetailViewController alloc] initWithFid:banner.fid tid:banner.tid];
-        
-        id controller;
-        if ([controller isKindOfClass:[UITabBarController class]] && ((UITabBarController *)controller).selectedViewController)
-        {
-            controller = ((UITabBarController *)controller).selectedViewController;
-        }
-        else if ([MOBFViewController currentViewController].navigationController)
-        {
-            controller = [MOBFViewController currentViewController];
-        }
-        else
-        {
-            return;
-        }
-        
-        [((UIViewController *)controller).navigationController pushViewController:detailVC animated:YES];
+        self.postButton.hidden = NO;
+        self.searchButton.hidden = NO;
+    }
+    else
+    {
+        self.postButton.hidden = YES;
+        self.searchButton.hidden = YES;
     }
 }
 
@@ -782,5 +554,4 @@ static NSInteger    BBSUIPageSize = 10;
         [((UIButton *)self.navigationItem.leftBarButtonItem.customView) setImage:scaleImage forState:UIControlStateNormal];
     }
 }
-
 @end

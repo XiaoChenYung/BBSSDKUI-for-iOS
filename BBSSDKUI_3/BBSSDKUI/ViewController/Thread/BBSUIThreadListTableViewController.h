@@ -9,14 +9,7 @@
 #import <UIKit/UIKit.h>
 #import "BBSUIThreadListView.h"
 #import <BBSSDK/BBSForum.h>
-
-typedef NS_ENUM(NSInteger, PageType) {
-    PageTypeHomePage    = 0,
-    PageTypeSearch      = 1,
-    PageTypeHistory     = 2,
-    PageTypeFavorites   = 3, // 收藏
-    PageTypeUserThread  = 4, // 帖子
-};
+#import "BBSUIEnum.h"
 
 @interface BBSUIThreadListTableViewController : UITableViewController
 

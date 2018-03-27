@@ -52,6 +52,15 @@
     return [[self alloc] init];
 }
 
++ (instancetype)portalTextView
+{
+    BBSUICommentTextView *textView = [[self alloc] init];
+    textView -> _imagePickButton.hidden = YES;
+    textView -> _keyboardButton.hidden = YES;
+    textView -> _faceButton.hidden = YES;
+    return textView;
+}
+
 -(instancetype)initWithFrame:(CGRect)frame
 {
     if (self = [super initWithFrame:frame]) {

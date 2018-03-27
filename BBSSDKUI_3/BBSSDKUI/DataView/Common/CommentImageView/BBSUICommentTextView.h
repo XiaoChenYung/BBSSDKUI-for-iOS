@@ -19,4 +19,6 @@
 
 + (instancetype)topTextView;
 
++ (instancetype)portalTextView;
+
 @end

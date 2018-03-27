@@ -25,8 +25,9 @@
 
  @param content 分享内容model
  @param animation 是否需要动画
+ @param flag 标识,0论坛,1门户
  */
-- (void)createShareViewWithContent:(id)content animation:(BOOL)animation;
+- (void)createShareViewWithContent:(id)content flag:(NSInteger)flag animation:(BOOL)animation;
 
 /**
  *  展现分享视图

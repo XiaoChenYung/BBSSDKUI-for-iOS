@@ -13,6 +13,7 @@
 #import "MJRefresh.h"
 #import "BBSUIContext.h"
 #import "BBSUIThreadDetailViewController.h"
+#import "BBSUIPortalDetailViewController.h"
 #import "UIView+TipView.h"
 #import "BBSUICoreDataManage.h"
 
@@ -236,12 +237,13 @@
     NSArray *array;
     __weak typeof(self) weakSelf = self;
     if (self.currentIndex == 1 || self.marrData.count == 0) {
-        array = [[BBSUICoreDataManage shareManager] queryHistoryWithTid:-1 limit:10];
+        array = [[BBSUICoreDataManage shareManager] queryHistoryWithId:-1 limit:10];
         self.marrData = [NSMutableArray arrayWithArray:array];
     }
     else{
+        // ???????
         BBSThread *thread = self.marrData.lastObject;
-        array = [[BBSUICoreDataManage shareManager] queryHistoryWithTid:thread.tid limit:10];
+        array = [[BBSUICoreDataManage shareManager] queryHistoryWithId:thread.tid limit:10];
         [self.marrData addObjectsFromArray:array];
     }
     [self.collectionTableView reloadData];
@@ -301,7 +303,15 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
     BBSThread *thread = self.marrData[indexPath.row];
     
-    BBSUIThreadDetailViewController *detailVC = [[BBSUIThreadDetailViewController alloc] initWithThreadModel:thread];
+    id detailVC;
+    if (_type == CollectionViewTypeHistory && [thread.type isEqualToString:@"portal"])
+    {
+        detailVC = [[BBSUIPortalDetailViewController alloc] initWithThreadModel:thread];
+    }
+    else
+    {
+        detailVC = [[BBSUIThreadDetailViewController alloc] initWithThreadModel:thread];
+    }
     
     if ([MOBFViewController currentViewController].navigationController)
     {

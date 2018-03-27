@@ -40,6 +40,8 @@
 @property(nonatomic, strong) UILabel *forumNameLabel;
 @property(nonatomic, strong) NSMutableDictionary <NSString *, NSString *>*mdicExpression;
 
+@property (nonatomic, strong) UIButton *hideNameButton;
+
 @end
 
 @implementation BBSUIFastPostViewController
@@ -89,6 +91,18 @@
     self.navigationController.navigationBar.tintColor = [UIColor whiteColor];
     
     [self.titleTextField becomeFirstResponder];
+    
+    BBSUser *currentUser = [BBSUIContext shareInstance].currentUser;
+    if ([currentUser.allowAnonymous integerValue] == 0 && self.forum.allowAnonymous == 0)
+    {
+        self.hideNameButton.hidden = YES;
+    }
+    else
+    {
+        self.hideNameButton.hidden = NO;
+    }
+    
+    self.hideNameButton.selected = NO;
 }
 
 - (void)setNavigationItems
@@ -112,7 +126,31 @@
     [publishButton.titleLabel setFont:[UIFont fontWithName:@".PingFangSC-Medium" size:15]];
     [publishButton addTarget:self action:@selector(publishButtonHandler:) forControlEvents:UIControlEventTouchUpInside];
     [publishButton.titleLabel setFont:[UIFont systemFontOfSize:15]];
-    self.navigationItem.rightBarButtonItems = @[fixedButton, [[UIBarButtonItem alloc] initWithCustomView:publishButton]];
+    
+    BBSUser *currentUser = [BBSUIContext shareInstance].currentUser;
+//    if ([currentUser.allowAnonymous integerValue])
+//    {
+        //匿名
+        UIButton *hideNameBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+        [hideNameBtn setFrame:CGRectMake(0, 0, 64, 44)];
+        [hideNameBtn setTitle:@" 匿名" forState:UIControlStateNormal];
+        [hideNameBtn setImage:[UIImage BBSImageNamed:@"/Thread/hideName@3x.png"] forState: UIControlStateNormal];
+        [hideNameBtn setImage:[UIImage BBSImageNamed:@"/Thread/hideNameSelect@3x.png"] forState: UIControlStateSelected];
+        [hideNameBtn setTitleColor:[UIColor grayColor] forState:UIControlStateNormal];
+        hideNameBtn.titleLabel.font = [UIFont systemFontOfSize:15];
+        [hideNameBtn addTarget:self action:@selector(hideNamebtnHandler:) forControlEvents:UIControlEventTouchUpInside];
+        self.hideNameButton = hideNameBtn;
+        
+        self.navigationItem.rightBarButtonItems = @[fixedButton, [[UIBarButtonItem alloc] initWithCustomView:publishButton], [[UIBarButtonItem alloc] initWithCustomView:hideNameBtn]];
+//    }
+//    else
+//    {
+//        self.navigationItem.rightBarButtonItems = @[fixedButton, [[UIBarButtonItem alloc] initWithCustomView:publishButton]];
+//    }
+    if ([currentUser.allowAnonymous integerValue] == 0 && self.forum.allowAnonymous == 0)
+    {
+        self.hideNameButton.hidden = YES;
+    }
 }
 
 - (void)cancelButtonHandler:(UIButton *)button
@@ -318,6 +356,16 @@
         if([selectedForum isKindOfClass:[BBSForum class]])
         {
             self.forum = selectedForum ;
+            
+            BBSUser *currentUser = [BBSUIContext shareInstance].currentUser;
+            if ([currentUser.allowAnonymous integerValue] || selectedForum.allowAnonymous)
+            {
+                self.hideNameButton.hidden = NO;
+            }
+            else
+            {
+                self.hideNameButton.hidden = YES;
+            }
         }
     }];
     
@@ -328,6 +376,24 @@
 - (void)publishButtonHandler:(UIButton *)button
 {
     [self.editor hideKeyboard];
+    
+    // 验证发帖间隔是否符合要求
+    NSDictionary *settings = [BBSUIContext shareInstance].settings;
+    if (settings[@"floodctrl"] && [settings[@"floodctrl"] integerValue] != 0)
+    {
+        NSInteger timeOffset = [settings[@"floodctrl"] integerValue];
+        
+        NSInteger lastime = [BBSUIContext shareInstance].lastFastPostTime;
+        NSLog(@"lastTime = %lu",lastime);
+        NSTimeInterval currentTime = [[NSDate date] timeIntervalSince1970];
+        
+        
+        if (currentTime - lastime < timeOffset)
+        {
+            [BBSUIProcessHUD showFailInfo:[NSString stringWithFormat:@"发帖间隔小于%lu秒",timeOffset] delay:2];
+            return;
+        }
+    }
     
     if (!_forum)
     {
@@ -364,6 +430,11 @@
     [self postThread];
     
  }
+
+- (void)hideNamebtnHandler:(UIButton *)button
+{
+    button.selected = !button.selected;
+}
 
 - (NSString *)_replaceExpressionWithUrl:(NSMutableString *)url key:(NSString *)key obj:(NSString *)obj
 {
@@ -409,7 +480,7 @@
 //        }
     }];
     
-    NSLog(@"   =====  ®%@",urlHtml);
+//    NSLog(@"   =====  ®%@",urlHtml);
     
     NSString *title = self.titleTextField.text;
     
@@ -495,7 +566,17 @@
 
 - (void)postThreadWithHTML:(NSString *)html
 {
-    [BBSSDK postThreadWithFid:_forum.fid subject:_titleTextField.text message:html result:^(NSError *error) {
+    // 是否匿名发帖
+    NSInteger isanonymous = 0;
+    if (self.hideNameButton.isSelected && self.hideNameButton.isHidden == NO)
+    {
+        isanonymous = 1;
+    }
+    
+    [BBSUIContext shareInstance].lastFastPostTime = [[NSDate date]timeIntervalSince1970];
+    NSLog(@"_______postDate%lu",[BBSUIContext shareInstance].lastFastPostTime);
+    
+    [BBSSDK postThreadWithFid:_forum.fid subject:_titleTextField.text message:html isanonymous:isanonymous hiddenreplies:0 result:^(NSError *error) {
         
         if (!error)
         {
@@ -599,10 +680,10 @@
 
 - (void)setForum:(BBSForum *)forum
 {
-    _forum = forum ;
-    
-    if (_forum)
+
+    if (forum && forum.fid != 0)//不是“全部”版块
     {
+        _forum = forum ;
         [self.forumNameLabel setText:forum.name];
         [SDWebImageDownloader.sharedDownloader setValue:@"text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8"
                                      forHTTPHeaderField:@"Accept"];
@@ -616,6 +697,7 @@
     }
     else
     {
+        _forum = nil;
         [self.forumNameLabel setText:@"请选择发帖模块"];
         [self.forumImageView setImage:[UIImage BBSImageNamed:@"/Thread/seletForum.png"]];
     }

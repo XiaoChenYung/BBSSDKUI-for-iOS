@@ -24,7 +24,14 @@
     
     [self addWebview];
     
-    [self setupJSNative];
+//    [self setupJSNative];
+    
+}
+
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:YES];
+    [self delNavLine];
 }
 
 - (void)addWebview
@@ -40,7 +47,7 @@
     self.webView.scalesPageToFit = YES;
 }
 
-- (void)setupJSNative
+- (void)setupJSNativeWithNativeExtPath:(NSString *)extPath
 {
     if ([MOBFDevice versionCompare:@"8.0"] >= 0) {
         self.context = [self.webView valueForKeyPath:@"documentView.webView.mainFrame.javaScriptContext"];
@@ -50,7 +57,7 @@
     }
     
     //加载NativeExt
-    NSString *path = [[NSBundle bbsLoadBundle] pathForResource:@"/HTML/assets/js/NativeExt" ofType:@"js"];
+    NSString *path = [[NSBundle bbsLoadBundle] pathForResource:extPath ofType:@"js"];
     NSString *pluginID = [self pluginIDByPath:path];
     if (pluginID)
     {
@@ -80,6 +87,33 @@
     }
     
     return nil;
+}
+
+- (void)delNavLine
+{
+    [self.navigationController.navigationBar setBackgroundImage:[UIImage imageNamed:@"head_bar_pink_.png"] forBarMetrics:UIBarMetricsDefault];
+    
+    [self.navigationController.navigationBar setShadowImage:[self createImageWithColor:[UIColor clearColor]]];
+}
+
+- (UIImage *)createImageWithColor:(UIColor *)color{
+    
+    CGRect rect = CGRectMake(0.0f,0.0f,1.0f,1.0f);
+    
+    UIGraphicsBeginImageContext(rect.size);
+    
+    CGContextRef context =UIGraphicsGetCurrentContext();
+    
+    CGContextSetFillColorWithColor(context, [color CGColor]);
+    
+    CGContextFillRect(context, rect);
+    
+    UIImage *theImage =UIGraphicsGetImageFromCurrentImageContext();
+    
+    UIGraphicsEndImageContext();
+    
+    return theImage;
+    
 }
 
 @end

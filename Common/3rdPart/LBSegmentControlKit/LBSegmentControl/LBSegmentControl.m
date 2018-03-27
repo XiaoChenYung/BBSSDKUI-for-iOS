@@ -70,6 +70,8 @@ typedef NS_ENUM(NSInteger, ScrollCtrlViewScrollStatus) {
 
 @property (strong, nonatomic) UIView *seperateView;
 
+@property (nonatomic, assign) CGFloat currentContentOffSet;
+
 @end
 
 @implementation LBSegmentControl
@@ -83,8 +85,13 @@ typedef NS_ENUM(NSInteger, ScrollCtrlViewScrollStatus) {
     
     // 必须要在这个方法中调用，因为在这里才可以知道响应者链的顺序
     [self.viewController.view addSubview:self.scrollCtrlView];
+    
     if (self.isIntegrated) {
         [self.scrollCtrlView setFrame:CGRectMake(0, 0, LBkScreen_width, CGRectGetHeight(self.viewController.view.frame))];
+    }
+    if (self.notScroll)
+    {
+        self.scrollCtrlView.scrollEnabled = NO;
     }
     
     // 创建默认的控制器试图
@@ -146,6 +153,7 @@ typedef NS_ENUM(NSInteger, ScrollCtrlViewScrollStatus) {
     if (self) {
         //
         self.isScrollTitle = YES;
+        self.titleSize = 14;
         [self initDefault];
         [self creatSegementScrollView];
     }
@@ -172,6 +180,9 @@ typedef NS_ENUM(NSInteger, ScrollCtrlViewScrollStatus) {
     self.segementScrollView.showsVerticalScrollIndicator = NO;
     self.segementScrollView.showsHorizontalScrollIndicator = NO;
     [self addSubview:self.segementScrollView];
+    
+    self.scrollCtrlView.scrollEnabled = NO;
+    self.segementScrollView.scrollEnabled = self.isScrollTitle;
 }
 
 /**
@@ -201,6 +212,7 @@ typedef NS_ENUM(NSInteger, ScrollCtrlViewScrollStatus) {
     // Item的宽度
     CGFloat itemW = 0.0;
     CGFloat itemX = 0.0;
+    
     for (int i = 0; i < titles.count; i ++) {
         // 判断是滑动还是静止标题栏
         if (self.isScrollTitle == YES) {
@@ -210,8 +222,9 @@ typedef NS_ENUM(NSInteger, ScrollCtrlViewScrollStatus) {
             CGSize labelSize = [self sizeWithText:titles[i] font:segementTitleNormalFont maxSize:CGSizeMake(LBkScreen_width, self.height)];
             // 计算Item的宽度  Item的宽度 = 本标签的宽度 + 间距
             itemW = labelSize.width + LBSegementViewTitlePadding / 2;
+    
             // 设置contentSize
-            self.segementScrollView.contentSize = [self getContentSize];
+//            self.segementScrollView.contentSize = [self getContentSize];
             // 滑动标题栏Item的x值在后面进行计算
         } else {
             // 静止标题栏
@@ -221,8 +234,9 @@ typedef NS_ENUM(NSInteger, ScrollCtrlViewScrollStatus) {
             // Item的x值
             itemX = i * itemW;
             // 设置contentSize
-            self.segementScrollView.contentSize = CGSizeMake(LBkScreen_width, 0);
+//            self.segementScrollView.contentSize = CGSizeMake(LBkScreen_width, 0);
         }
+        
         LBSegment * segment = [[LBSegment alloc] initWithFrame:CGRectMake(itemX, 0, itemW, self.height)];
         [segment setTitle:titles[i] titleSize:self.titleSize];
         segment.titleNormalColor = self.titleNormalColor;
@@ -236,6 +250,65 @@ typedef NS_ENUM(NSInteger, ScrollCtrlViewScrollStatus) {
         // 计算滑动标题栏Item的x值
         itemX += itemW;
     }
+    
+    if (self.isScrollTitle == YES) {
+        self.segementScrollView.contentSize = CGSizeMake(itemX, 0);
+    }else{
+        self.segementScrollView.contentSize = CGSizeMake(LBkScreen_width > self.width? self.width:LBkScreen_width, 0);
+    }
+}
+
+- (NSArray <LBSegment *>*)settingTitles:(NSArray *)titles{
+    _titles = titles;
+    NSMutableArray *segments = [NSMutableArray arrayWithCapacity:2];
+    
+    // Item的宽度
+    CGFloat itemW = 0.0;
+    CGFloat itemX = 0.0;
+    for (int i = 0; i < titles.count; i ++) {
+        // 判断是滑动还是静止标题栏
+        if (self.isScrollTitle == YES) {
+            // 滑动标题栏
+            
+            // 计算文本标签的Size
+            CGSize labelSize = [self sizeWithText:titles[i] font:segementTitleNormalFont maxSize:CGSizeMake(LBkScreen_width, self.height)];
+            // 计算Item的宽度  Item的宽度 = 本标签的宽度 + 间距
+            itemW = labelSize.width + LBSegementViewTitlePadding / 2;
+            // 设置contentSize
+//            self.segementScrollView.contentSize = [self getContentSize];
+            // 滑动标题栏Item的x值在后面进行计算
+        } else {
+            // 静止标题栏
+            
+            // Item的宽度
+            itemW = self.width / titles.count;
+            // Item的x值
+            itemX = i * itemW;
+            // 设置contentSize
+//            self.segementScrollView.contentSize = CGSizeMake(LBkScreen_width, 0);
+        }
+        LBSegment * segment = [[LBSegment alloc] initWithFrame:CGRectMake(itemX, 0, itemW, self.height)];
+        [segment setTitle:titles[i] titleSize:self.titleSize];
+        segment.titleNormalColor = self.titleNormalColor;
+        segment.titleSelectColor = self.titleSelectColor;
+        
+        segment.titleSelectBold = YES;
+        segment.tag = 1995 + i;
+        [segment addTarget:self action:@selector(itemAction:) forControlEvents:UIControlEventTouchUpInside];
+        [self.segementScrollView addSubview:segment];
+        [segments addObject:segment];
+        
+        // 计算滑动标题栏Item的x值
+        itemX += itemW;
+        
+        if (self.isScrollTitle == YES) {
+            self.segementScrollView.contentSize = CGSizeMake(itemX, 0);
+        }else{
+            self.segementScrollView.contentSize = CGSizeMake(LBkScreen_width > self.width? self.width:LBkScreen_width, 0);
+        }
+    }
+    
+    return segments;
 }
 
 - (void)setViewControllers:(NSArray *)viewControllers {
@@ -251,7 +324,7 @@ typedef NS_ENUM(NSInteger, ScrollCtrlViewScrollStatus) {
     [_seperateView setHidden:isIntegrated];
     
     if (_isIntegrated) {
-        self.segementScrollView.contentSize = CGSizeMake(self.width, 0);
+//        self.segementScrollView.contentSize = CGSizeMake(self.width, 0);
     }
 }
 
@@ -262,6 +335,9 @@ typedef NS_ENUM(NSInteger, ScrollCtrlViewScrollStatus) {
  */
 - (void)itemAction:(LBSegment *)segment {
     
+//    NSLog(@"=====________ %@ %@",self.currentItem.title, self.nextItem.title);
+    [self _settingCurrentContentOffSet];
+    
     // 设置滑动试图的偏移量
     [self.scrollCtrlView setContentOffset:CGPointMake(LBkScreen_width * (segment.tag - 1995), 0) animated:NO];
     
@@ -269,6 +345,8 @@ typedef NS_ENUM(NSInteger, ScrollCtrlViewScrollStatus) {
     self.currentItem = segment;
     
     [self setSegementAnimate];
+    
+    [self _settingNextContentOffSet];
 }
 
 #pragma mark - Public
@@ -302,6 +380,11 @@ typedef NS_ENUM(NSInteger, ScrollCtrlViewScrollStatus) {
     self.bottomView = nil;
 }
 
+- (void)setNotScroll:(BOOL)notScroll
+{
+    _notScroll = notScroll;
+//    self.scrollCtrlView.scrollEnabled = !notScroll;
+}
 #pragma mark - Private
 
 /**
@@ -315,8 +398,11 @@ typedef NS_ENUM(NSInteger, ScrollCtrlViewScrollStatus) {
 //        return;
 //    }
     // 设置子视图
+    
     if (self.isIntegrated) {
         VC.view.frame = CGRectMake(ctrlIndex * LBkScreen_width, 0, LBkScreen_width, CGRectGetHeight(self.scrollCtrlView.frame));
+    }else if (self.viewHeight){
+        VC.view.frame = CGRectMake(ctrlIndex * LBkScreen_width, 0, LBkScreen_width, self.viewHeight);
     }else{
         VC.view.frame = CGRectMake(ctrlIndex * LBkScreen_width, 0, LBkScreen_width, LBkScreen_height - NavigationBar_Height - self.height);
     }
@@ -410,6 +496,10 @@ typedef NS_ENUM(NSInteger, ScrollCtrlViewScrollStatus) {
     // 当前选中的Item
     LBSegment * currentItem = self.currentItem;
     // 标题栏动画
+    if (self.segementScrollView.contentSize.width <= LBkScreen_width)
+    {
+        return;
+    }
     [UIView animateWithDuration:0.3 animations:^{
         // 判断能否设置居中（除开距离不够的）
         if (currentItem.center.x > (self.width / 2) && currentItem.center.x < (self.segementScrollView.contentSize.width - self.width / 2)) {
@@ -424,15 +514,68 @@ typedef NS_ENUM(NSInteger, ScrollCtrlViewScrollStatus) {
     }];
 }
 
+- (void)_settingCurrentContentOffSet
+{
+    if (_tableViewY != 0)
+    {
+        id vc = self.viewControllers[self.currentItem.tag-1995];
+        UITableView *tableView = [vc valueForKey:@"homeTableView"];
+        
+        _currentContentOffSet = tableView.contentOffset.y;
+    }
+}
+
+- (void)_settingNextContentOffSet
+{
+    if (_tableViewY != 0)
+    {
+        id vc = self.viewControllers[self.nextItem.tag-1995];
+        UITableView *tableView = [vc valueForKey:@"homeTableView"];
+        
+        CGFloat nextOffSetY = tableView.contentOffset.y;
+        
+        if (_currentContentOffSet <= _tableViewY)
+        {
+            nextOffSetY = _currentContentOffSet;
+            
+            if (_currentContentOffSet > nextOffSetY)
+            {
+                
+            }else
+            {
+                
+            }
+            
+        }
+        else if (_currentContentOffSet > _tableViewY && nextOffSetY < _tableViewY)
+        {
+            nextOffSetY = _tableViewY;
+        }
+        
+        tableView.contentOffset = CGPointMake(0, nextOffSetY);
+    }
+    
+    if (self.changeControllerBlock)
+    {
+        self.changeControllerBlock(self.nextItem.tag-1995);
+    }
+}
+
 #pragma mark - UIScrollViewDelegate
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView {
     NSInteger currentIndex = self.currentItem.tag - 1995;
+    
+    [self _settingCurrentContentOffSet];
+    
     if (scrollView.contentOffset.x > (currentIndex * LBkScreen_width)) {
         // 向左滑动，偏移量变大
         self.currentSelectProgress = 1 - (fmod (scrollView.contentOffset.x, LBkScreen_width) / LBkScreen_width);
         // 设置手势是向左滑动
         self.scrollCtrlViewScrollStatus = scrollCtrlViewScrollStatusToLeft;
+        
+        
+        
         // 保持从0 -> 1，也就是从非选中到选中状态
         if (self.currentSelectProgress == 0) {
             self.currentSelectProgress = 1;
@@ -460,6 +603,8 @@ typedef NS_ENUM(NSInteger, ScrollCtrlViewScrollStatus) {
     self.currentItem = [self.segementScrollView viewWithTag:currentIndex + 1995];
     scrollView.scrollEnabled = YES;
     [self setSegementAnimate];
+    
+    [self _settingNextContentOffSet];
 }
 
 - (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate {

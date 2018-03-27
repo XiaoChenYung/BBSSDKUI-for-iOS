@@ -15,7 +15,8 @@ typedef enum : NSUInteger {
     BBSUIThreadSummaryCellTypeHomepage,
     BBSUIThreadSummaryCellTypeForums,
     BBSUIThreadSummaryCellTypeSearch,
-    BBSUIThreadSummaryCellTypeHistory
+    BBSUIThreadSummaryCellTypeHistory,
+    BBSUIThreadSummaryCellTypePortal
 } BBSUIThreadSummaryCellType;
 
 @interface BBSUIThreadSummaryCell : UITableViewCell

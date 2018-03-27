@@ -47,12 +47,20 @@
     self.view.backgroundColor = DZSUIColorFromHex(0xeaedf2);
     BBSUser *currentUser = [BBSUIContext shareInstance].currentUser;
     
+    CGFloat iphoneXPadding = 0;
+    if ([BBSUIContext shareInstance].isIphoneX)
+    {
+        iphoneXPadding = 30;
+    }
+    
+    
+    
     UIView *viewBg = [UIView new];
     viewBg.backgroundColor = [UIColor whiteColor];
     [self.view addSubview:viewBg];
     [viewBg mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.right.equalTo(@0);
-        make.top.equalTo(@(10 + NavigationBar_Height));
+        make.top.equalTo(@(10 + NavigationBar_Height + iphoneXPadding));
         make.height.equalTo(@50);
     }];
     

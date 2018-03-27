@@ -12,9 +12,18 @@
 #import "BBSThread.h"
 #import "BBSPost.h"
 #import "BBSFans.h"
+#import "BBSComment.h"
 #import "BBSInformation.h"
 
 @interface BBSSDK : NSObject
+
+/**
+ 获取全局配置
+ 
+ @param result 回调
+ */
++ (void)getGlobalSettings:(void(^)(NSDictionary *settings, NSError *error))result;
+
 
 /**
  获取版块列表
@@ -95,6 +104,8 @@
 + (void)postThreadWithFid:(NSInteger)fid
                   subject:(NSString *)subject
                   message:(NSString *)message
+              isanonymous:(NSInteger)isanonymous
+            hiddenreplies:(NSInteger)hiddenreplies
                    result:(void(^)(NSError *))result;
 
 /**
@@ -152,6 +163,30 @@
                questionid:(NSInteger)questionid
                    answer:(NSString *)answer
                    result:(void(^)(BBSUser * ,id res, NSError *error))result;
+
+/**
+ 授权登录
+ 
+ @param openid openid微信和qq的唯一标示
+ @param unionid 判断是否唯一，如果有一定要带上
+ @param authType 授权类型：微信 = wechat；QQ = qq
+ @param createNew 如果openid还没有创建账号，1=创建新账号，0=绑定现有账号
+ @param userName 用户名
+ @param email 邮箱
+ @param password 密码
+ @param questionId 问答id
+ @param answer 问答答案
+ */
++ (void)authLoginWithOpenid:(NSString *)openid
+                    unionid:(NSString *)unionid
+                   authType:(NSString *)authType
+                  createNew:(NSNumber *)createNew
+                   userName:(NSString *)userName
+                      email:(NSString *)email
+                   password:(NSString *)password
+                 questionId:(NSNumber *)questionId
+                     answer:(NSString *)answer
+                     result:(void(^)(BBSUser *user, id res, NSError *error))result;
 
 /**
  登出
@@ -383,4 +418,82 @@
                     message:(NSString *)message 
                      result:(void (^)(NSError *error))result;
 
+/**
+ 预览版设置appkey和secret
+ */
++ (void)setupAppkey:(NSString *)appkey appSecret:(NSString *)secret;
+
+
+#pragma mark - *********** 门户 **********
+
+/**
+ 获取热帖banner列表
+ 
+ @param result 回调
+ */
++ (void)getPortalBannerList:(void (^)(NSArray *bannnerList, NSError *error))result;
+
+/**
+ 获取帖子列表
+ 
+ @param catid 类别id
+ @param result 回调
+ */
++ (void)getPortalListWithCatid:(NSInteger)catid
+                     pageIndex:(NSInteger)pageIndex
+                      pageSize:(NSInteger)pageSize
+                        result:(void (^)(NSArray *threadList, NSError *error))result;
+
+/**
+ 获取门户频道列表
+ 
+ @param result 回调
+ */
++ (void)getPortalCategories:(void (^)(NSArray *categories, NSError *error))result;
+
+/**
+ 获取门户详情
+ 
+ @param aid 文章id
+ @param result 回调
+ */
++ (void)getPortalDetailWithAid:(NSInteger)aid
+                        result:(void(^)(BBSThread *,NSError *))result;
+
+/**
+ 门户点赞
+ 
+ @param aid 文章id
+ @param clickid __nullable 默认1,1鲜花 2握手 3雷人 4路过 5鸡蛋
+ @param result 回调
+ */
++ (void)likePortalWithAid:(NSInteger)aid
+                  clickid:(NSNumber *) clickid
+                   result:(void(^)(NSError *))result;
+
+/**
+ 发评论
+ 
+ @param aid 文章id
+ @param uid 用户id
+ @param message 消息内容
+ @param result 回调
+ */
++ (void)postPortalCommentWithAid:(NSInteger)aid
+                             uid:(NSInteger)uid
+                         message:(NSString *)message
+                          result:(void(^)(BBSComment *,NSError *))result;
+
+/**
+ 获取门户文章评论列表
+ 
+ @param aid 文章id
+ @param pageIndex 页索引
+ @param pageSize 每页请求大小
+ @param result 回调
+ */
++ (void)getPortalCommentListWithAid:(NSInteger)aid
+                          pageIndex:(NSInteger)pageIndex
+                           pageSize:(NSInteger)pageSize
+                             result:(void (^)(NSArray *__strong, NSError *__strong))result;
 @end

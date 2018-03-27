@@ -25,6 +25,7 @@
 @property (nonatomic, strong) NSMutableArray  *imageArr;
 @property (nonatomic, assign) float  shareRegionHeight;
 @property (nonatomic, strong) id shareContent;
+@property (nonatomic, assign) NSInteger flag;
 @property (nonatomic, assign) BOOL needAnimation;
 @end
 
@@ -50,11 +51,12 @@
     return self;
 }
 
-- (void)createShareViewWithContent:(id)content animation:(BOOL)animation
+- (void)createShareViewWithContent:(id)content flag:(NSInteger)flag animation:(BOOL)animation
 {
     self.frame = [[UIScreen mainScreen] bounds];
     
     self.shareContent = content;
+    self.flag = flag;
     NSLog(@"______ %@",content);
     
     self.needAnimation = animation;
@@ -221,18 +223,45 @@
     NSLog(@"%@",thread.summary);
     NSLog(@"%@",thread.threadurl);
     
-    if (thread.images.count == 0) {
-
-        if (thread.forumPic)
+    id images = nil;
+    NSString *title = nil;
+    NSString *url = nil;
+    
+    if (self.flag == 0)// 论坛
+    {
+        if (thread.images.count == 0) {
+            
+            if (thread.forumPic)
+            {
+                thread.images = @[thread.forumPic];
+            }
+            else
+            {
+                thread.images = @[[UIImage BBSImageNamed:@"Forum/ForumNormalIcon.png"]];
+            }
+            
+        }
+        
+        images = thread.images;
+        title = thread.subject;
+        url = thread.threadurl;
+    }
+    else
+    {
+        if (thread.pic && thread.pic.length > 0)
         {
-            thread.images = @[thread.forumPic];
+            images = @[thread.pic];
         }
         else
         {
-            thread.images = @[[UIImage BBSImageNamed:@"Forum/ForumNormalIcon.png"]];
+            images = @[[UIImage BBSImageNamed:@"Forum/ForumNormalIcon.png"]];
         }
         
+        title = thread.title;
+        url = thread.shareurl;
     }
+    
+    
     
     NSLog(@"%@_____",thread.threadurl);
     
@@ -242,9 +271,9 @@
         //分享操作
         //1、创建分享参数
         NSMutableDictionary *shareParams = [ShareComponent SSDKSetupShareParamsByText:thread.summary
-                                         images:thread.images
-                                            url:[NSURL URLWithString:thread.threadurl]
-                                          title:thread.subject
+                                         images:images
+                                            url:[NSURL URLWithString:url]
+                                          title:title
                                            type:3
                                  dataDictionary:nil];
         

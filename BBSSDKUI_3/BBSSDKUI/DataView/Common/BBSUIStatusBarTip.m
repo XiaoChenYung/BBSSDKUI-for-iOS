@@ -7,6 +7,7 @@
 //
 
 #import "BBSUIStatusBarTip.h"
+#import "BBSUIContext.h"
 
 @interface BBSUIStatusBarTip ()
 {
@@ -39,6 +40,11 @@ static  BBSUIStatusBarTip  * msb;
 -(id)init
 {
     CGRect statusFrame = [UIApplication sharedApplication].statusBarFrame;
+    if ([BBSUIContext shareInstance].isIphoneX)
+    {
+        statusFrame.size.height = 66;
+        statusFrame.origin.y = 15;
+    }
     height = statusFrame.size.height;
     screenWidth = [UIScreen mainScreen].bounds.size.width;
     screenHeight = [UIScreen mainScreen].bounds.size.height;

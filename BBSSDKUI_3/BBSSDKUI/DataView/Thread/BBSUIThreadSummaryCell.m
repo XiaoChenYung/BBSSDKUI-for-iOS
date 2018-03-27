@@ -78,6 +78,11 @@
 @property (nonatomic, strong) UIView *line;
 
 /**
+ 分割线2
+ */
+@property (nonatomic, strong) UIView *lineOrange;
+
+/**
  评论
  */
 @property (nonatomic, strong) UILabel *repliesLabel;
@@ -95,6 +100,11 @@
 @property (nonatomic, strong) BBSThread *threadModel;
 
 @property (nonatomic, assign) BBSUIThreadSummaryCellType cellType;
+
+/**
+ 资讯还是论坛的标签
+ */
+@property (nonatomic, strong) UILabel *tipLabel;
 
 @end
 
@@ -200,6 +210,27 @@
         
         subjectLabel;
     });
+    
+    // 摘要
+    self.summaryLabel =
+    ({
+        UILabel *summaryLb = [[UILabel alloc] init];
+        
+        summaryLb.font = [UIFont boldSystemFontOfSize:13];
+        summaryLb.textColor = DZSUIColorFromHex(0x4E4F57);
+        summaryLb.numberOfLines = 2 ;
+        summaryLb.text = @"";
+        [self.contentView addSubview:summaryLb];
+        
+        [summaryLb mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.left.equalTo(@15);
+            make.top.equalTo(_authorLabel.mas_bottom).offset(23);
+            make.right.equalTo(@-15);
+        }];
+        
+        summaryLb;
+    });
+    self.summaryLabel.hidden = YES;
     
     self.repliesLabel =
     ({
@@ -307,6 +338,40 @@
         time;
     });
     
+    self.lineOrange =
+    ({
+        UIView *line = [UIView new];
+        [self.contentView addSubview:line];
+        line.backgroundColor = DZSUIColorFromHex(0xFFAA42);
+        
+        [line mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.left.equalTo(@15);
+            make.top.equalTo(_subjectLabel.mas_bottom).offset(6);
+            make.size.mas_equalTo(CGSizeMake(2, 11));
+        }];
+        
+        line;
+    });
+    self.lineOrange.hidden = YES;
+    
+    self.tipLabel =
+    ({
+        UILabel *label = [UILabel new];
+        [self.contentView addSubview:label];
+        label.textColor = [UIColor whiteColor];
+        label.font = [UIFont systemFontOfSize:13];
+        label.textAlignment = NSTextAlignmentCenter;
+        
+        [label mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.top.right.equalTo(@0);
+            make.size.mas_equalTo(CGSizeMake(36, 18));
+        }];
+        label;
+    }
+    );
+    self.tipLabel.hidden = YES;
+    
+    
     self.subjectLabel.preferredMaxLayoutWidth = [UIScreen mainScreen].bounds.size.width - 66;
     [self.subjectLabel setContentHuggingPriority:UILayoutPriorityRequired forAxis:UILayoutConstraintAxisHorizontal];
 }
@@ -315,6 +380,86 @@
 {
     _cellType = cellType;
     _threadModel = threadModel ;
+    
+    NSInteger dateline;
+    
+    if (threadModel.dateline)
+    {
+        dateline = threadModel.dateline;
+    }
+    else
+    {
+        dateline = threadModel.createdOn;
+    }
+    
+    if (cellType == BBSUIThreadSummaryCellTypePortal)
+    {
+        self.read = _threadModel.isSelected;
+        _timeLabel.text = [NSString timeTextWithTimesStamp:dateline];
+        _summaryLabel.textColor = DZSUIColorFromHex(0x9A9EA5);
+        
+        if (threadModel.pic)
+        {
+            _imagesView.hidden = NO;
+            
+            NSString * url = threadModel.pic;
+            
+            _imagesView.image = [UIImage BBSImageNamed:@"/Home/wutu@2x.png"];
+            [[MOBFImageGetter sharedInstance] getImageDataWithURL:[NSURL URLWithString:url] result:^(NSData *imageData, NSError *error) {
+                if (error)
+                {
+                    NSLog(@"%@",error);
+                    return ;
+                }
+                
+                UIImage *image = [UIImage imageWithData:imageData];
+                _imagesView.image = image;
+            }];
+            
+        }else
+        {
+            _imagesView.hidden = YES;
+        }
+        
+        _repliesLabel.text = [NSString stringWithFormat:@"评论 %lu",(long)_threadModel.commentnum];
+        _viewsLabel.text = [NSString stringWithFormat:@"查看 %lu",(long)_threadModel.viewnum];
+        
+        // author和username长度截取
+        if (_threadModel.author.length > 10) _threadModel.author = [_threadModel.author substringToIndex:10];
+        if (_threadModel.username.length > 10) _threadModel.username = [_threadModel.username substringToIndex:10];
+        
+        _authorLabel.text = [NSString stringWithFormat:@"文:%@", (_threadModel.author && _threadModel.author.length > 0)?_threadModel.author : _threadModel.username];
+        
+        _authorLabel.font = [UIFont systemFontOfSize:10];
+        _authorLabel.textColor = DZSUIColorFromHex(0xACADB8);
+        _line.backgroundColor = DZSUIColorFromHex(0xACADB8);
+        _summaryLabel.text = _threadModel.summary;
+        
+        [self _setCellFrame];
+        
+        return;
+    }
+    
+    if (_threadModel.forumName)
+    {
+        _forumTagView.text = _threadModel.forumName;
+        
+    }
+    
+    if (cellType == BBSUIThreadSummaryCellTypeSearch)
+    {
+        if (_threadModel.type && [_threadModel.type isEqualToString:@"portal"])
+        {
+            self.tipLabel.text = @"资讯";
+            self.tipLabel.backgroundColor = DZSUIColorFromHex(0xffc6b7);
+            _forumTagView.text = _threadModel.catname;
+        }
+        else
+        {
+            self.tipLabel.text = @"论坛";
+            self.tipLabel.backgroundColor = DZSUIColorFromHex(0xb2ddfd);
+        }
+    }
     
     _avatarImageView.image = [UIImage BBSImageNamed:@"/User/AvatarDefault3.png"];
     
@@ -350,24 +495,20 @@
     
     [_signView setupWithPaths:_signs.mutableCopy];
     
-    if (_threadModel.forumName)
-    {
-        _forumTagView.text = _threadModel.forumName;
-    }
-    else
-    {
 
-    }
-
-    _timeLabel.text = [NSString timeTextWithTimesStamp:threadModel.createdOn];
+    _timeLabel.text = [NSString timeTextWithTimesStamp:dateline];
     
     NSInteger imageCount = _threadModel.images.count ;
     
-    if(imageCount)
+    if(imageCount || threadModel.pic)
     {
         _imagesView.hidden = NO;
         
         NSString * url = [_threadModel.images firstObject];
+        if (!url)
+        {
+            url = threadModel.pic;
+        }
         
         _imagesView.image = [UIImage BBSImageNamed:@"/Home/wutu@2x.png"];
         [[MOBFImageGetter sharedInstance] getImageDataWithURL:[NSURL URLWithString:url] result:^(NSData *imageData, NSError *error) {
@@ -382,7 +523,7 @@
         }];
         
         
-        if (imageCount-1)
+        if (imageCount > 1)
         {
             _imageCountLabel.hidden = NO;
             _imageCountLabel.text = [@"+" stringByAppendingFormat:@"%zd",_threadModel.images.count];
@@ -404,6 +545,13 @@
     
     // 设置frame
     [self _setCellFrame];
+    
+    if ( (!_threadModel.author || _threadModel.author.length == 0) && _threadModel.tid)
+    {
+        _avatarImageView.image = [UIImage BBSImageNamed:@"/Thread/bbs_login_account.png"];
+        _authorLabel.text = @"匿名用户";
+    }
+    
 }
 
 /**
@@ -425,24 +573,49 @@
 {
     _read = read;
     
-    _authorLabel.attributedText  = [NSString stringWithString:_threadModel.author
+    NSString *title;
+    NSString *content;
+    
+    if (_threadModel.aid)
+    {
+        title = _threadModel.title;
+//        content =
+    }
+    else
+    {
+        title = _threadModel.subject;
+    }
+    
+    _authorLabel.attributedText  = [NSString stringWithString:((!_threadModel.author || _threadModel.author.length == 0) && _threadModel.tid) ? @"匿名用户":_threadModel.author
                                                      fontSize:13
                                             defaultColorValue:@"8A8D94"
                                                     lineSpace:0
                                                     wordSpace:0];
     
+    CGFloat fontSize = 16;
+    if (_cellType == BBSUIThreadSummaryCellTypePortal)
+    {
+        fontSize = 18;
+        _subjectLabel.font = [UIFont systemFontOfSize:fontSize];
+    }
+    
     if (_read)
     {
         if (_cellType == BBSUIThreadSummaryCellTypeSearch) {
-            _subjectLabel.attributedText = [NSString stringWithString:_threadModel.subject
-                                                             fontSize:16
+            _subjectLabel.attributedText = [NSString stringWithString:title
+                                                             fontSize:fontSize
                                                     defaultColorValue:@"ACADB8"
                                                             lineSpace:6
                                                             wordSpace:0];
 
         }else{
-            _subjectLabel.attributedText = [self stringWithString:_threadModel.subject lineSpace:1];
-
+            if (_cellType == BBSUIThreadSummaryCellTypePortal)
+            {
+                _subjectLabel.attributedText = [self stringWithString:[self removeLastThreeChar:_threadModel.title] lineSpace:6];
+            }else{
+                _subjectLabel.attributedText = [self stringWithString:_threadModel.subject lineSpace:6];
+            }
+        
             _subjectLabel.textColor = DZSUIColorFromHex(0xACADB8);
 
         }
@@ -452,28 +625,50 @@
     {
         
         if (_cellType == BBSUIThreadSummaryCellTypeSearch) {
-            _subjectLabel.attributedText = [NSString stringWithString:_threadModel.subject
-                                                             fontSize:16
+            _subjectLabel.attributedText = [NSString stringWithString:title
+                                                             fontSize:fontSize
                                                     defaultColorValue:@"4E4F57"
                                                             lineSpace:6
                                                             wordSpace:0];
             
         }else{
-            _subjectLabel.attributedText = [self stringWithString:_threadModel.subject lineSpace:6];
-
+            
+            if (_cellType == BBSUIThreadSummaryCellTypePortal)
+            {
+                _subjectLabel.attributedText = [self stringWithString:[self removeLastThreeChar:_threadModel.title] lineSpace:6];
+            }else{
+                _subjectLabel.attributedText = [self stringWithString:_threadModel.subject lineSpace:6];
+            }
             _subjectLabel.textColor = DZSUIColorFromHex(0x4E4F57);
 
         }
         
     }
     
-    if (_threadModel.subject.length == 0) _subjectLabel.text = @" ";
+    if(_threadModel.aid)
+    {
+        if (_threadModel.title.length == 0) _subjectLabel.text = @" ";
+    }
+    else
+    {
+        if (_threadModel.subject.length == 0) _subjectLabel.text = @" ";
+    }
+}
 
+- (NSString*) removeLastThreeChar:(NSString*)origin
+{
+    NSString* cutted;
+    if([origin hasSuffix:@"..."]){
+        cutted = [origin substringToIndex:([origin length]-3)];// 去掉最后一个","
+    }else{
+        cutted = origin;
+    }
+    return cutted;
 }
 
 - (void)_setCellFrame
 {
-    if (_cellType == BBSUIThreadSummaryCellTypeForums || _cellType == BBSUIThreadSummaryCellTypeSearch)
+    if (_cellType == BBSUIThreadSummaryCellTypeForums)
     {
         _signView.hidden = NO;
         _forumTagView.hidden = YES;
@@ -486,6 +681,21 @@
         _timeLabel.textAlignment = NSTextAlignmentLeft;
         
         [self _setForumFrame];
+    }
+    
+    if (_cellType == BBSUIThreadSummaryCellTypeSearch)
+    {
+        _signView.hidden = NO;
+        _forumTagView.hidden = YES;
+        _repliesLabel.hidden = NO;
+        _favoriteLabel.hidden = NO;
+        _viewsLabel.hidden = NO;
+        _tipLabel.hidden = NO;
+        _avatarImageView.hidden = YES;
+        _authorLabel.hidden = YES;
+        _timeLabel.textAlignment = NSTextAlignmentLeft;
+        
+        [self _setSearchFrame];
     }
     
     if (_cellType == BBSUIThreadSummaryCellTypeHomepage)
@@ -506,6 +716,22 @@
         _timeLabel.hidden = NO;
         
         _timeLabel.textAlignment = NSTextAlignmentRight;
+    }
+    
+    if (_cellType == BBSUIThreadSummaryCellTypePortal)
+    {
+        _signView.hidden = YES;
+        _forumTagView.hidden = YES;
+        _avatarImageView.hidden = YES;
+        _authorLabel.hidden = NO;
+        _repliesLabel.hidden = NO;
+        _favoriteLabel.hidden = YES;
+        _viewsLabel.hidden = NO;
+        _lineOrange.hidden = NO;
+        _summaryLabel.hidden = NO;
+        _subjectLabel.hidden = NO;
+        
+        [self _setFrameForPortal];
     }
 }
 
@@ -635,6 +861,65 @@
     }];
 }
 
+- (void)_setSearchFrame
+{
+    CGFloat padding = 15;
+    NSInteger imageCount = _threadModel.images.count ;
+    
+    if (imageCount && _threadModel.images)
+    {
+        _imagesView.hidden = NO;
+        
+        [_imagesView mas_remakeConstraints:^(MASConstraintMaker *make) {
+            make.right.equalTo(@(-padding));
+            make.top.equalTo(@19).priorityHigh();
+            make.width.height.equalTo(@105);
+        }];
+        
+        [_line mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.left.right.equalTo(self.contentView).priorityHigh();
+            make.height.mas_equalTo(3).priorityHigh();
+            make.bottom.equalTo(self.contentView);
+            make.top.equalTo(_imagesView.mas_bottom).offset(19);
+        }];
+        
+        [_subjectLabel mas_remakeConstraints:^(MASConstraintMaker *make) {
+            make.left.equalTo(@(padding));
+            make.top.equalTo(self.avatarImageView.mas_bottom).offset(10);
+            make.right.equalTo(_imagesView.mas_left).offset(-20);
+        }];
+        
+        [_repliesLabel mas_remakeConstraints:^(MASConstraintMaker *make) {
+            make.left.equalTo(_avatarImageView);
+            make.bottom.equalTo(_line.mas_top).offset(-17);
+            make.height.equalTo(@10);
+        }];
+    }
+    else
+    {
+        _imagesView.hidden = YES;
+        
+        [_subjectLabel mas_remakeConstraints:^(MASConstraintMaker *make) {
+            make.left.equalTo(@(padding));
+            make.top.equalTo(self.avatarImageView.mas_bottom).offset(10);
+            make.right.equalTo(@-15);
+        }];
+        
+        [_repliesLabel mas_remakeConstraints:^(MASConstraintMaker *make) {
+            make.left.equalTo(_avatarImageView);
+            make.top.equalTo(_subjectLabel.mas_bottom).offset(17);
+            make.bottom.equalTo(_line.mas_top).offset(-17);
+            make.height.equalTo(@10);
+        }];
+    }
+    
+    [_timeLabel mas_remakeConstraints:^(MASConstraintMaker *make) {
+        make.left.equalTo(@15);
+        make.centerY.equalTo(_authorLabel);
+        make.height.equalTo(_authorLabel);
+    }];
+}
+
 // 收藏
 - (void)setFrameForFavorites
 {
@@ -744,6 +1029,72 @@
     }
 }
 
+
+/**
+ 门户
+ */
+- (void)_setFrameForPortal
+{
+    if(_threadModel.pic)
+    {
+        _imagesView.hidden = NO;
+        
+        [_imagesView mas_remakeConstraints:^(MASConstraintMaker *make) {
+            make.left.right.top.equalTo(@0);
+            make.height.equalTo(@152);
+        }];
+        
+        [_subjectLabel mas_remakeConstraints:^(MASConstraintMaker *make) {
+            make.left.equalTo(@15);
+            make.top.equalTo(_imagesView.mas_bottom).offset(15);
+            make.right.equalTo(@-15);
+        }];
+        
+        
+    }
+    else
+    {
+        _imagesView.hidden = YES;
+
+        [_subjectLabel mas_remakeConstraints:^(MASConstraintMaker *make) {
+            make.left.equalTo(@15);
+            make.top.equalTo(@15);
+            make.right.equalTo(@-15);
+        }];
+    }
+    
+    [_authorLabel mas_remakeConstraints:^(MASConstraintMaker *make) {
+        make.left.equalTo(_lineOrange.mas_right).offset(5);
+        make.centerY.equalTo(_lineOrange);
+        make.height.equalTo(@10);
+    }];
+    
+    [_timeLabel mas_remakeConstraints:^(MASConstraintMaker *make) {
+        make.left.equalTo(_authorLabel.mas_right).offset(14);
+        make.centerY.equalTo(_lineOrange);
+        make.height.equalTo(_authorLabel);
+    }];
+    
+    [_viewsLabel mas_remakeConstraints:^(MASConstraintMaker *make) {
+        make.right.equalTo(@-18);
+        make.centerY.equalTo(_lineOrange);
+        make.height.equalTo(_authorLabel);
+    }];
+    
+    [_repliesLabel mas_remakeConstraints:^(MASConstraintMaker *make) {
+        make.right.equalTo(_viewsLabel.mas_left).offset(-15);
+        make.centerY.equalTo(_lineOrange);
+        make.height.equalTo(_authorLabel);
+    }];
+    
+    [_line mas_remakeConstraints:^(MASConstraintMaker *make) {
+        make.centerX.equalTo(self.contentView);
+        make.size.mas_equalTo(CGSizeMake(30, 2));
+        make.top.equalTo(_summaryLabel.mas_bottom).offset(25);
+        make.bottom.equalTo(self.contentView.mas_bottom).offset(-15);
+    }];
+    
+}
 
 - (NSMutableAttributedString *)stringWithString:(NSString *)string lineSpace:(CGFloat)offset
 {

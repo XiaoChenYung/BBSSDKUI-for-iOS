@@ -3,7 +3,7 @@
 // GitHub 代码地址:https://github.com/NGeLB/LBSegmentControl
 
 #import <UIKit/UIKit.h>
-
+@class LBSegment;
 @protocol LBSegmentControlDelegate <NSObject>
 
 -(void)selectIndex:(NSInteger)index;
@@ -63,6 +63,11 @@
 @property (assign, nonatomic) BOOL isIntegrated;
 
 /**
+ *  禁止滑动,默认不设置,可以左右滑动,如果设置为yes,scrollView不能左右滑动
+ */
+@property (nonatomic, assign) BOOL notScroll;
+
+/**
  *  设置底部栏颜色(和底部栏图片只能设置一个)
  */
 - (void)setBottomViewColor:(UIColor *)color;
@@ -76,5 +81,17 @@
  *  取消底部栏
  */
 - (void)cancelBottomView;
+
+
+- (NSArray <LBSegment *>*)settingTitles:(NSArray *)titles;
+
+@property (nonatomic, assign) CGFloat tableViewY;
+
+/**
+ 自定义视图高度
+ */
+@property (nonatomic, assign) CGFloat viewHeight;
+
+@property (nonatomic, copy) void (^changeControllerBlock)(NSUInteger index);
 
 @end

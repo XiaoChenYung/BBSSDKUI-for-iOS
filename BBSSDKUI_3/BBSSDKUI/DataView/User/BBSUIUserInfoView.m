@@ -140,6 +140,10 @@
     
     _testImageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 100, 100)];
     [self addSubview:_testImageView];
+    
+    self.userInfoTableView.estimatedRowHeight = 0;
+    self.userInfoTableView.estimatedSectionHeaderHeight = 0;
+    self.userInfoTableView.estimatedSectionFooterHeight = 0;
 }
 
 - (void)setCurrentUser:(BBSUser *)currentUser

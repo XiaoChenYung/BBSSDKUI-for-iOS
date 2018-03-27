@@ -104,9 +104,18 @@
         [logoutButton addTarget:self action:@selector(logoutButtonHandler:) forControlEvents:UIControlEventTouchUpInside];
     }
     else{
-        [_threadTableView mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.edges.equalTo(self).with.insets(UIEdgeInsetsMake(0, 0, NavigationBar_Height-20, 0));
-        }];
+        if ([BBSUIContext shareInstance].isIphoneX)
+        {
+            [_threadTableView mas_makeConstraints:^(MASConstraintMaker *make) {
+                make.edges.equalTo(self).with.insets(UIEdgeInsetsMake(50, 0, NavigationBar_Height-20, 0));
+            }];
+        }
+        else
+        {
+            [_threadTableView mas_makeConstraints:^(MASConstraintMaker *make) {
+                make.edges.equalTo(self).with.insets(UIEdgeInsetsMake(0, 0, NavigationBar_Height-20, 0));
+            }];
+        }
     }
 
     [self setTableHeaderView];

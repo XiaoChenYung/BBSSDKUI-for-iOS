@@ -12,6 +12,7 @@
 #import "BBSThread+BBSUI.h"
 #import "UIView+TipView.h"
 #import "BBSUIThreadDetailViewController.h"
+#import "BBSUIPortalDetailViewController.h"
 #import "BBSUICoreDataManage.h"
 #import "BBSUICacheManager.h"
 #import <BBSSDK/BBSBanner.h>
@@ -214,7 +215,16 @@ static NSString *cellIdentifier = @"ThreadSummaryCell";
     
     cell.read = YES;
     
-    BBSUIThreadDetailViewController *detailVC = [[BBSUIThreadDetailViewController alloc] initWithThreadModel:thread];
+    id detailVC;
+    
+    if (_pageType == PageTypeSearch && [thread.type isEqualToString:@"portal"])
+    {
+        detailVC = [[BBSUIPortalDetailViewController alloc] initWithThreadModel:thread];
+    }
+    else
+    {
+        detailVC = [[BBSUIThreadDetailViewController alloc] initWithThreadModel:thread];
+    }
     
     if ([MOBFViewController currentViewController].navigationController)
     {
@@ -238,7 +248,14 @@ static NSString *cellIdentifier = @"ThreadSummaryCell";
 {
     BBSThread *thread = self.threadListArray[indexPath.row];
     
-    [[BBSUICoreDataManage shareManager] deleteHistoryWithTid:thread.tid];
+    if ([thread.type isEqualToString:@"portal"])
+    {
+        [[BBSUICoreDataManage shareManager] deleteHistoryWithAid:thread.aid];
+    }
+    else
+    {
+        [[BBSUICoreDataManage shareManager] deleteHistoryWithTid:thread.tid];
+    }
     
     [self.threadListArray removeObjectAtIndex:indexPath.row];
     
@@ -392,7 +409,7 @@ static NSString *cellIdentifier = @"ThreadSummaryCell";
 
 - (void)getSearchData {
     __weak typeof(self) weakSelf = self;
-    [BBSSDK searchWithType:@"thread" wd:_keyword pageIndex:self.currentIndex pageSize:BBSUIPageSize result:^(NSArray *threadList, NSError *error)
+    [BBSSDK searchWithType:@"all" wd:_keyword pageIndex:self.currentIndex pageSize:BBSUIPageSize result:^(NSArray *threadList, NSError *error)
     {
         if (!error) {
 
@@ -451,12 +468,13 @@ static NSString *cellIdentifier = @"ThreadSummaryCell";
     NSArray *array;
     __weak typeof(self) weakSelf = self;
     if (self.currentIndex == 1 || self.threadListArray.count == 0) {
-        array = [[BBSUICoreDataManage shareManager] queryHistoryWithTid:-1 limit:10];
+        array = [[BBSUICoreDataManage shareManager] queryHistoryWithId:-1 limit:10];
         self.threadListArray = [NSMutableArray arrayWithArray:array];
     }
     else{
+        //??????
         BBSThread *thread = self.threadListArray.lastObject;
-        array = [[BBSUICoreDataManage shareManager] queryHistoryWithTid:thread.tid limit:10];
+        array = [[BBSUICoreDataManage shareManager] queryHistoryWithId:thread.tid limit:10];
         [self.threadListArray addObjectsFromArray:array];
     }
     [self.tableView reloadData];

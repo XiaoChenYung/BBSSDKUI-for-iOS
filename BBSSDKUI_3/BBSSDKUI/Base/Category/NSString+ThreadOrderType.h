@@ -7,21 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
-
-typedef NS_ENUM(NSInteger, BBSUIThreadSelectType)
-{
-    BBSUIThreadSelectTypeLatest = 0,        //最新
-    BBSUIThreadSelectTypeHeats = 1,         //热门
-    BBSUIThreadSelectTypeDigest = 2,        //精华
-    BBSUIThreadSelectTypeDisplayOrder = 3   //置顶
-};
-
-typedef NS_ENUM(NSInteger, BBSUIThreadOrderType)
-{
-    BBSUIThreadOrderCommentTime = 0,    //最后回复时间排序
-    
-    BBSUIThreadOrderPostTime = 1        //发布时间排序
-};
+#import "BBSUIEnum.h"
 
 @interface NSString (ThreadOrderType)
 

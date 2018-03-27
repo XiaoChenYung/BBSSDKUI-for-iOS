@@ -30,4 +30,6 @@
 
 @property (nonatomic, strong) MOBFJSContext *jsContext;
 
+- (void)setupJSNativeWithNativeExtPath:(NSString *)extPath;
+
 @end

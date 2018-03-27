@@ -169,6 +169,9 @@
 - (void)selectIndex:(NSInteger)index
 {
     self.currentSelectType = index;
+    
+    NSLog(@"=======+++++++   %lu",index);
+    
 }
 
 @end

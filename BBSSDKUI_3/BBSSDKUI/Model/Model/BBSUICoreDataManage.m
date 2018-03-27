@@ -10,6 +10,7 @@
 #import "BBSUIStore.h"
 #import <BBSSDK/BBSThread.h>
 #import "BBSUIContext.h"
+#define PORTAL(aid)  [NSString stringWithFormat:@"Portal%lu",aid]
 
 @interface BBSUICoreDataManage ()
 
@@ -62,11 +63,19 @@
     
     NSInteger uid = [[BBSUIContext shareInstance].currentUser.uid integerValue];
     
-//    if ([self queryHistoryWithTid:thread.tid needTransform:NO].count > 0) {
-//        return;
-//    }
+    //    if ([self queryHistoryWithTid:thread.tid needTransform:NO].count > 0) {
+    //        return;
+    //    }
     
-    [self deleteHistoryWithTid:thread.tid];
+    if (!thread.tid)
+    {
+        [self deleteHistoryWithAid:thread.aid];
+    }
+    else
+    {
+        [self deleteHistoryWithTid:thread.tid];
+    }
+    
     
     History *threadHistory = [NSEntityDescription insertNewObjectForEntityForName:self.entityName inManagedObjectContext:self.store.managedObjectContext];
     
@@ -92,10 +101,31 @@
     threadHistory.views         = @(thread.views);
     threadHistory.username      = thread.username;
     threadHistory.uid           = @(uid);
+    threadHistory.recommend_add = @(thread.recommend_add);
+    
+    threadHistory.aid           = PORTAL(thread.aid);
+    threadHistory.title         = thread.title;
+    threadHistory.authorid      = @(thread.authorid);
+    threadHistory.dateline      = @(thread.dateline);
+    threadHistory.viewnum       = @(thread.viewnum);
+    threadHistory.commentnum    = @(thread.commentnum);
+    threadHistory.sharetimes    = @(thread.sharetimes);
+    threadHistory.pic           = thread.pic;
+    threadHistory.click1        = @(thread.click1);
+    threadHistory.click2        = @(thread.click2);
+    threadHistory.click3        = @(thread.click3);
+    threadHistory.click4        = @(thread.click4);
+    threadHistory.click5        = @(thread.click5);
+    threadHistory.content       = thread.content;
+    threadHistory.related       = thread.related;
+    threadHistory.allowcomment  = @(thread.allowcomment);
+    threadHistory.type          = thread.type;
+    threadHistory.catname       = thread.catname;
+    threadHistory.shareurl      = thread.shareurl;
+    threadHistory.originUid     = @(thread.originUid);
     
     long historyTime = [[NSDate date] timeIntervalSince1970];
     
-    NSLog(@"____________%zu",historyTime);
     threadHistory.historyTime   = @(historyTime);
     
     if ([self.store.managedObjectContext save:nil]) {
@@ -116,15 +146,25 @@
     return array;
 }
 
+- (NSArray *)queryHistoryWithAid:(NSInteger)aid needTransform:(BOOL)transform
+{
+    NSInteger uid = [[BBSUIContext shareInstance].currentUser.uid integerValue];
+    
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"aid == %@ && uid == %lu",PORTAL(aid),uid];
+    NSArray *array = [self queryHistoryWithPredicate:predicate limit:10 needTransform:transform];
+    
+    return array;
+}
+
 
 /**
  查询一定条数结果集
-
+ 
  @param limit 条数
  @return 结果集
  */
-- (NSArray *)queryHistoryWithTid:(NSInteger)tid limit:(NSInteger)limit {
-    if (tid == -1)
+- (NSArray *)queryHistoryWithId:(NSInteger)ID limit:(NSInteger)limit {
+    if (ID == -1)
     {
         _lastHistoryTime = -1;
     }
@@ -143,10 +183,9 @@
     return array;
 }
 
-
 /**
  查询数据
-
+ 
  @param predicate 条件
  @param limit 条数
  @param transform 是否需要转换数据 YES:需要,转成BBSThread类型 NO:不需要，得到查询结果源数据
@@ -176,8 +215,6 @@
     if (transform)
     {
         _lastHistoryTime = [array.lastObject.historyTime integerValue];
-        
-        NSLog(@"____________ss %zu",_lastHistoryTime);
         
         return [self arrayWithHistoryArray:array];
     }
@@ -213,6 +250,28 @@
         threadHistory.replies       = [thread.replies integerValue];
         threadHistory.views         = [thread.views integerValue];
         threadHistory.username      = thread.username;
+        threadHistory.recommend_add = [thread.recommend_add integerValue];
+        
+        threadHistory.aid           = [[thread.aid stringByReplacingOccurrencesOfString:@"Portal" withString:@""] integerValue];
+        threadHistory.title         = thread.title;
+        threadHistory.authorid      = [thread.authorid integerValue];
+        threadHistory.dateline      = [thread.dateline integerValue];
+        threadHistory.viewnum       = [thread.viewnum integerValue];
+        threadHistory.commentnum    = [thread.commentnum integerValue];
+        threadHistory.sharetimes    = [thread.sharetimes integerValue];
+        threadHistory.pic           = thread.pic;
+        threadHistory.click1        = [thread.click1 integerValue];
+        threadHistory.click2        = [thread.click2 integerValue];
+        threadHistory.click3        = [thread.click3 integerValue];
+        threadHistory.click4        = [thread.click4 integerValue];
+        threadHistory.click5        = [thread.click5 integerValue];
+        threadHistory.content       = thread.content;
+        threadHistory.related       = thread.related;
+        threadHistory.allowcomment  = [thread.allowcomment integerValue];
+        threadHistory.type          = thread.type;
+        threadHistory.catname       = thread.catname;
+        threadHistory.shareurl      = thread.shareurl;
+        threadHistory.originUid     = [thread.originUid integerValue];
         
         [resultArray addObject:threadHistory];
     }
@@ -221,8 +280,20 @@
 }
 
 - (void)deleteHistoryWithTid:(NSInteger)tid {
- 
+    
     NSArray *arrHistory = [self queryHistoryWithTid:tid needTransform:NO];
+    if (arrHistory != nil && arrHistory.count > 0) {
+        [self.store.managedObjectContext deleteObject:arrHistory.firstObject];
+        [self.store saveContext];
+        NSLog(@"Delete successfully");
+    }else{
+        NSLog(@"This does not exist before,can not delete");
+    }
+}
+
+- (void)deleteHistoryWithAid:(NSInteger)aid {
+    
+    NSArray *arrHistory = [self queryHistoryWithAid:aid needTransform:NO];
     if (arrHistory != nil && arrHistory.count > 0) {
         [self.store.managedObjectContext deleteObject:arrHistory.firstObject];
         [self.store saveContext];
@@ -252,7 +323,6 @@
     return folderSize/(1024 * 1024.0);
 }
 
-
 // 计算 单个文件的大小
 - ( long long ) fileSizeAtPath:( NSString *) filePath{
     NSFileManager * manager = [NSFileManager defaultManager];
@@ -266,15 +336,16 @@
 {
     NSURL *storeURL = [[self.store applicationDocumentsDirectory] URLByAppendingPathComponent:@"BBSSDKUI.sqlite"];
     NSError * error = nil ;
-
+    
     NSString *filePath = [storeURL path];
     if ([[NSFileManager defaultManager ] fileExistsAtPath :filePath])
     {
-         [[NSFileManager defaultManager ] removeItemAtPath :filePath error :&error];
+        [[NSFileManager defaultManager ] removeItemAtPath :filePath error :&error];
     }
-
+    
     [self.store.persistentStoreCoordinator removePersistentStore:self.store.persistentStoreCoordinator.persistentStores[0]error:nil];
     [self.store.persistentStoreCoordinator addPersistentStoreWithType:NSSQLiteStoreType  configuration:nil URL:storeURL options:nil error:&error];
 }
 
 @end
+

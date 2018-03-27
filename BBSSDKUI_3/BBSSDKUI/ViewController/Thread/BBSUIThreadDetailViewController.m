@@ -98,6 +98,9 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    
+    [self setupJSNativeWithNativeExtPath:@"/HTML/assets/js/NativeExt"];
+    
     [self registerNativeMethods];//注册本地native方法
     [self setup];
 }
@@ -118,7 +121,7 @@
     self.webView.delegate = self ;
     self.webView.backgroundColor = [UIColor whiteColor];
     [self setBarButtonItem];
-//    self.replyEditor = [[BBSUIReplyEditor alloc] init];
+    //    self.replyEditor = [[BBSUIReplyEditor alloc] init];
     [self configBottomBar];
     [self loadWeb];
 }
@@ -197,7 +200,7 @@
     [self.favButton setTitle:@"0" forState:UIControlStateNormal];
     [self.favButton addTarget:self action:@selector(favButtonHandler:) forControlEvents:UIControlEventTouchUpInside];
     [self.favButton setContentMode:UIViewContentModeCenter];
-
+    
     
     self.replyView = [UIView new];
     [self.view addSubview:self.replyView];
@@ -243,9 +246,9 @@
 
 - (void)updateUI
 {
-//    if (_threadModel.replies > 0) {
-//        [_commentButton yee_MakeBadgeText:[NSString stringWithFormat:@"%zd", _threadModel.replies] textColor:[UIColor whiteColor] backColor:[UIColor redColor] Font:[UIFont systemFontOfSize:12]];
-//    }
+    //    if (_threadModel.replies > 0) {
+    //        [_commentButton yee_MakeBadgeText:[NSString stringWithFormat:@"%zd", _threadModel.replies] textColor:[UIColor whiteColor] backColor:[UIColor redColor] Font:[UIFont systemFontOfSize:12]];
+    //    }
     [_commentButton setTitle:[NSString stringWithFormat:@"%zd", _threadModel.replies] forState:UIControlStateNormal];
     [_likeButton setTitle:[NSString stringWithFormat:@"%zd", _threadModel.recommend_add] forState:UIControlStateNormal];
     [_favButton setTitle:[NSString stringWithFormat:@"%zd", _threadModel.favtimes] forState:UIControlStateNormal];
@@ -302,7 +305,7 @@
 {
     __weak typeof(self) theWebController = self;
     [self.jsContext registerJSMethod:@"getForumThreadDetails" block:^(NSArray *arguments) {
-        
+        NSLog(@"=====22222");
         NSString *callback = nil;
         if (arguments.count > 0 && [arguments[0] isKindOfClass:[NSString class]]) {
             callback = arguments[0];
@@ -392,11 +395,11 @@
         {
             callback = arguments[5];
         }
-
+        
         [BBSSDK getPostListWithFid:fid tid:tid authorId:authorID pageIndex:page pageSize:pageSize result:^(NSArray *postList, NSError *error) {
             
             NSMutableArray *postArray = [NSMutableArray array];
-
+            
             for (BBSPost *obj in postList)
             {
                 if ([obj isKindOfClass:[BBSPost class]])
@@ -418,7 +421,7 @@
             {
                 BBSUIAlert(@"获取详情失败:%@,code:%zd",error.userInfo[@"description"],error.code);
             }
-
+            
         }];
     }];
 }
@@ -584,8 +587,8 @@
         UIAlertAction *save = [UIAlertAction actionWithTitle:@"保存到手机相册" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
             
             [[MOBFImageGetter sharedInstance] getImageWithURL:[NSURL URLWithString:src] result:^(UIImage *image, NSError *error) {
-               
-                    UIImageWriteToSavedPhotosAlbum(image, weakSelf, @selector(image:didFinishSavingWithError:contextInfo:), (__bridge void *)self);
+                
+                UIImageWriteToSavedPhotosAlbum(image, weakSelf, @selector(image:didFinishSavingWithError:contextInfo:), (__bridge void *)self);
             }];
             
         }];
@@ -670,13 +673,13 @@
                     }
                 }];
             }
-
+            
         }
         
         
         
     }];
-
+    
 }
 
 /**
@@ -706,7 +709,7 @@
         }
         //进入其他用户详情入口
     }];
-
+    
 }
 
 /**
@@ -788,12 +791,12 @@
 - (void)commentButtonHandler:(UIButton *)button
 {
     [self.webView stringByEvaluatingJavaScriptFromString:@"BBSSDKNative.goComment()"];
-
+    
 }
 
 /**
  收藏
-
+ 
  @param button 收藏按钮
  */
 - (void)favButtonHandler:(UIButton *)button
@@ -855,6 +858,12 @@
     };
 }
 
+
+/**
+ 👍
+
+ @param button <#button description#>
+ */
 - (void)_likeButtonHandler:(UIButton *)button
 {
     if (![BBSUIContext shareInstance].currentUser) {
@@ -912,16 +921,16 @@
 
 - (void)shareButtonHandler:(UIButton *)button
 {
-//    if (![BBSUIContext shareInstance].currentUser)
-//    {
-//        BBSUILoginViewController *vc = [[BBSUILoginViewController alloc] init];
-//        UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
-//        [self.navigationController presentViewController:nav animated:YES completion:nil];
-//    }
-//    else if(self.threadModel)
-//    {
-        [[BBSUIShareView sharedInstance] createShareViewWithContent:self.threadModel animation:YES];
-//    }
+    //    if (![BBSUIContext shareInstance].currentUser)
+    //    {
+    //        BBSUILoginViewController *vc = [[BBSUILoginViewController alloc] init];
+    //        UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
+    //        [self.navigationController presentViewController:nav animated:YES completion:nil];
+    //    }
+    //    else if(self.threadModel)
+    //    {
+    [[BBSUIShareView sharedInstance] createShareViewWithContent:self.threadModel flag:0 animation:YES];
+    //    }
     
     return;
 }
@@ -992,7 +1001,7 @@
         return;
     }
     
-//    self.replyView.state = BBSUIReplyStateUploading;
+    //    self.replyView.state = BBSUIReplyStateUploading;
     
     NSArray *imagesArray = images.copy;
     
@@ -1071,7 +1080,16 @@
 {
     MBProgressHUD *HUD = [[MBProgressHUD alloc] initWithView:self.view];
     [self.view addSubview:HUD];
+    
     HUD.label.text = error.userInfo[@"description"];
+    
+    NSString *code = error.userInfo[@"statusCode"];
+    if ([code isEqualToString:@"-1009"])
+    {
+        HUD.label.text = @"似乎已断开网络连接";
+    }
+    NSLog(@"________  error%@",HUD.label.text);
+    
     HUD.contentColor = [UIColor whiteColor];
     HUD.mode = MBProgressHUDModeText;
     HUD.bezelView.backgroundColor = [UIColor blackColor];
@@ -1095,7 +1113,7 @@
     [HUD showAnimated:YES];
     [HUD hideAnimated:YES afterDelay:2];
     
-//    post.message = comment;
+    //    post.message = comment;
     [self updateComment:post prePid:pid];
     if (self.commentTextView) {
         if (self.commentTextView.superview) {
@@ -1224,3 +1242,4 @@
 
 
 @end
+

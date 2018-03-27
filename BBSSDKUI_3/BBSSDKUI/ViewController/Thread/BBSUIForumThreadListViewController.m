@@ -129,7 +129,15 @@ static NSString *BBSUIForumThreadIdentifier = @"BBSUIForumThreadIdentifier";
 #pragma mark - private methods
 - (void)_configureUI
 {
-    _forumThreadListTableView = [[UITableView alloc] initWithFrame:CGRectMake(0, -20, DZSUIScreen_width, DZSUIScreen_height + 20) style:UITableViewStylePlain];
+    if ([BBSUIContext shareInstance].isIphoneX)
+    {
+        _forumThreadListTableView = [[UITableView alloc] initWithFrame:CGRectMake(0, -15, DZSUIScreen_width, DZSUIScreen_height + 50) style:UITableViewStylePlain];
+    }
+    else
+    {
+        _forumThreadListTableView = [[UITableView alloc] initWithFrame:CGRectMake(0, -20, DZSUIScreen_width, DZSUIScreen_height + 20) style:UITableViewStylePlain];
+    }
+    
     _forumThreadListTableView.delegate = self;
     _forumThreadListTableView.dataSource = self;
     _forumThreadListTableView.backgroundColor = [UIColor clearColor];
@@ -338,24 +346,32 @@ static NSString *BBSUIForumThreadIdentifier = @"BBSUIForumThreadIdentifier";
 
 - (void)_createNavView
 {
+    CGFloat iphoneXTopPadding = 0;
+    if ([BBSUIContext shareInstance].isIphoneX)
+    {
+        iphoneXTopPadding = 10;
+    }
+    
+    CGFloat controlY = 27 + iphoneXTopPadding;
+    
     self.navView = [[BBSUIBaseView alloc] initWithFrame:CGRectMake(0, 0, DZSUIScreen_width, NavigationBar_Height)];
     [self.view addSubview:self.navView];
     
     self.backButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    [self.backButton setFrame:CGRectMake(7, 27, 30, 30)];
+    [self.backButton setFrame:CGRectMake(7, controlY, 30, 30)];
     [self.backButton setImage:[UIImage BBSImageNamed:@"/Common/backWhite.png"] forState:UIControlStateNormal];
     [self.backButton addTarget:self action:@selector(backButtonHandler:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:self.backButton];
 
     self.postButton = [UIButton buttonWithType:UIButtonTypeCustom];
     [self.postButton setImage:[UIImage BBSImageNamed:@"/Home/postThreadWhite@2x.png"] forState:UIControlStateNormal];
-    [self.postButton setFrame:CGRectMake(DZSUIScreen_width - 7 - 30, 27, 30, 30)];
+    [self.postButton setFrame:CGRectMake(DZSUIScreen_width - 7 - 30, controlY, 30, 30)];
     [self.postButton addTarget:self action:@selector(editThread:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:self.postButton];
     
     self.searchButton = [UIButton buttonWithType:UIButtonTypeCustom];
     [self.searchButton setImage:[UIImage BBSImageNamed:@"/Common/searchWhite@2x.png"] forState:UIControlStateNormal];
-    [self.searchButton setFrame:CGRectMake(BBS_LEFT(self.postButton) - 10 - 30, 27, 30, 30)];
+    [self.searchButton setFrame:CGRectMake(BBS_LEFT(self.postButton) - 10 - 30, controlY, 30, 30)];
     [self.searchButton addTarget:self action:@selector(searchAction:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:self.searchButton];
 
@@ -468,10 +484,8 @@ static NSString *BBSUIForumThreadIdentifier = @"BBSUIForumThreadIdentifier";
     else
     {
         BBSUIFastPostViewController *editVC = [BBSUIFastPostViewController shareInstance];
-        if (self.currentForum.fid != 0)//不是“全部”版块
-        {
-            editVC.forum = self.currentForum;
-        }
+        editVC.forum = self.currentForum;
+        
         [editVC addPostThreadObserver:self];
         UINavigationController *mainStyleNav = [[UINavigationController alloc] initWithRootViewController:editVC];
         

@@ -1,6 +1,6 @@
 //
 //  History+CoreDataProperties.m
-//  
+//
 //
 //  Created by chuxiao on 2017/9/21.
 //
@@ -36,5 +36,29 @@
 @dynamic uid;
 @dynamic username;
 @dynamic views;
+@dynamic recommend_add;
+
+@dynamic aid;
+@dynamic title;
+@dynamic authorid
+@dynamic dateline;
+@dynamic viewnum;
+@dynamic commentnum;
+@dynamic sharetimes;
+@dynamic favtimes;
+@dynamic pic;
+@dynamic click1;
+@dynamic click2;
+@dynamic click3;
+@dynamic click4;
+@dynamic click5;
+@dynamic content;
+@dynamic related;
+@dynamic allowcomment;
+@dynamic type;
+@dynamic catname;
+@dynamic shareurl;
+@dynamic originUid;
 
 @end
+

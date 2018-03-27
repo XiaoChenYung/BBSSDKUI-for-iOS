@@ -155,5 +155,13 @@
     return attachmentDic;
 }
 
+#pragma mark - 门户
+//+ (NSDictionary *)objectFromPortalModel:(BBSThread *)model
+//{
+//    NSMutableDictionary *commentDic = [NSMutableDictionary dictionary];
+//    
+//    
+//}
+
 
 @end

@@ -10,6 +10,9 @@
 
 @class BBSForum;
 
+/**
+ 板块详情VC
+ */
 @interface BBSUIForumThreadListViewController : BBSUIBaseViewController
 
 - (instancetype)initWithForum:(BBSForum *)forum;
