@@ -122,6 +122,7 @@ static NSInteger    BBSUIPageSize = 10;
     [[BBSUILaunchConfig shareInstance] cleaerUserConfig];
 }
 
+#pragma mark -  生命周期 Life Circle
 - (void)viewDidLoad
 {
     [super viewDidLoad];
@@ -177,7 +178,6 @@ static NSInteger    BBSUIPageSize = 10;
 - (void)setupVC
 {
     NSLog(@"oooooooooooo  --2%@",[NSThread currentThread]);
-    
     NSDictionary *settings = [BBSUIContext shareInstance].settings;
     BOOL hidden = NO;
     
@@ -248,6 +248,8 @@ static NSInteger    BBSUIPageSize = 10;
     
     self.segments = [self.segmentControl settingTitles:@[@"资讯", @"论坛"] ];
     self.segmentControl.viewControllers = @[vc2, vc];
+    NSLog(@"=====%@", self.segmentControl.viewControllers);
+    
     [self.segmentControl setBottomViewColor:DZSUIColorFromHex(0xFFAA42)];
     [self.segmentControl setTitleNormalColor:[UIColor whiteColor]];
     [self.segmentControl setTitleSelectColor:DZSUIColorFromHex(0xFFAA42)];
@@ -272,10 +274,9 @@ static NSInteger    BBSUIPageSize = 10;
     {
         [self.view bringSubviewToFront:self.navView];
     }
-
 }
 
-
+#pragma mark -配置导航搜索发帖
 - (void)_createNavView:(BOOL)hidden
 {
 //    return;
@@ -463,11 +464,11 @@ static NSInteger    BBSUIPageSize = 10;
         [editVC addPostThreadObserver:self];
         UINavigationController *mainStyleNav = [[UINavigationController alloc] initWithRootViewController:editVC];
         
-        
         [self presentViewController:mainStyleNav animated:YES completion:nil];
     }
 }
 
+#pragma mark -搜索
 - (void)searchAction:(UIButton *)sender {
     BBSUISearchViewController *vc = [BBSUISearchViewController new];
     

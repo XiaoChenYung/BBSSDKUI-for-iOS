@@ -64,6 +64,7 @@ static NSString *cellIdentifier = @"ThreadSummaryCell";
     return self;
 }
 
+#pragma mark -  生命周期 Life Circle
 - (void)viewDidLoad
 {
     [super viewDidLoad];
@@ -98,6 +99,7 @@ static NSString *cellIdentifier = @"ThreadSummaryCell";
     [super viewWillDisappear:animated];
 }
 
+#pragma mark - UI初始化
 - (void)configureUI
 {
     self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
@@ -133,7 +135,7 @@ static NSString *cellIdentifier = @"ThreadSummaryCell";
     
 }
 
-
+#pragma mark - 加载数据
 - (void)initData
 {
     self.currentIndex = 1;

@@ -307,6 +307,7 @@
     if (_type == CollectionViewTypeHistory && [thread.type isEqualToString:@"portal"])
     {
         detailVC = [[BBSUIPortalDetailViewController alloc] initWithThreadModel:thread];
+        ((BBSUIPortalDetailViewController *)detailVC).hasContent = YES;
     }
     else
     {

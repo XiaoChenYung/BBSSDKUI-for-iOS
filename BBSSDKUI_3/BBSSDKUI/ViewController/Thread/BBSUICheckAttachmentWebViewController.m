@@ -125,6 +125,7 @@
     [self.downLoadView setAttachment:self.attachment];
 }
 
+#pragma mark -下载文件
 - (void)loadContent:(BOOL)isTxt
 {
     if (isTxt) {

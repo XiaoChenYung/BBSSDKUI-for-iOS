@@ -37,6 +37,7 @@
 
 @implementation BBSUIPortalViewController
 
+#pragma mark -  生命周期 Life Circle
 - (void)viewDidLoad {
     [super viewDidLoad];
     
@@ -58,6 +59,7 @@
     // Dispose of any resources that can be recreated.
 }
 
+#pragma mark - 初始化UI
 -(void)_configureUI
 {
     [self _setupHeaderView];
@@ -93,27 +95,31 @@
             
             dispatch_async(dispatch_get_main_queue(), ^{
                 
-                self.segmentControl = [[LBSegmentControl alloc] initScrollTitlesWithFrame:CGRectMake(0, 245+ _iphoneXTopPadding, DZSUIScreen_width, 40)];
-                self.segmentControl.tableViewY = 245 - 64 + _iphoneXTopPadding;
-                //    self.segmentControl.tableViewY = 0;
+                if (vcs.count)
+                {
+                    self.segmentControl = [[LBSegmentControl alloc] initScrollTitlesWithFrame:CGRectMake(0, 245+ _iphoneXTopPadding, DZSUIScreen_width, 40)];
+                    self.segmentControl.tableViewY = 245 - 64 + _iphoneXTopPadding;
+                    //    self.segmentControl.tableViewY = 0;
+                    
+                    self.segments = [self.segmentControl settingTitles:titles];
+                    self.segmentControl.viewControllers = vcs;
+                    self.segmentControl.backgroundColor = [UIColor whiteColor];
+                    [self.segmentControl setBottomViewColor:[UIColor clearColor]];
+                    [self.segmentControl setTitleNormalColor:DZSUIColorFromHex(0x2A2B30)];
+                    [self.segmentControl setTitleSelectColor:DZSUIColorFromHex(0xFFAA42)];
+                    self.segmentControl.isTitleScale = YES;
+                    self.segmentControl.isIntegrated = YES;
+                    
+                    self.headerView = [self _obtainHeaderView];
+                    _headerView.layer.zPosition = 1.0f;
+                    //    [_headerView addSubview:self.segmentControl];
+                    
+                    [self.view addSubview:_headerView];
+                    
+                    self.segmentControl.layer.zPosition = 2.0f;
+                    [self.view addSubview:self.segmentControl];
+                }
                 
-                self.segments = [self.segmentControl settingTitles:titles];
-                self.segmentControl.viewControllers = vcs;
-                self.segmentControl.backgroundColor = [UIColor whiteColor];
-                [self.segmentControl setBottomViewColor:[UIColor clearColor]];
-                [self.segmentControl setTitleNormalColor:DZSUIColorFromHex(0x2A2B30)];
-                [self.segmentControl setTitleSelectColor:DZSUIColorFromHex(0xFFAA42)];
-                self.segmentControl.isTitleScale = YES;
-                self.segmentControl.isIntegrated = YES;
-                
-                self.headerView = [self _obtainHeaderView];
-                _headerView.layer.zPosition = 1.0f;
-                //    [_headerView addSubview:self.segmentControl];
-                
-                [self.view addSubview:_headerView];
-                
-                self.segmentControl.layer.zPosition = 2.0f;
-                [self.view addSubview:self.segmentControl];
             });
             
         }
@@ -159,7 +165,6 @@
     if (bannerList.count > 0) {
         
         self.maskImage.hidden = YES;
-        
         self.bannerArray = bannerList;
         
         NSMutableArray *titleArray = [NSMutableArray array];
@@ -228,8 +233,7 @@
             [self.view bringSubviewToFront:self.segmentControl];
         }
     }
-    
-    
+
 }
 
 - (void)_setupHeaderView
@@ -245,7 +249,7 @@
     
     UIView *headerView = [[UIView alloc] initWithFrame:CGRectMake(0, _iphoneXTopPadding, DZSUIScreen_width, 245 + forumViewHeight)];
     [headerView setBackgroundColor:[UIColor whiteColor]];
-    
+    //banner图
     self.bannerView = [[BBSUIThreadBanner alloc]
                        initWithFrame:CGRectMake(0, 0, [UIScreen mainScreen].bounds.size.width,
                                                 247)];

@@ -46,7 +46,7 @@
 //@property (nonatomic, strong) UIButton *favButton;
 @property (nonatomic, strong) UIButton *commentButton;
 @property (nonatomic, assign) BOOL isFavirated;
-@property (nonatomic, assign) BOOL hasContent;
+
 @end
 
 @implementation BBSUIPortalDetailViewController
@@ -82,10 +82,6 @@
     {
         self.threadModel = model;
         self.aid = self.threadModel.aid;
-        if (self.threadModel.content)
-        {
-            self.hasContent = YES;
-        }
     }
     return self;
 }

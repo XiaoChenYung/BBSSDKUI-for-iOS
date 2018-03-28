@@ -48,7 +48,6 @@
 @property (nonatomic, strong) UIButton              *favButton;
 @property (nonatomic, assign) BOOL                  isFavirated;
 @property (nonatomic, strong) BBSUICommentTextView  *commentTextView; //回复视图
-@property (nonatomic, assign) BOOL hasContent;
 
 
 @end
@@ -87,10 +86,6 @@
     {
         self.threadModel = model;
         self.aid = self.threadModel.aid;
-        if (self.threadModel.content)
-        {
-            self.hasContent = YES;
-        }
     }
     return self;
 }

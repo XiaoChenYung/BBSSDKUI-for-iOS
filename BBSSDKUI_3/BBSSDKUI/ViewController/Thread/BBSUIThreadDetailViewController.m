@@ -61,6 +61,7 @@
     return @"/thread/detail";
 }
 
+#pragma mark - init
 - (instancetype)initWithMobLinkScene:(id<IMOBFScene>)scene;
 {
     self = [super init];
@@ -95,6 +96,7 @@
     return self;
 }
 
+#pragma mark -  生命周期 Life Circle
 - (void)viewDidLoad
 {
     [super viewDidLoad];
@@ -140,7 +142,6 @@
     [moreButton addTarget:self action:@selector(moreButtonHandler:) forControlEvents:UIControlEventTouchUpInside];
     UIBarButtonItem *rightBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:moreButton];
     self.navigationItem.rightBarButtonItems = @[rightBarButtonItem, shareButtonItem];
-    
 }
 
 - (void)configBottomBar
@@ -673,13 +674,8 @@
                     }
                 }];
             }
-            
         }
-        
-        
-        
     }];
-    
 }
 
 /**

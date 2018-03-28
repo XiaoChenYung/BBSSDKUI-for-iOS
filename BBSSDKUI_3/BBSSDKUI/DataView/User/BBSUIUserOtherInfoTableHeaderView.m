@@ -32,6 +32,9 @@
  */
 @property (nonatomic, strong) MOBFImageObserver *verifyImgObserver;
 
+@property (nonatomic, strong) UILabel *testLab;
+
+
 @end
 
 @implementation BBSUIUserOtherInfoTableHeaderView
@@ -65,11 +68,11 @@
 }
 
 - (void)configUI {
+    //添加背景模糊效果
     [self addVisualEffectView];
     
     // 头像
     CGFloat avatarWH = 93;
-    
     self.avatarImageView =
     ({
         BBSUIZoomImageView *avatar = [[BBSUIZoomImageView alloc] init];
@@ -163,6 +166,7 @@
         }];
         notice;
     });
+    
     
     // 关注和粉丝按钮
     self.divViewLine =

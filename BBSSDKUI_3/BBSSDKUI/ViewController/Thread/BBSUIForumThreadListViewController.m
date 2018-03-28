@@ -82,6 +82,7 @@ static NSString *BBSUIForumThreadIdentifier = @"BBSUIForumThreadIdentifier";
     return self;
 }
 
+#pragma mark -  生命周期 Life Circle
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
@@ -94,7 +95,6 @@ static NSString *BBSUIForumThreadIdentifier = @"BBSUIForumThreadIdentifier";
 //    [self _setCustomTitleView];
     
     [self _createNavView];//自定义navview
-    
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -104,7 +104,6 @@ static NSString *BBSUIForumThreadIdentifier = @"BBSUIForumThreadIdentifier";
     if (self.forumThreadListTableView) {
         self.forumThreadListTableView.delegate = self;
     }
-    
 }
 
 - (void)viewWillDisappear:(BOOL)animated
@@ -118,7 +117,6 @@ static NSString *BBSUIForumThreadIdentifier = @"BBSUIForumThreadIdentifier";
 - (void)dealloc
 {
     self.forumThreadListTableView.delegate = nil;
-    
 }
 
 - (void)didReceiveMemoryWarning {
@@ -155,8 +153,6 @@ static NSString *BBSUIForumThreadIdentifier = @"BBSUIForumThreadIdentifier";
         [theController _requestData];
     }];
     
-    
-    
     _forumThreadListTableView.mj_footer = [MJRefreshBackNormalFooter footerWithRefreshingBlock:^{
         theController.currentIndex++;
         [theController _requestData];
@@ -184,6 +180,10 @@ static NSString *BBSUIForumThreadIdentifier = @"BBSUIForumThreadIdentifier";
     
     _forumContentView = [[UIView alloc] initWithFrame:CGRectMake(DZSUIScreen_width, 117, DZSUIScreen_width, 43)];
     [headerView addSubview:_forumContentView];
+    
+   // _forumContentView.backgroundColor = [UIColor orangeColor];
+   // headerView.backgroundColor = [UIColor redColor];
+    
     
     CGFloat leftMargin = 20;
     CGFloat forumButtonHeight = 24;
@@ -251,6 +251,7 @@ static NSString *BBSUIForumThreadIdentifier = @"BBSUIForumThreadIdentifier";
     return headerView;
 }
 
+#pragma mark -时间排序弹框
 - (void)_forumArrowButtonHandler:(UIButton *)button
 {
     [UIView animateWithDuration:0.3 animations:^{
@@ -574,6 +575,7 @@ static NSString *BBSUIForumThreadIdentifier = @"BBSUIForumThreadIdentifier";
     return 40;
 }
 
+#pragma mark -最新热门精华置顶
 - (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
 {
     if (!self.sectionHeaderView) {
@@ -590,6 +592,7 @@ static NSString *BBSUIForumThreadIdentifier = @"BBSUIForumThreadIdentifier";
         NSArray *array  = @[@"最新",@"热门",@"精华",@"置顶"];
         segmentView.titleArray = array;
         [segmentView setDelegate:self];
+        
     }
     
     return self.sectionHeaderView;

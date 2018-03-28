@@ -34,6 +34,7 @@
 
 @implementation BBSUISearchViewController
 
+#pragma mark -  生命周期 Life Circle
 - (void)viewDidLoad {
     [super viewDidLoad];
     
@@ -58,6 +59,7 @@
     [self.navigationController.navigationBar setHidden:NO];
 }
 
+#pragma mark - 初始化UI
 - (void)configUI {
     _currentUser = [BBSUIContext shareInstance].currentUser;
     _searchHistory = [[BBSUICacheManager sharedInstance] getSearchHistoriesWithUid:_currentUser.uid];
@@ -194,7 +196,6 @@
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier];
     if (!cell) {
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellIdentifier];
-        
         cell.selectionStyle = UITableViewCellSelectionStyleNone;
         
         UIImage *icon = [UIImage BBSImageNamed:@"Common/SearchHistory.png"];
@@ -233,7 +234,7 @@
     [self searchWithSearchValue:_searchHistory[indexPath.row]];
 }
 
-#pragma mark searchBar delegate
+#pragma mark - searchBar delegate
 - (void)searchBarCancelButtonClicked:(UISearchBar *)searchBar {
     
 }
@@ -249,6 +250,7 @@
     NSLog(@"%@",searchValue);
     
     _tableView.hidden = YES;
+    //setKeyword:(NSString *)keyword请求数据
     self.threadVC.keyword = searchValue;
     
     NSMutableArray *marr = [[BBSUICacheManager sharedInstance] getSearchHistoriesWithUid:_currentUser.uid].mutableCopy;

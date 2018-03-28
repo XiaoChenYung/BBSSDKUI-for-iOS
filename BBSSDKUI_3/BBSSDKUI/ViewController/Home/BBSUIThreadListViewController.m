@@ -69,6 +69,7 @@ static NSInteger    BBSUIPageSize = 10;
 
 @implementation BBSUIThreadListViewController
 
+#pragma mark -  生命周期 Life Circle
 - (void)viewDidLoad
 {
     [super viewDidLoad];
@@ -78,7 +79,6 @@ static NSInteger    BBSUIPageSize = 10;
     [self _initData];
     //    [self _setCustomTitleView];
     [self _requestData];
-    
     
 }
 
@@ -212,7 +212,6 @@ static NSInteger    BBSUIPageSize = 10;
         //加载广告条
         self.maskImage = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, BBS_WIDTH(self.bannerView), BBS_HEIGHT(self.bannerView))];
     
-    
         __weak typeof(self) theController = self;
         _forumHeader = [[BBSUIForumHeader alloc] initWithFrame:CGRectMake(0, BBS_BOTTOM(self.bannerView), DZSUIScreen_width, forumViewHeight)];
         [_forumHeader setResultHandler:^(BBSForum *forum){
@@ -231,6 +230,11 @@ static NSInteger    BBSUIPageSize = 10;
         [headerView addSubview:viewLine];
     }
     
+    //headerView.backgroundColor = [UIColor purpleColor];
+    //_forumHeader.backgroundColor = [UIColor greenColor];
+    //self.bannerView.backgroundColor = [UIColor orangeColor];
+    
+    
     return headerView;
 }
 
@@ -238,10 +242,9 @@ static NSInteger    BBSUIPageSize = 10;
 {
     //首页所有帖子列表视图
     
-    
-    
 }
 
+#pragma mark -全部财经体育跳转
 - (void)_pushForumVC:(BBSForum *)forum
 {
     if (forum) {
@@ -250,14 +253,10 @@ static NSInteger    BBSUIPageSize = 10;
         [self.navigationController pushViewController:threadListVC animated:YES];
         
     }else{
-        
         BBSUIForumViewController *form = [[BBSUIForumViewController alloc] init];
-        
         [self.navigationController pushViewController:form animated:YES];
     }
-    
 }
-
 
 #pragma mark - private data
 - (void)_initData
@@ -267,6 +266,7 @@ static NSInteger    BBSUIPageSize = 10;
 //    self.stateStarted = YES;
 }
 
+#pragma mark -数据加载
 - (void)_requestData
 {
     if (self.viewType == BBSUIThreadListViewTypePortal)
@@ -279,6 +279,7 @@ static NSInteger    BBSUIPageSize = 10;
         [self _requestThreadList];
         [self _requestBannerList];
         [self _requestForumList];
+        
     }
 }
 
@@ -288,7 +289,6 @@ static NSInteger    BBSUIPageSize = 10;
     [BBSSDK getThreadListWithFid:0 orderType:[NSString orderTypeStringFromOrderType:BBSUIThreadOrderPostTime] selectType:[NSString selectTypeStringFromSelectType:BBSUIThreadSelectTypeLatest] pageIndex:self.currentIndex pageSize:BBSUIPageSize result:^(NSArray *threadList, NSError *error) {
         
         if (!error) {
-            
             if (theController.currentIndex == 1) {
                 theController.threadListArray = [NSMutableArray arrayWithArray:threadList];
             }else{
@@ -310,7 +310,6 @@ static NSInteger    BBSUIPageSize = 10;
                     
                     [theController.homeTableView.mj_header beginRefreshing];
                     [theController _requestData];
-                    
                 }];
                 
             }
@@ -384,7 +383,7 @@ static NSInteger    BBSUIPageSize = 10;
                 }];
                 theController.homeTableView.tableFooterView = nil;
             }
-            
+        
             else if (threadList.count == 0)
             {
                 UILabel *footLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, DZSUIScreen_width, 50)];
@@ -606,8 +605,6 @@ static NSInteger    BBSUIPageSize = 10;
         BBSUIThreadDetailViewController *detailVC = [[BBSUIThreadDetailViewController alloc] initWithThreadModel:threadModel];
         [self.navigationController pushViewController:detailVC animated:YES];
     }
-    
-    
 }
 
 

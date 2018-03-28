@@ -79,6 +79,7 @@ const CGFloat HeaderHeight = 360;
     return self;
 }
 
+#pragma mark -  生命周期 Life Circle
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
@@ -106,6 +107,36 @@ const CGFloat HeaderHeight = 360;
     
 }
 
+- (instancetype)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
+    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
+    if (self) {
+        
+        _currentUser = [BBSUIContext shareInstance].currentUser;
+        self.automaticallyAdjustsScrollViewInsets = NO;
+        
+        self.titleButtons = [[NSMutableArray alloc] initWithCapacity:CATEGORY.count];
+        self.controlleres = [[NSMutableArray alloc] initWithCapacity:CATEGORY.count];
+        self.tableViews = [[NSMutableArray alloc] initWithCapacity:CATEGORY.count];
+        
+        [self.view addSubview:self.bottomScrollView];
+        
+        self.navHeaderView.tableViews = [NSMutableArray arrayWithArray:self.tableViews];
+        self.headerView = self.tableHeaderView;
+        
+        [self.view addSubview:self.headerView];
+        [self.view addSubview:self.segmentScrollView];
+        [self.view addSubview:self.navHeaderView];
+        self.bottomScrollView.contentOffset = CGPointMake(DZSUIScreen_width, 0);
+
+        //self.headerView.backgroundColor = [UIColor orangeColor];
+        //self.segmentScrollView.backgroundColor = [UIColor greenColor];
+        //self.navHeaderView.backgroundColor = [UIColor blueColor];
+        
+    }
+    return self;
+}
+
+#pragma mark - 加载数据
 - (void)requestData {
     _currentUser = [BBSUIContext shareInstance].currentUser;
     long time = [[NSDate date] timeIntervalSince1970];
@@ -174,35 +205,8 @@ const CGFloat HeaderHeight = 360;
     
 }
 
-- (instancetype)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
-    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
-    if (self) {
-        
-        _currentUser = [BBSUIContext shareInstance].currentUser;
-        
-        self.automaticallyAdjustsScrollViewInsets = NO;
-        
-        self.titleButtons = [[NSMutableArray alloc] initWithCapacity:CATEGORY.count];
-        self.controlleres = [[NSMutableArray alloc] initWithCapacity:CATEGORY.count];
-        self.tableViews = [[NSMutableArray alloc] initWithCapacity:CATEGORY.count];
-        
-        [self.view addSubview:self.bottomScrollView];
-        
-        self.navHeaderView.tableViews = [NSMutableArray arrayWithArray:self.tableViews];
-        
-        self.headerView = self.tableHeaderView;
-        
-        [self.view addSubview:self.headerView];
-        [self.view addSubview:self.segmentScrollView];
-        [self.view addSubview:self.navHeaderView];
-        self.bottomScrollView.contentOffset = CGPointMake(DZSUIScreen_width, 0);
-        
-    }
-    return self;
-}
 
-
-#pragma mark -UIScrollViewDelegate
+#pragma mark - UIScrollViewDelegate
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView {
     if (scrollView !=self.bottomScrollView) {
         return ;
@@ -302,9 +306,7 @@ const CGFloat HeaderHeight = 360;
         self.bottomScrollView.contentOffset = CGPointMake(DZSUIScreen_width *index, 0);
         
         self.currentSelectedItemView.frame = CGRectMake(CGRectGetMinX(currentButton.frame) + currentButton.frame.size.width/2 - 18, self.segmentScrollView.frame.size.height-1, 40, 1);
-        
     }];
-    
     
     [self.tableViews enumerateObjectsUsingBlock:^(UITableView *  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
 //        NSLog(@"fffffffff %zu",obj.mj_footer.state);
@@ -313,7 +315,6 @@ const CGFloat HeaderHeight = 360;
 
 
 #pragma -mark Lazy Load
-
 //TODO: 加载所有的tableview
 - (UIScrollView *)bottomScrollView {
     
@@ -321,7 +322,6 @@ const CGFloat HeaderHeight = 360;
         _bottomScrollView = [[UIScrollView alloc]initWithFrame:CGRectMake(0, 0, DZSUIScreen_width, DZSUIScreen_height)];
         _bottomScrollView.delegate = self;
         _bottomScrollView.pagingEnabled = YES;
-
         
         for (int index = 0; index < CATEGORY.count; index ++)
         {

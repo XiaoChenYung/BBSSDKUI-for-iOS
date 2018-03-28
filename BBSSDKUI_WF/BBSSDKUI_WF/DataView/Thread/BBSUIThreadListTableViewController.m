@@ -245,15 +245,23 @@ static NSString *cellIdentifier = @"ThreadSummaryCell";
     id detailVC = nil;
     if (_pageType == PageTypePortal
         || (_pageType == PageTypeSearch
-            && [thread.type isEqualToString:@"portal"])
-        || (_pageType == PageTypeHistory
             && [thread.type isEqualToString:@"portal"]))
     {
         detailVC = [[BBSUIPortalDetailViewController alloc] initWithThreadModel:thread];
         ((BBSUIPortalDetailViewController *)detailVC).catname = self.catname;
         ((BBSUIPortalDetailViewController *)detailVC).allowcomment = self.allowcomment;
         [_selectedArray addObject:@(thread.aid)];
-    }else
+    }
+    else if (_pageType == PageTypeHistory
+             && [thread.type isEqualToString:@"portal"])
+    {
+        detailVC = [[BBSUIPortalDetailViewController alloc] initWithThreadModel:thread];
+        ((BBSUIPortalDetailViewController *)detailVC).catname = self.catname;
+        ((BBSUIPortalDetailViewController *)detailVC).allowcomment = self.allowcomment;
+        ((BBSUIPortalDetailViewController *)detailVC).hasContent = YES;
+        [_selectedArray addObject:@(thread.aid)];
+    }
+    else
     {
         detailVC = [[BBSUIThreadDetailViewController alloc] initWithThreadModel:thread];
         [_selectedArray addObject:@(thread.tid)];

@@ -68,6 +68,7 @@
     return self;
 }
 
+#pragma mark -  生命周期 Life Circle
 - (void)viewDidLoad
 {
     [super viewDidLoad];
@@ -105,64 +106,12 @@
     self.hideNameButton.selected = NO;
 }
 
-- (void)setNavigationItems
-{
-    //取消
-    UIBarButtonItem *fixedButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFixedSpace target:nil action:nil];
-    fixedButton.width = -8;
-    UIButton *cancelButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    [cancelButton setFrame:CGRectMake(0, 0, 44, 44)];
-    [cancelButton setTitle:@"取消" forState:UIControlStateNormal];
-    [cancelButton.titleLabel setFont:[UIFont fontWithName:@".PingFangSC-Regular" size:15]];
-    [cancelButton setTitleColor:[UIColor colorWithRed:172/255.0 green:173/255.0 blue:184/255.0 alpha:1/1.0] forState:UIControlStateNormal];
-    [cancelButton addTarget:self action:@selector(cancelButtonHandler:) forControlEvents:UIControlEventTouchUpInside];
-    self.navigationItem.leftBarButtonItems = @[fixedButton, [[UIBarButtonItem alloc] initWithCustomView:cancelButton]];
-    
-    //发布
-    UIButton *publishButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    [publishButton setFrame:CGRectMake(0, 0, 44, 44)];
-    [publishButton setTitle:@"发布" forState:UIControlStateNormal];
-    [publishButton setTitleColor:[UIColor colorWithRed:255/255.0 green:170/255.0 blue:66/255.0 alpha:1/1.0] forState:UIControlStateNormal];
-    [publishButton.titleLabel setFont:[UIFont fontWithName:@".PingFangSC-Medium" size:15]];
-    [publishButton addTarget:self action:@selector(publishButtonHandler:) forControlEvents:UIControlEventTouchUpInside];
-    [publishButton.titleLabel setFont:[UIFont systemFontOfSize:15]];
-    
-    BBSUser *currentUser = [BBSUIContext shareInstance].currentUser;
-//    if ([currentUser.allowAnonymous integerValue])
-//    {
-        //匿名
-        UIButton *hideNameBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-        [hideNameBtn setFrame:CGRectMake(0, 0, 64, 44)];
-        [hideNameBtn setTitle:@" 匿名" forState:UIControlStateNormal];
-        [hideNameBtn setImage:[UIImage BBSImageNamed:@"/Thread/hideName@3x.png"] forState: UIControlStateNormal];
-        [hideNameBtn setImage:[UIImage BBSImageNamed:@"/Thread/hideNameSelect@3x.png"] forState: UIControlStateSelected];
-        [hideNameBtn setTitleColor:[UIColor grayColor] forState:UIControlStateNormal];
-        hideNameBtn.titleLabel.font = [UIFont systemFontOfSize:15];
-        [hideNameBtn addTarget:self action:@selector(hideNamebtnHandler:) forControlEvents:UIControlEventTouchUpInside];
-        self.hideNameButton = hideNameBtn;
-        
-        self.navigationItem.rightBarButtonItems = @[fixedButton, [[UIBarButtonItem alloc] initWithCustomView:publishButton], [[UIBarButtonItem alloc] initWithCustomView:hideNameBtn]];
-//    }
-//    else
-//    {
-//        self.navigationItem.rightBarButtonItems = @[fixedButton, [[UIBarButtonItem alloc] initWithCustomView:publishButton]];
-//    }
-    if ([currentUser.allowAnonymous integerValue] == 0 && self.forum.allowAnonymous == 0)
-    {
-        self.hideNameButton.hidden = YES;
-    }
-}
-
-- (void)cancelButtonHandler:(UIButton *)button
-{
-    [self dismissViewControllerAnimated:YES completion:nil];
-}
-
 - (void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
 }
 
+#pragma mark - 初始化UI
 - (void)configUI
 {
     //设置barButtonItem
@@ -239,7 +188,67 @@
         }];
         editor ;
     });
+    
+    //self.forumSelectView.backgroundColor = [UIColor greenColor];
+    //self.forumNameLabel.backgroundColor = [UIColor orangeColor];
+    //_editor.view.backgroundColor = [UIColor redColor];
+    //self.titleTextField.backgroundColor = [UIColor yellowColor];
+    
 }
+
+- (void)setNavigationItems
+{
+    //取消
+    UIBarButtonItem *fixedButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFixedSpace target:nil action:nil];
+    fixedButton.width = -8;
+    UIButton *cancelButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    [cancelButton setFrame:CGRectMake(0, 0, 44, 44)];
+    [cancelButton setTitle:@"取消" forState:UIControlStateNormal];
+    [cancelButton.titleLabel setFont:[UIFont fontWithName:@".PingFangSC-Regular" size:15]];
+    [cancelButton setTitleColor:[UIColor colorWithRed:172/255.0 green:173/255.0 blue:184/255.0 alpha:1/1.0] forState:UIControlStateNormal];
+    [cancelButton addTarget:self action:@selector(cancelButtonHandler:) forControlEvents:UIControlEventTouchUpInside];
+    self.navigationItem.leftBarButtonItems = @[fixedButton, [[UIBarButtonItem alloc] initWithCustomView:cancelButton]];
+    
+    //发布
+    UIButton *publishButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    [publishButton setFrame:CGRectMake(0, 0, 44, 44)];
+    [publishButton setTitle:@"发布" forState:UIControlStateNormal];
+    [publishButton setTitleColor:[UIColor colorWithRed:255/255.0 green:170/255.0 blue:66/255.0 alpha:1/1.0] forState:UIControlStateNormal];
+    [publishButton.titleLabel setFont:[UIFont fontWithName:@".PingFangSC-Medium" size:15]];
+    [publishButton addTarget:self action:@selector(publishButtonHandler:) forControlEvents:UIControlEventTouchUpInside];
+    [publishButton.titleLabel setFont:[UIFont systemFontOfSize:15]];
+    
+    BBSUser *currentUser = [BBSUIContext shareInstance].currentUser;
+    //    if ([currentUser.allowAnonymous integerValue])
+    //    {
+    //匿名
+    UIButton *hideNameBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+    [hideNameBtn setFrame:CGRectMake(0, 0, 64, 44)];
+    [hideNameBtn setTitle:@" 匿名" forState:UIControlStateNormal];
+    [hideNameBtn setImage:[UIImage BBSImageNamed:@"/Thread/hideName@3x.png"] forState: UIControlStateNormal];
+    [hideNameBtn setImage:[UIImage BBSImageNamed:@"/Thread/hideNameSelect@3x.png"] forState: UIControlStateSelected];
+    [hideNameBtn setTitleColor:[UIColor grayColor] forState:UIControlStateNormal];
+    hideNameBtn.titleLabel.font = [UIFont systemFontOfSize:15];
+    [hideNameBtn addTarget:self action:@selector(hideNamebtnHandler:) forControlEvents:UIControlEventTouchUpInside];
+    self.hideNameButton = hideNameBtn;
+    
+    self.navigationItem.rightBarButtonItems = @[fixedButton, [[UIBarButtonItem alloc] initWithCustomView:publishButton], [[UIBarButtonItem alloc] initWithCustomView:hideNameBtn]];
+    //    }
+    //    else
+    //    {
+    //        self.navigationItem.rightBarButtonItems = @[fixedButton, [[UIBarButtonItem alloc] initWithCustomView:publishButton]];
+    //    }
+    if ([currentUser.allowAnonymous integerValue] == 0 && self.forum.allowAnonymous == 0)
+    {
+        self.hideNameButton.hidden = YES;
+    }
+}
+
+- (void)cancelButtonHandler:(UIButton *)button
+{
+    [self dismissViewControllerAnimated:YES completion:nil];
+}
+
 
 #pragma mark - Image Picker Delegate
 
@@ -372,7 +381,7 @@
     [self.navigationController pushViewController:vc animated:YES];
 }
 
-
+#pragma mark -发帖Action
 - (void)publishButtonHandler:(UIButton *)button
 {
     [self.editor hideKeyboard];
@@ -450,6 +459,7 @@
     return urlHtml;
 }
 
+#pragma mark -发帖请求数据
 - (void)postThread
 {
     __block NSMutableString *urlHtml = [self.editor getHTML].mutableCopy;
@@ -631,6 +641,7 @@
         draft.html = html;
         draft.forum = _forum;
         NSLog(@"saving draft:%@",draft);
+        //做一个缓存
         [draft save];
         [self setupAsDraft];
     }

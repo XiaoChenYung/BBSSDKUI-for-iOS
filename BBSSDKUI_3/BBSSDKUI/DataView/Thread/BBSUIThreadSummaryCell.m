@@ -617,9 +617,7 @@
             }
         
             _subjectLabel.textColor = DZSUIColorFromHex(0xACADB8);
-
         }
-        
     }
     else
     {
@@ -640,9 +638,7 @@
                 _subjectLabel.attributedText = [self stringWithString:_threadModel.subject lineSpace:6];
             }
             _subjectLabel.textColor = DZSUIColorFromHex(0x4E4F57);
-
         }
-        
     }
     
     if(_threadModel.aid)
