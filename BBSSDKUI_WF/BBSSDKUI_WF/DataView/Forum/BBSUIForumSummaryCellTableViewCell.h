@@ -27,8 +27,10 @@
 @property (nonatomic, strong) BBSForum *forumModel;
 
 @property (nonatomic, strong) UIButton *stickButton;
+@property (nonatomic, assign) BOOL isSelectForum;
 
 - (void)setStickButtonHidden:(BOOL)hidden;
+- (void) hiddForumCountLabel;
 
 @end
 

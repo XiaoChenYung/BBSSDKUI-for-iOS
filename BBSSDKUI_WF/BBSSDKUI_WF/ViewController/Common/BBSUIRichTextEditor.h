@@ -6,8 +6,8 @@
 //  Copyright © 2017年 MOB. All rights reserved.
 //
 
-#import "ZSSRichTextEditor.h"
+#import "BBSUIBaseRichTextEditor.h"
 
-@interface BBSUIRichTextEditor : ZSSRichTextEditor
+@interface BBSUIRichTextEditor : BBSUIBaseRichTextEditor
 
 @end

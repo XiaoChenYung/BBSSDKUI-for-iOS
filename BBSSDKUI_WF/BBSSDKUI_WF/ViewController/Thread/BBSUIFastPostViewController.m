@@ -18,6 +18,10 @@
 #import "BBSUIContext.h"
 #import "BBSUIThreadDraft.h"
 #import "BBSUIExpressionViewConfiguration.h"
+#import "BBSUILBSLocationViewController.h"
+#import "BBSUIForumViewController.h"
+
+
 
 @interface BBSUIFastPostViewController ()<UINavigationControllerDelegate,UIImagePickerControllerDelegate,UITextFieldDelegate>
 {
@@ -36,7 +40,17 @@
 @property(nonatomic ,strong) NSMutableArray <id<iBBSUIFastPostViewControllerDelegate>> *delegates ;
 @property(nonatomic, strong) NSMutableDictionary <NSString *, NSString *>*mdicExpression;
 
+@property (nonatomic, strong) UIButton *publishButton;
+
 @property (nonatomic, strong) UIButton *hideNameButton;
+
+@property (nonatomic, strong) UIButton *checkMasterButton;
+
+@property (nonatomic, strong) UIBarButtonItem *publishButtonItem;
+@property (nonatomic, strong) UIBarButtonItem *hideNameButtonItem;
+@property (nonatomic, strong) UIBarButtonItem *checkMasterButtonItem;
+
+@property (nonatomic, strong) NSDictionary *locationInfo;
 
 @end
 
@@ -67,7 +81,7 @@
 {
     [super viewDidLoad];
     
-    self.title = @"快速发帖";
+    //self.title = @"快速发帖";
     
     self.edgesForExtendedLayout = UIRectEdgeNone ;
     _images = [NSMutableArray array];
@@ -132,8 +146,23 @@
         [hideNameBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
         [hideNameBtn addTarget:self action:@selector(hideNamebtnHandler:) forControlEvents:UIControlEventTouchUpInside];
         self.hideNameButton = hideNameBtn;
-        
-        self.navigationItem.rightBarButtonItems = @[fixedButton, [[UIBarButtonItem alloc] initWithCustomView:publishButton], [[UIBarButtonItem alloc] initWithCustomView:hideNameBtn]];
+    
+    //楼主
+    UIButton *checkMasterButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    checkMasterButton.frame = CGRectMake(0, 0, 120, 44);
+    [checkMasterButton setTitle:@" 回复仅楼主可见" forState:UIControlStateNormal];
+    [checkMasterButton setImage:[UIImage BBSImageNamed:@"/Thread/hideName@3x.png"] forState: UIControlStateNormal];
+    [checkMasterButton setImage:[UIImage BBSImageNamed:@"/Thread/hideNameSelect@3x.png"] forState: UIControlStateSelected];
+    [checkMasterButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+    checkMasterButton.titleLabel.font = [UIFont systemFontOfSize:15];
+    [checkMasterButton addTarget:self action:@selector(checkMasterbtnHandler:) forControlEvents:UIControlEventTouchUpInside];
+    self.checkMasterButton = checkMasterButton;
+    
+    self.publishButtonItem = [[UIBarButtonItem alloc] initWithCustomView:publishButton];
+    self.hideNameButtonItem = [[UIBarButtonItem alloc] initWithCustomView:hideNameBtn];
+    self.checkMasterButtonItem = [[UIBarButtonItem alloc] initWithCustomView:checkMasterButton];
+    
+        self.navigationItem.rightBarButtonItems = @[self.publishButtonItem, self.hideNameButtonItem,self.checkMasterButtonItem];
 //    }
 //    else
 //    {
@@ -143,6 +172,7 @@
     if ([currentUser.allowAnonymous integerValue] == 0 && self.forum.allowAnonymous == 0)
     {
         self.hideNameButton.hidden = YES;
+        self.navigationItem.rightBarButtonItems = @[self.publishButtonItem,self.checkMasterButtonItem];
     }
 }
 
@@ -389,23 +419,47 @@
     [_mdicExpression setObject:[nowHtml substringFromIndex:originHtml.length] forKey:expKey];
 }
 
-#pragma mark - click event
+- (void)openLBS{
+    //self.editor.addressTag = @"区游族大厦";
+    __weak typeof(self)weakSelf = self;
+    BBSUILBSLocationViewController *locationVC = [[BBSUILBSLocationViewController alloc] init];
+    locationVC.locationSelectBlock = ^(id locationInfo) {
+        NSDictionary *info = (NSDictionary *)locationInfo;
+        weakSelf.locationInfo = info;
+        if (info == nil) {
+            weakSelf.editor.addressTag = nil;
+        }else{
+            weakSelf.editor.addressTag = [info valueForKey:@"name"];
+        }
+    };
+    //if (self.navigationController == nil) {
+        UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:locationVC];
+        locationVC.isPresent = YES;
+        [self presentViewController:nav animated:YES completion:nil];
+    //}else{
+    //    [self.navigationController pushViewController:locationVC animated:YES];
+    //}
+}
 
+#pragma mark - 选择版块
 - (void)selectForum:(id)sender
 {
+    __weak typeof(self)weakSelf = self;
     BBSUIThreadForumListSelectViewController * vc = [[BBSUIThreadForumListSelectViewController alloc] initWithResult:^(BBSForum *selectedForum) {
         if([selectedForum isKindOfClass:[BBSForum class]])
         {
-            self.forum = selectedForum ;
+            weakSelf.forum = selectedForum ;
             
             BBSUser *currentUser = [BBSUIContext shareInstance].currentUser;
             if ([currentUser.allowAnonymous integerValue] || selectedForum.allowAnonymous)
             {
-                self.hideNameButton.hidden = NO;
+                weakSelf.hideNameButton.hidden = NO;
+                weakSelf.navigationItem.rightBarButtonItems = @[weakSelf.publishButtonItem,weakSelf.hideNameButtonItem,weakSelf.checkMasterButtonItem];
             }
             else
             {
-                self.hideNameButton.hidden = YES;
+                weakSelf.hideNameButton.hidden = YES;
+                weakSelf.navigationItem.rightBarButtonItems = @[weakSelf.publishButtonItem,weakSelf.checkMasterButtonItem];
             }
         }
     }];
@@ -478,6 +532,11 @@
     button.selected = !button.selected;
 }
 
+- (void)checkMasterbtnHandler:(UIButton *)button
+{
+    button.selected = !button.selected;
+}
+
 - (NSString *)_replaceExpressionWithUrl:(NSMutableString *)url key:(NSString *)key obj:(NSString *)obj
 {
     NSMutableString *urlHtml = url;
@@ -531,7 +590,7 @@
     });
     
     _context = [self.editor.editorView valueForKeyPath:@"documentView.webView.mainFrame.javaScriptContext"];
-    JSValue *value = [_context evaluateScript:@"zss_editor.getImages()"];
+    JSValue *value = [_context evaluateScript:@"bbsui_editor.getImages()"];
     NSArray *imageJsons = value.toArray ;
     
     if (!imageJsons.count)
@@ -610,9 +669,30 @@
         isanonymous = 1;
     }
     
+    NSInteger hiddenreplies = 0;
+    if (self.checkMasterButton.isSelected) {
+        hiddenreplies = 1;
+    }
+    
     [BBSUIContext shareInstance].lastFastPostTime = [[NSDate date]timeIntervalSince1970];
     
-    [BBSSDK postThreadWithFid:_forum.fid subject:_titleTextField.text message:html isanonymous:isanonymous hiddenreplies:0 result:^(NSError *error) {
+    NSString *address = @"";
+    NSString *poiTitle = @"";
+    float lat = 0;
+    float lng = 0;
+    BBSLocation *location = nil;
+    if (self.locationInfo) {
+        poiTitle = self.locationInfo[@"name"];
+        address = self.locationInfo[@"address"];
+        NSArray *arr = [self.locationInfo[@"location"] componentsSeparatedByString:@","];
+        if ([arr count] == 2) {
+            lat = [[self.locationInfo[@"location"] componentsSeparatedByString:@","].firstObject floatValue];
+            lng = [[self.locationInfo[@"location"] componentsSeparatedByString:@","].lastObject floatValue];
+        }
+        location = [[BBSLocation alloc] initWithPOITitle:poiTitle address:address latitude:lat longitude:lng];
+    }
+
+    [BBSSDK postThreadWithFid:_forum.fid subject:_titleTextField.text message:html isanonymous:isanonymous hiddenreplies:hiddenreplies location:location result:^(NSError *error) {
         
         if (!error)
         {

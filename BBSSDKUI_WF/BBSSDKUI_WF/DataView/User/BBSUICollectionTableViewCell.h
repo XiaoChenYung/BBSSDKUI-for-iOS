@@ -12,6 +12,8 @@
 
 @interface BBSUICollectionTableViewCell : UITableViewCell
 
+@property (nonatomic, copy)void (^addressOnClickBlock)(BBSThread *threadModel);
+
 @property (nonatomic, assign) BBSUICollectionViewType collectionViewType;
 
 @property (nonatomic, strong) BBSThread *collection;

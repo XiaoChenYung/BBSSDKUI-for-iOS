@@ -8,8 +8,7 @@
 
 #import "BBSUIShareView.h"
 #import <BBSSDK/BBSThread.h>
-#import <ShareSDK/IMOBFShareComponent.h>
-#import <MOBFoundation/MOBFComponentManager.h>
+#import <BBSSDK/BBSSDK+ShareSDK.h>
 
 //分享item高度
 #define  ItemWH                 48
@@ -225,48 +224,41 @@
     
     
     //分享操作
-    NSArray *components = [[MOBFComponentManager defaultManager] getComponents:@protocol(IMOBFShareComponent)];
-    if (components.count > 0) {
-        id<IMOBFShareComponent>  ShareComponent = components[0];
-        //分享操作
-        //1、创建分享参数
-        NSMutableDictionary *shareParams = [ShareComponent SSDKSetupShareParamsByText:thread.summary
-                                                                               images:images
-                                                                                  url:[NSURL URLWithString:url]
-                                                                                title:title
-                                                                                 type:3
-                                                                       dataDictionary:nil];
-        
-        //有的平台要客户端分享需要加此方法，例如微博
-        //        [shareParams SSDKEnableUseClientShare];
-        
-        NSUInteger platformType;
-        switch (sender.tag) {
-            case 0:
-                platformType = 22;
-                break;
-            case 1:
-                platformType = 23;
-                break;
-            case 2:
-                platformType = 24;
-                break;
-                //            case 3:
-                //                platformType = SSDKPlatformTypeSinaWeibo;
-                //                break;
-            case 3:
-                platformType = 6;
-                break;
-            default:
-                platformType = 0;
-                break;
-        }
-        
-        if (ShareComponent && [ShareComponent conformsToProtocol:@protocol(IMOBFShareComponent)])
-        {
-            [ShareComponent share:platformType parameters:shareParams onStateChanged:nil];
-        }
+    //1、创建分享参数
+    NSMutableDictionary *shareParams = [BBSSDK setupShareParamsByText:thread.summary
+                                                               images:images
+                                                                  url:[NSURL URLWithString:url]
+                                                                title:title
+                                                                 type:3
+                                                       dataDictionary:nil];
+    
+    //有的平台要客户端分享需要加此方法，例如微博
+    //        [shareParams SSDKEnableUseClientShare];
+    
+    NSUInteger platformType;
+    switch (sender.tag) {
+        case 0:
+            platformType = 22;
+            break;
+        case 1:
+            platformType = 23;
+            break;
+        case 2:
+            platformType = 24;
+            break;
+            //            case 3:
+            //                platformType = SSDKPlatformTypeSinaWeibo;
+            //                break;
+        case 3:
+            platformType = 6;
+            break;
+        default:
+            platformType = 0;
+            break;
     }
+    
+    
+    [BBSSDK share:platformType parameters:shareParams onStateChanged:nil];
     
     [self hide];
 }

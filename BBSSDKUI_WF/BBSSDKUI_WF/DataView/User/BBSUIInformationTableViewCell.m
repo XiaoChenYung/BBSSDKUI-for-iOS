@@ -9,7 +9,7 @@
 #import "BBSUIInformationTableViewCell.h"
 #import "Masonry.h"
 #import <BBSSDK/BBSInformation.h>
-#import "NSString+Paragraph.h"
+#import "NSString+BBSUIParagraph.h"
 
 @interface BBSUIInformationTableViewCell ()
 
@@ -156,7 +156,7 @@
         self.iconImageView.image = [UIImage BBSImageNamed:@"/Common/mob_notice.png"];
         [self makeConstraintWithNoSummary];
         
-        self.titleLabel.attributedText = [NSString stringWithString:information.title fontSize:12 defaultColorValue:@"6A7081" lineSpace:0 wordSpace:0];
+        self.titleLabel.attributedText = [NSString bbs_stringWithString:information.title fontSize:12 defaultColorValue:@"6A7081" lineSpace:0 wordSpace:0];
     }
 
     else if ([information.type isEqualToString:@"mob_like"]
@@ -197,7 +197,7 @@
             title = [NSString stringWithFormat:@"<span style=\"color:%@\">%@</span>关注了您",@"12d9f0", information.author];
         }
 
-        self.titleLabel.attributedText = [NSString stringWithString:title fontSize:12 defaultColorValue:@"6A7081" lineSpace:0 wordSpace:0];
+        self.titleLabel.attributedText = [NSString bbs_stringWithString:title fontSize:12 defaultColorValue:@"6A7081" lineSpace:0 wordSpace:0];
     }
 
     self.timeLabel.text = [self dataWithTimeStamp:information.dateline];

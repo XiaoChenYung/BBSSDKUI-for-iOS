@@ -15,7 +15,7 @@
 #import "BBSUISystemInformationViewController.h"
 #import "BBSUIUserOtherInfoViewController.h"
 #import "BBSUIThreadDetailViewController.h"
-#import "UIView+TipView.h"
+#import "UIView+BBSUITipView.h"
 
 #define BBSUIInformationCellHeight 65
 #define BBSUIPageSize       10
@@ -98,7 +98,7 @@
         [weakSelf.tableView.mj_footer endRefreshing];
         
         if (weakSelf.currentIndex == 1) {
-            [weakSelf configureTipViewWithTipMessage:@"暂无内容" hasData:weakSelf.marrData.count != 0 hasError:YES reloadButtonBlock:^(id sender) {
+            [weakSelf bbs_configureTipViewWithTipMessage:@"暂无内容" hasData:weakSelf.marrData.count != 0 hasError:YES reloadButtonBlock:^(id sender) {
                 [weakSelf.tableView.mj_header beginRefreshing];
                 [weakSelf requestData];
             }];

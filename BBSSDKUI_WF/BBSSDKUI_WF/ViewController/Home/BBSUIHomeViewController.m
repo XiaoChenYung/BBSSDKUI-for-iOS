@@ -7,13 +7,14 @@
 //
 
 #import "BBSUIHomeViewController.h"
-#import "LBSegmentControl.h"
+#import "BBSUILBSegmentControl.h"
 #import "BBSUIThreadListViewController.h"
 #import "BBSUIForumViewController.h"
 #import "BBSUIFastPostViewController.h"
 #import "BBSUILoginViewController.h"
 #import "BBSUISearchViewController.h"
 #import "BBSUINewsViewController.h"
+#import "BBSUITribuneViewController.h"
 
 #import "BBSUIContext.h"
 #import "BBSUIUserMeInfoViewController.h"
@@ -22,10 +23,11 @@
 #import "BBSUIStatusBarTip.h"
 #import "UIButton+WebCache.h"
 #import "BBSUILaunchConfig.h"
+#import "BBSUIAlertView.h"
 
-@interface BBSUIHomeViewController ()<iBBSUIFastPostViewControllerDelegate,LBSegmentControlDelegate>
+@interface BBSUIHomeViewController ()<iBBSUIFastPostViewControllerDelegate,BBSUILBSegmentControlDelegate>
 
-@property (nonatomic, strong) LBSegmentControl * segmentControl;
+@property (nonatomic, strong) BBSUILBSegmentControl * segmentControl;
 @property (nonatomic, strong) MOBFImageObserver *verifyImgObserver;
 
 @property (nonatomic, strong) UIButton          *postButton;
@@ -81,13 +83,26 @@
                         [self _updateKey];
                     }
                 }
-                
-                
                 NSLog(@"oooooooooooo  --1%@",settings);
+                NSString *plugins_version = settings[@"bbssdk_version"];
+                NSString *bbssdk_version = [BBSSDK sdkVersion];
+                NSArray<NSString *> *pluginsArr = [plugins_version componentsSeparatedByString:@"."];
+                NSArray<NSString *> *bbssdkArr = [bbssdk_version componentsSeparatedByString:@"."];
+                if ([pluginsArr count] > 2) {
+                    plugins_version = [NSString stringWithFormat:@"%@.%@",pluginsArr[0],pluginsArr[1]];
+                }
+                if ([bbssdkArr count] > 2) {
+                    bbssdk_version = [NSString stringWithFormat:@"%@.%@",bbssdkArr[0],bbssdkArr[1]];
+                }
+                
                 dispatch_semaphore_signal(self.semaphore);
+                
+                if ([bbssdk_version compare:plugins_version options:NSNumericSearch] == NSOrderedDescending) {
+                    BBSUIAlertView *alertView = [[BBSUIAlertView alloc] initWithMessage:@"请更新插件版本" cancelButtonTitle:@"知道了" cancelBlock: nil];
+                    [alertView show];
+                }
             }
         }];
-        
         
         //        //阻塞线程，直到获取配置信息完成之后
         //        dispatch_semaphore_wait(self.semaphore, DISPATCH_TIME_FOREVER);
@@ -102,12 +117,12 @@
     [[BBSUILaunchConfig shareInstance] cleaerUserConfig];
 }
 
+#pragma mark -  生命周期 Life Circle
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    
     [self setupRightBarButton];
-    //    [self setupLeftBarButton];
+    //[self setupLeftBarButton];
     //设置自定义标题栏按钮
     [self setCustomNavTitleView];
 }
@@ -116,26 +131,23 @@
 {
     [super viewWillAppear:animated];
     [self setupLeftBarButton];
-    
 }
 
+#pragma mark - configure
 - (void)setCustomNavTitleView
 {
     __weak typeof (self) weakSelf = self;
     dispatch_async(self.queue, ^{
-        
         dispatch_async(dispatch_get_main_queue(), ^{
             [weakSelf setupVC];
             dispatch_semaphore_signal(self.semaphore);
         });
     });
-    
 }
 
 - (void)setupVC
 {
     NSLog(@"oooooooooooo  --2%@",[NSThread currentThread]);
-    
     NSDictionary *settings = [BBSUIContext shareInstance].settings;
     BOOL hidden = NO;
     
@@ -157,7 +169,7 @@
     //首页所有帖子列表视图
     BBSUIThreadListViewController *vc = [[BBSUIThreadListViewController alloc] init];
     
-    self.segmentControl = [[LBSegmentControl alloc] initStaticTitlesWithFrame:CGRectMake(0, 0, 80, 42) titleFontSize:17 isIntegrated:YES];
+    self.segmentControl = [[BBSUILBSegmentControl alloc] initStaticTitlesWithFrame:CGRectMake(0, 0, 80, 42) titleFontSize:17 isIntegrated:YES];
     self.segmentControl.titles = @[@"论坛"];
     self.segmentControl.notScroll = YES;
     self.segmentControl.viewControllers = @[vc];
@@ -173,16 +185,20 @@
 
 - (void)setupSegmentControlWithPortal
 {
-    //首页所有帖子列表视图
-    BBSUIThreadListViewController *vc = [[BBSUIThreadListViewController alloc] init];
-    //    BBSUIForumViewController *vc2 = [[BBSUIForumViewController alloc] init];
-    BBSUIThreadListViewController *vc2 = [BBSUIThreadListViewController new];
-    vc2.pageType = PageTypePortal;
+    //资讯
+    BBSUIThreadListViewController *vc = [BBSUIThreadListViewController new];
+    vc.pageType = PageTypePortal;
+
+    //论坛
+//    BBSUIThreadListViewController *vc2 = [[BBSUIThreadListViewController alloc] init];
+//    vc2.pageType = PageTypeHomePage;
     
-    self.segmentControl = [[LBSegmentControl alloc] initStaticTitlesWithFrame:CGRectMake(0, 0, 160, 42) titleFontSize:17 isIntegrated:YES];
+    BBSUITribuneViewController *vc2 = [[BBSUITribuneViewController alloc] initWithForum:nil selectType:0];
+    
+    self.segmentControl = [[BBSUILBSegmentControl alloc] initStaticTitlesWithFrame:CGRectMake(0, 0, 160, 42) titleFontSize:17 isIntegrated:YES];
     self.segmentControl.titles = @[@"资讯", @"论坛"];
     self.segmentControl.notScroll = YES;
-    self.segmentControl.viewControllers = @[vc2, vc];
+    self.segmentControl.viewControllers = @[vc, vc2];
     [self.segmentControl setBottomViewColor:[UIColor whiteColor]];
     [self.segmentControl setTitleNormalColor:[UIColor colorWithRed:255 green:255 blue:255 alpha:0.8]];
     [self.segmentControl setTitleSelectColor:[UIColor whiteColor]];
@@ -198,9 +214,7 @@
     if (![BBSUIContext shareInstance].currentUser)
     {
         BBSUILoginViewController *vc = [[BBSUILoginViewController alloc] init];
-        
         UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
-        
         [self.navigationController presentViewController:nav animated:YES completion:nil];
     }
     else
@@ -208,7 +222,6 @@
         BBSUIFastPostViewController *editVC = [BBSUIFastPostViewController shareInstance];
         [editVC addPostThreadObserver:self];
         BBSUIMainStyleNavigationController *mainStyleNav = [[BBSUIMainStyleNavigationController alloc] initWithRootViewController:editVC];
-
         
         [self presentViewController:mainStyleNav animated:YES completion:nil];
     }
@@ -238,10 +251,8 @@
     {
         BBSUser *currentUser = [BBSUIContext shareInstance].currentUser;
         
-        __weak typeof (self) weakSelf = self;
         long time = [[NSDate date] timeIntervalSince1970];
         NSString *strTime = [NSString stringWithFormat:@"%lu",time];
-        
         
         [BBSSDK getProfileInfoWithAuthorid:-1 time:strTime result:^(BBSUser *user, NSError *error) {
             
@@ -271,13 +282,9 @@
                 return ;
             }
         }];
-        
-        
-        
     }}
 
 #pragma mark - iBBSUIFastPostViewControllerDelegate
-
 - (void)didBeginPostThread
 {
     [[BBSUIStatusBarTip shareStatusBar] postBegin];

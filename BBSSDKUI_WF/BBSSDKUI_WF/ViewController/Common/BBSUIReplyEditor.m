@@ -12,6 +12,7 @@
 #import "BBSUIImagePickerView.h"
 #import "BBSUIExpressionViewConfiguration.h"
 #import "BBSUIExpressionTextField.h"
+#import "BBSUILBSLocationViewController.h"
 
 @interface BBSUIReplyEditor ()<iBBSUIImagePickerViewDelegate, BBSUIExpressionViewDelegate, UITextViewDelegate>
 {
@@ -25,6 +26,7 @@
 @property (nonatomic ,strong) UIView *imagePickBar;
 @property (nonatomic ,strong) UIButton *imagePickBtn;
 @property (nonatomic, strong) UIButton *faceButton;
+@property (nonatomic, strong) UIButton *addressButton;
 @property (nonatomic ,strong) BBSUIImagePickerView *imagePickerView ;
 @property (nonatomic ,copy) NSString *userName ;
 @property (nonatomic ,strong) UIWindow *window ;
@@ -35,6 +37,8 @@
 @property (nonatomic, strong) BBSUIExpressionView *expView;
 @property (nonatomic, assign) CGFloat keyboardHeight;
 @property (nonatomic, assign) BOOL secondShow;
+
+@property (nonatomic, strong) NSDictionary *locationInfo;
 
 @end
 
@@ -191,6 +195,7 @@
         make.centerY.equalTo(_imagePickBar);
         make.height.with.width.equalTo(@30);
     }];
+    
 
     // 表情
     UIButton *faceButton = [UIButton buttonWithType:UIButtonTypeCustom];
@@ -238,6 +243,17 @@
         imagePickerView ;
     });
     
+    //地址Tag v2.4.0
+    self.addressButton = ({
+        UIButton *addressButton = [UIButton buttonWithType:UIButtonTypeCustom];
+        [addressButton setTitle:@"" forState:UIControlStateNormal];
+        [addressButton setTitleColor:DZSUIColorFromHex(0x9A9CAA) forState:UIControlStateNormal];
+        [addressButton setImage:[UIImage BBSImageNamed:@"/LBS/LBS_max_icon.png"] forState:UIControlStateNormal];
+        addressButton.titleLabel.font = [UIFont systemFontOfSize:12];
+        [addressButton addTarget:self action:@selector(addressButtonOnClick:) forControlEvents:UIControlEventTouchUpInside];
+        
+        addressButton;
+    });
     
     if (_isPortal)
     {
@@ -263,6 +279,23 @@
             make.width.equalTo(@70);
             make.height.equalTo(@30);
         }];
+        
+        
+        [_editorView addSubview:_addressButton];
+        [_addressButton mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.left.equalTo(_editorView.mas_left).offset(10);
+            make.centerY.equalTo(_sendBtn);
+            make.height.equalTo(@30);
+        }];
+
+    }else{
+        [_imagePickBar addSubview:_addressButton];
+        [_addressButton mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.left.equalTo(_imagePickBar.mas_left).offset(10);
+            make.centerY.equalTo(_imagePickBar);
+            make.height.equalTo(@30);
+        }];
+        
     }
     
 }
@@ -358,7 +391,7 @@
     
     if (self.handler)
     {
-        self.handler(NO, [_imagePickerView selectedImages], string);
+        self.handler(NO, [_imagePickerView selectedImages], string, _locationInfo);
     }
     
     self.window.hidden = YES;
@@ -384,6 +417,23 @@
     }
     
     [self.view addSubview:_expView];
+}
+
+- (void)addressButtonOnClick:(id)sender{
+    __weak typeof(self)weakSelf = self;
+    BBSUILBSLocationViewController *locationVC = [[BBSUILBSLocationViewController alloc] init];
+    locationVC.locationSelectBlock = ^(id locationInfo) {
+        NSDictionary *info = (NSDictionary *)locationInfo;
+        weakSelf.locationInfo = info;
+        if (info == nil) {
+            [weakSelf.addressButton setTitle:@"" forState:UIControlStateNormal];
+        }else{
+            [weakSelf.addressButton setTitle:[info valueForKey:@"name"] forState:UIControlStateNormal];
+        }
+    };
+    UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:locationVC];
+    locationVC.isPresent = YES;
+    [self presentViewController:nav animated:YES completion:nil];
 }
 
 #pragma mark - iBBSUIImagePickerViewDelegate 
@@ -417,7 +467,7 @@
     
     if (self.handler)
     {
-        self.handler(YES, [_imagePickerView selectedImages], _textEditor.text);
+        self.handler(YES, [_imagePickerView selectedImages], _textEditor.text, _locationInfo);
     }
     
 //    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(_animationDuration * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{

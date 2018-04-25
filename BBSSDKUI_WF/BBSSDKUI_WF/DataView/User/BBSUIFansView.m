@@ -13,7 +13,7 @@
 #import <BBSSDK/BBSSDK.h>
 #import "MJRefresh.h"
 #import "BBSUIUserOtherInfoViewController.h"
-#import "UIView+TipView.h"
+#import "UIView+BBSUITipView.h"
 #import "BBSUIContext.h"
 
 #define BBSUIFansCellHeight 65
@@ -120,7 +120,7 @@
             [weakSelf.tableView.mj_footer endRefreshing];
             
             if (weakSelf.currentIndex == 1) {
-                [weakSelf configureTipViewWithTipMessage:@"暂无内容" hasData:weakSelf.marrData.count != 0 hasError:YES reloadButtonBlock:^(id sender) {
+                [weakSelf bbs_configureTipViewWithTipMessage:@"暂无内容" hasData:weakSelf.marrData.count != 0 hasError:YES reloadButtonBlock:^(id sender) {
                     [weakSelf.tableView.mj_header beginRefreshing];
                     [weakSelf requestData];
                 }];
@@ -139,7 +139,7 @@
             [weakSelf.tableView.mj_footer endRefreshing];
             
             if (weakSelf.currentIndex == 1) {
-                [weakSelf configureTipViewWithTipMessage:@"暂无内容" hasData:weakSelf.marrData.count != 0 hasError:YES reloadButtonBlock:^(id sender) {
+                [weakSelf bbs_configureTipViewWithTipMessage:@"暂无内容" hasData:weakSelf.marrData.count != 0 hasError:YES reloadButtonBlock:^(id sender) {
                     [weakSelf.tableView.mj_header beginRefreshing];
                     [weakSelf requestData];
                 }];

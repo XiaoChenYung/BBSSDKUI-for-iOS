@@ -102,6 +102,9 @@
     threadHistory.username      = thread.username;
     threadHistory.uid           = @(uid);
     threadHistory.recommend_add = @(thread.recommend_add);
+    threadHistory.poiTitle      = thread.poiTitle;
+    threadHistory.latitude      = @(thread.latitude);
+    threadHistory.longitude     = @(thread.longitude);
     
     threadHistory.aid           = PORTAL(thread.aid);
     threadHistory.title         = thread.title;
@@ -251,6 +254,9 @@
         threadHistory.views         = [thread.views integerValue];
         threadHistory.username      = thread.username;
         threadHistory.recommend_add = [thread.recommend_add integerValue];
+        threadHistory.poiTitle      = thread.poiTitle;
+        threadHistory.latitude      = [thread.latitude floatValue];
+        threadHistory.longitude     = [thread.longitude floatValue];
         
         threadHistory.aid           = [[thread.aid stringByReplacingOccurrencesOfString:@"Portal" withString:@""] integerValue];
         threadHistory.title         = thread.title;

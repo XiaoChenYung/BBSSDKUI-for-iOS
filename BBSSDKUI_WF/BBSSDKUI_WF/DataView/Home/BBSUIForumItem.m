@@ -7,7 +7,7 @@
 //
 
 #import "BBSUIForumItem.h"
-#import "UIViewExt.h"
+#import "UIView+BBSUIExt.h"
 #import "UIImage+BBSFunction.h"
 
 #define BBSUIForumImageViewWidth 45
@@ -37,14 +37,14 @@
 
 - (void)configureUI
 {
-    self.forumImageView = [[UIImageView alloc] initWithFrame:CGRectMake((self.width - BBSUIForumImageViewWidth) / 2, 5, BBSUIForumImageViewWidth, BBSUIForumImageViewWidth)];
-    self.forumImageView.layer.cornerRadius = self.width / 10;
+    self.forumImageView = [[UIImageView alloc] initWithFrame:CGRectMake((self.bbs_width - BBSUIForumImageViewWidth) / 2, 5, BBSUIForumImageViewWidth, BBSUIForumImageViewWidth)];
+    self.forumImageView.layer.cornerRadius = self.bbs_width / 10;
     //将多余的部分切掉
     self.forumImageView.layer.masksToBounds = YES;
     [self.forumImageView setImage:[UIImage BBSImageNamed:@"/Common/forumList.png"]];
     [self addSubview:self.forumImageView];
     
-    self.forumTitleLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, self.forumImageView.bottom + 10, self.width, 15)];
+    self.forumTitleLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, self.forumImageView.bbs_bottom + 10, self.bbs_width, 15)];
     [self.forumTitleLabel setFont:[UIFont boldSystemFontOfSize:15]];
     [self.forumTitleLabel setTextColor:DZSUIColorFromHex(0x3A4045)];
     [self.forumTitleLabel setText:@"摄影大赛"];

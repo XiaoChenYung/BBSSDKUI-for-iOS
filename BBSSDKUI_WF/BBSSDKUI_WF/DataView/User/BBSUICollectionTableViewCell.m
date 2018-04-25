@@ -11,7 +11,8 @@
 #import "Masonry.h"
 #import <BBSSDK/BBSThread.h>
 #import "BBSUIViewsRepliesView.h"
-#import "NSString+Time.h"
+#import "NSString+BBSUITime.h"
+#import "BBSUILBSShowLocationViewController.h"
 
 #define kImageWidth (([UIScreen mainScreen].bounds.size.width) * 80 / 375)
 
@@ -57,6 +58,10 @@
  */
 @property (nonatomic, strong) UILabel *imageCountLabel;
 
+/**
+ 地址标签 v2.4.0
+ */
+@property (nonatomic, strong) UIButton *addressTagView;
 
 @end
 
@@ -156,6 +161,13 @@
         signLabel.layer.masksToBounds = YES;
         [self addSubview:signLabel];
         
+        [_signLabel mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.left.equalTo(@15).priorityHigh();
+            make.bottom.equalTo(@-12).priorityHigh();
+            make.height.equalTo(@15).priorityHigh();
+            make.top.equalTo(self.contentLabel.mas_bottom).offset(13);
+        }];
+        
         signLabel;
     });
     
@@ -200,9 +212,38 @@
         }];
         timeLabel ;
     });
+    
+    // 地址Tag v2.4.0
+    self.addressTagView = ({
+        UIButton *addressTagView = [UIButton buttonWithType:UIButtonTypeCustom];
+        [addressTagView setBackgroundColor:DZSUIColorFromHex(0xEAEDF2)];
+        [addressTagView setTitle:@"地址" forState:UIControlStateNormal];
+        [addressTagView setTitleColor:DZSUIColorFromHex(0x9A9CAA) forState:UIControlStateNormal];
+        [addressTagView setImage:[UIImage BBSImageNamed:@"/LBS/LBS_min_icon.png"] forState:UIControlStateNormal];
+        [addressTagView addTarget:self action:@selector(addressTagOnClick:) forControlEvents:UIControlEventTouchUpInside];
+        addressTagView.titleLabel.font = [UIFont systemFontOfSize:11];
+        [addressTagView.layer setCornerRadius:2];
+        [addressTagView.layer setMasksToBounds:YES];
+        addressTagView.hidden = YES;
+        // 光栅化
+        addressTagView.layer.shouldRasterize = true;
+        addressTagView.layer.rasterizationScale = [UIScreen mainScreen].scale;
+        [addressTagView setContentEdgeInsets:UIEdgeInsetsMake(0, 8, 0, 8)];
+        [self addSubview:addressTagView];
+        
+        [addressTagView mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.left.equalTo(_signLabel);
+            make.top.equalTo(_signLabel.mas_bottom).offset(10);
+            make.height.mas_equalTo(20);
+        }];
+        
+        addressTagView ;
+    });
 }
 
 - (void)setCollection:(BBSThread *)collection{
+    //collection.address = @"游族网络";
+    _collection = collection;
     _summaryLabel.attributedText = [self stringWithString:collection.subject lineSpace:6];
     _contentLabel.attributedText = [self stringWithString:collection.summary lineSpace:3];
     
@@ -221,7 +262,7 @@
     }
     
     NSInteger timeOffset = [[NSDate date] timeIntervalSince1970] - collection.createdOn ;
-    _timeLabel.text = [NSString timeTextWithOffset:timeOffset];
+    _timeLabel.text = [NSString bbs_timeTextWithOffset:timeOffset];
     
     if (collection.images.count > 0) {
         _imagesView.image = [UIImage BBSImageNamed:@"/Home/wutu@2x.png"];
@@ -243,6 +284,16 @@
     }
     
 
+    if (_collection.poiTitle && _collection.poiTitle.length != 0 && _collection.tid)
+    {
+        _addressTagView.hidden = NO;
+        [_addressTagView setTitle:[NSString stringWithFormat:@" %@",_collection.poiTitle] forState:UIControlStateNormal];
+    }
+    else
+    {
+        _addressTagView.hidden = YES;
+    }
+    
 }
 
 - (void)makeConstraintWithImageType
@@ -256,9 +307,14 @@
         [self makeConstraintWithLeftImage];
     }
     
+    NSInteger tmp_bottom = -12;
+    if (_collection.poiTitle && _collection.poiTitle.length != 0 && _collection.tid)
+    {
+        tmp_bottom = -40;
+    }
     [_signLabel mas_remakeConstraints:^(MASConstraintMaker *make) {
         make.left.equalTo(@15).priorityHigh();
-        make.bottom.equalTo(@-12).priorityHigh();
+        make.bottom.equalTo(@(tmp_bottom)).priorityHigh();
         make.height.equalTo(@15).priorityHigh();
         make.top.equalTo(self.imagesView.mas_bottom).offset(13);
     }];
@@ -267,7 +323,7 @@
         self.signLabel.hidden = YES;
         [self.repliesLabel mas_remakeConstraints:^(MASConstraintMaker *make) {
             make.left.equalTo(@15).priorityHigh();
-            make.bottom.equalTo(@-12).priorityHigh();
+            //make.bottom.equalTo(@-12).priorityHigh();
             make.height.equalTo(@15).priorityHigh();
             make.top.equalTo(self.imagesView.mas_bottom).offset(13);
         }];
@@ -343,9 +399,15 @@
         make.right.equalTo(@-15);
     }];
     
+    NSInteger tmp_bottom = -12;
+    if (_collection.poiTitle && _collection.poiTitle.length != 0 && _collection.tid)
+    {
+
+        tmp_bottom = -40;
+    }
     [_signLabel mas_remakeConstraints:^(MASConstraintMaker *make) {
         make.left.equalTo(@15).priorityHigh();
-        make.bottom.equalTo(@-12).priorityHigh();
+        make.bottom.equalTo(@(tmp_bottom)).priorityHigh();
         make.height.equalTo(@15).priorityHigh();
         make.top.equalTo(self.contentLabel.mas_bottom).offset(13);
     }];
@@ -354,7 +416,7 @@
         self.signLabel.hidden = YES;
         [self.repliesLabel mas_remakeConstraints:^(MASConstraintMaker *make) {
             make.left.equalTo(@15).priorityHigh();
-            make.bottom.equalTo(@-12).priorityHigh();
+            //make.bottom.equalTo(@-12).priorityHigh();
             make.height.equalTo(@15).priorityHigh();
             make.top.equalTo(self.contentLabel.mas_bottom).offset(13);
         }];
@@ -400,6 +462,16 @@
     [str addAttribute:NSParagraphStyleAttributeName value:paragrah range:NSMakeRange(0, string.length)];
     
     return str;
+}
+
+#pragma mark - selector
+- (void)addressTagOnClick:(id)sender
+{
+    if (_collection && _collection.poiTitle && ![_collection.poiTitle isEqualToString:@""]) {
+        if (_addressOnClickBlock) {
+            _addressOnClickBlock(_collection);
+        }
+    }
 }
 
 @end

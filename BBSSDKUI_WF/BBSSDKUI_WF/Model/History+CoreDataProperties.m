@@ -37,6 +37,9 @@
 @dynamic username;
 @dynamic views;
 @dynamic recommend_add;
+@dynamic poiTitle;
+@dynamic latitude;
+@dynamic longitude;
 
 @dynamic aid;
 @dynamic title;

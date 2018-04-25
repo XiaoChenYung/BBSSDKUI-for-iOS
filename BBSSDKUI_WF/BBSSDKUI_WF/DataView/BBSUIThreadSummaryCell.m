@@ -15,8 +15,8 @@
 #import "YYImage.h"
 #import "YYAnimatedImageView.h"
 #import "BBSUIThreadTypeSignView.h"
-#import "NSString+Time.h"
-#import "NSString+Paragraph.h"
+#import "NSString+BBSUITime.h"
+#import "NSString+BBSUIParagraph.h"
 
 #define kImageWidth (([UIScreen mainScreen].bounds.size.width) * 80 / 375)
 
@@ -96,6 +96,12 @@
  资讯还是论坛的标签
  */
 @property (nonatomic, strong) UILabel *tipLabel;
+
+
+/**
+ 地址标签 v2.4.0
+ */
+@property (nonatomic, strong) UIButton *addressTagView;
 
 @end
 
@@ -228,7 +234,7 @@
     self.forumTagView =
     ({
         UIButton *forumTagView = [UIButton buttonWithType:UIButtonTypeCustom];
-        [forumTagView setBackgroundColor:DZSUIColorFromHex(0xDDE1EB)];
+        [forumTagView setBackgroundColor:DZSUIColorFromHex(0x9DB9FF)];//DDE1EB
         [forumTagView setTitle:@"版块" forState:UIControlStateNormal];
         [forumTagView setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
         forumTagView.titleLabel.font = [UIFont systemFontOfSize:11];
@@ -303,6 +309,33 @@
         timeLabel ;
     });
     
+    // 地址Tag v2.4.0
+    self.addressTagView = ({
+        UIButton *addressTagView = [UIButton buttonWithType:UIButtonTypeCustom];
+        [addressTagView setBackgroundColor:DZSUIColorFromHex(0xEAEDF2)];
+        [addressTagView setTitle:@"地址" forState:UIControlStateNormal];
+        [addressTagView setTitleColor:DZSUIColorFromHex(0x9A9CAA) forState:UIControlStateNormal];
+        [addressTagView setImage:[UIImage BBSImageNamed:@"/LBS/LBS_min_icon.png"] forState:UIControlStateNormal];
+        [addressTagView addTarget:self action:@selector(addressTagOnClick:) forControlEvents:UIControlEventTouchUpInside];
+        addressTagView.titleLabel.font = [UIFont systemFontOfSize:11];
+        [addressTagView.layer setCornerRadius:2];
+        [addressTagView.layer setMasksToBounds:YES];
+        addressTagView.hidden = YES;
+        // 光栅化
+        addressTagView.layer.shouldRasterize = true;
+        addressTagView.layer.rasterizationScale = [UIScreen mainScreen].scale;
+        [addressTagView setContentEdgeInsets:UIEdgeInsetsMake(0, 8, 0, 8)];
+        [self.contentView addSubview:addressTagView];
+        
+        [addressTagView mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.left.equalTo(_summaryLabel);
+            make.top.equalTo(_repliesView.mas_bottom).offset(10);
+            make.height.mas_equalTo(20);
+        }];
+        
+        addressTagView ;
+    });
+    
     // 横线
     _line = [[UIView alloc] init];
     _line.backgroundColor = DZSUIColorFromHex(0xF9F9F9);
@@ -311,7 +344,7 @@
     [_line mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.right.equalTo(self.contentView).priorityHigh();
         make.height.mas_equalTo(1).priorityHigh();
-        make.top.equalTo(_repliesView.mas_bottom).offset(15).priorityHigh();
+        make.top.equalTo(_repliesView.mas_bottom).offset(10).priorityHigh();
         make.left.bottom.equalTo(self.contentView);
     }];
     
@@ -349,6 +382,7 @@
 
 - (void) setThreadModel:(BBSThread *)threadModel
 {
+    //threadModel.address = @"游族网络";
     _threadModel = threadModel ;
     NSInteger dateline;
     
@@ -364,7 +398,7 @@
     if (_cellType == BBSUIThreadSummaryCellTypePortal)
     {
         self.read = _threadModel.isSelected;
-        _timeLabel.text = [NSString timeTextWithTimesStamp:dateline];
+        _timeLabel.text = [NSString bbs_timeTextWithTimesStamp:dateline];
         [_repliesView setupWithCount:_threadModel.commentnum style:BBSUIViewRepliesStyleImage];
         [_viewsView setupWithCount:_threadModel.viewnum style:BBSUIViewRepliesStyleImage];
         
@@ -458,7 +492,7 @@
     [_signView setupWithPaths:_signs.mutableCopy];
     
     
-    _timeLabel.text = [NSString timeTextWithTimesStamp:dateline];
+    _timeLabel.text = [NSString bbs_timeTextWithTimesStamp:dateline];
     
     NSInteger imageCount = _threadModel.images.count ;
     
@@ -507,6 +541,13 @@
         NSLog(@"0000000000000m  %@ -- %lu  %@",_threadModel.author, _threadModel.tid, _threadModel.subject);
         _avatarImageView.image = [UIImage BBSImageNamed:@"/Thread/bbs_login_account.png"];
         _authorLabel.text = @"匿名用户";
+    }
+    
+    if (_threadModel.poiTitle && _threadModel.poiTitle.length !=0 && _threadModel.tid) {
+        [_addressTagView setTitle:[NSString stringWithFormat:@" %@",_threadModel.poiTitle] forState:UIControlStateNormal];
+        _addressTagView.hidden = NO;
+    }else{
+        _addressTagView.hidden = YES;
     }
 }
 
@@ -674,6 +715,25 @@
             make.right.equalTo(@-15);
             make.centerY.equalTo(_forumTagView);
         }];
+        
+
+        // 地址的展示
+        if (_threadModel.poiTitle && _threadModel.poiTitle.length !=0 && _threadModel.tid) {
+            [_line mas_remakeConstraints:^(MASConstraintMaker *make) {
+                make.left.right.equalTo(self.contentView).priorityHigh();
+                make.height.mas_equalTo(1).priorityHigh();
+                make.top.equalTo(_addressTagView.mas_bottom).offset(10).priorityHigh();
+                make.left.bottom.equalTo(self.contentView);
+            }];
+        }else{
+            [_line mas_remakeConstraints:^(MASConstraintMaker *make) {
+                make.left.right.equalTo(self.contentView).priorityHigh();
+                make.height.mas_equalTo(1).priorityHigh();
+                make.top.equalTo(_repliesView.mas_bottom).offset(10).priorityHigh();
+                make.left.bottom.equalTo(self.contentView);
+            }];
+        }
+        
     }
 }
 
@@ -772,6 +832,23 @@
             make.right.equalTo(@-15);
             make.centerY.equalTo(_forumTagView);
         }];
+        
+        // 地址的展示
+        if (_threadModel.poiTitle && _threadModel.poiTitle.length !=0 && _threadModel.tid) {
+            [_line mas_remakeConstraints:^(MASConstraintMaker *make) {
+                make.left.right.equalTo(self.contentView).priorityHigh();
+                make.height.mas_equalTo(1).priorityHigh();
+                make.top.equalTo(_addressTagView.mas_bottom).offset(10).priorityHigh();
+                make.left.bottom.equalTo(self.contentView);
+            }];
+        }else{
+            [_line mas_remakeConstraints:^(MASConstraintMaker *make) {
+                make.left.right.equalTo(self.contentView).priorityHigh();
+                make.height.mas_equalTo(1).priorityHigh();
+                make.top.equalTo(_repliesView.mas_bottom).offset(10).priorityHigh();
+                make.left.bottom.equalTo(self.contentView);
+            }];
+        }
     }
     
 }
@@ -825,7 +902,7 @@
     else
     {
         NSLog(@"0000000000000m  %@ -- %@",_threadModel.author, _threadModel.subject);
-        _authorLabel.attributedText  = [NSString stringWithString:(_threadModel.author && _threadModel.author.length) ? _threadModel.author:@"匿名用户"
+        _authorLabel.attributedText  = [NSString bbs_stringWithString:(_threadModel.author && _threadModel.author.length) ? _threadModel.author:@"匿名用户"
                                                          fontSize:13
                                                 defaultColorValue:@"8A8D94"
                                                         lineSpace:0
@@ -844,13 +921,13 @@
     if (_read)
     {
         if (_cellType == BBSUIThreadSummaryCellTypeSearch) {
-            _subjectLabel.attributedText = [NSString stringWithString:title
+            _subjectLabel.attributedText = [NSString bbs_stringWithString:title
                                                              fontSize:16
                                                     defaultColorValue:@"A5A7A8"
                                                             lineSpace:6
                                                             wordSpace:0];
             
-            _summaryLabel.attributedText = [NSString stringWithString:content
+            _summaryLabel.attributedText = [NSString bbs_stringWithString:content
                                                              fontSize:13
                                                     defaultColorValue:@"9A9EA5"
                                                             lineSpace:3
@@ -875,13 +952,13 @@
     {
         
         if (_cellType == BBSUIThreadSummaryCellTypeSearch) {
-            _subjectLabel.attributedText = [NSString stringWithString:title
+            _subjectLabel.attributedText = [NSString bbs_stringWithString:title
                                                              fontSize:16
                                                     defaultColorValue:@"3A4045"
                                                             lineSpace:6
                                                             wordSpace:0];
             
-            _summaryLabel.attributedText = [NSString stringWithString:content
+            _summaryLabel.attributedText = [NSString bbs_stringWithString:content
                                                              fontSize:13
                                                     defaultColorValue:@"9A9EA5"
                                                             lineSpace:3
@@ -986,8 +1063,8 @@
             make.centerY.equalTo(_forumTagView);
         }];
     }
-    
-    if (cellType == BBSUIThreadSummaryCellTypeHistory)
+    //MARK:--关注cell
+    if (cellType == BBSUIThreadSummaryCellTypeHistory || cellType == BBSUIThreadSummaryCellTypeAttion)
     {
         _timeLabel.hidden = NO;
         [_timeLabel mas_remakeConstraints:^(MASConstraintMaker *make) {
@@ -995,9 +1072,9 @@
             make.top.bottom.equalTo(_viewsView);
             make.width.equalTo(@120);
         }];
-        
         _timeLabel.textAlignment = NSTextAlignmentRight;
     }
+    
     
     if (_cellType == BBSUIThreadSummaryCellTypeSearch)
     {
@@ -1026,5 +1103,15 @@
     return str;
 }
 
+
+#pragma mark - selector
+- (void)addressTagOnClick:(id)sender
+{
+    if (_threadModel && _threadModel.poiTitle && ![_threadModel.poiTitle isEqualToString:@""]) {
+        if (_addressOnClickBlock) {
+            _addressOnClickBlock(_threadModel);
+        }
+    }
+}
 
 @end

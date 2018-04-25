@@ -20,8 +20,8 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    [self configUI];
-    // Do any additional setup after loading the view.
+    [self _configUI];
+    
 }
 
 - (void)didReceiveMemoryWarning {
@@ -29,7 +29,7 @@
     // Dispose of any resources that can be recreated.
 }
 
-- (void)configUI {
+- (void)_configUI {
     self.title = @"浏览记录";
     
     _threadVC = [[BBSUIThreadListTableViewController alloc]initWithPageType:PageTypeHistory];

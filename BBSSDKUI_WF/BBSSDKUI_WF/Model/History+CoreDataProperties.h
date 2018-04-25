@@ -39,6 +39,9 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nullable, nonatomic, retain) NSString *username;
 @property (nullable, nonatomic, retain) NSNumber *views;
 @property (nullable, nonatomic, retain) NSNumber *recommend_add;
+@property (nullable, nonatomic, copy) NSString *poiTitle;
+@property (nullable, nonatomic, retain) NSNumber *latitude;
+@property (nullable, nonatomic, retain) NSNumber *longitude;
 
 @property (nullable, nonatomic, retain) NSString *aid;
 @property (nullable, nonatomic, retain) NSString *title;

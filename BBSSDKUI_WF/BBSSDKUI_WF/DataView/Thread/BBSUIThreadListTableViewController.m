@@ -10,7 +10,7 @@
 #import "MJRefresh.h"
 #import "BBSUIThreadSummaryCell.h"
 #import "BBSThread+BBSUI.h"
-#import "UIView+TipView.h"
+#import "UIView+BBSUITipView.h"
 #import "BBSUIThreadDetailViewController.h"
 #import "BBSUICoreDataManage.h"
 #import "BBSUICacheManager.h"
@@ -21,6 +21,7 @@
 #import "Masonry.h"
 #import "BBSUIForumHeader.h"
 #import "BBSUIPortalDetailViewController.h"
+#import "BBSUILBSShowLocationViewController.h"
 
 #define BBSUIPageSize 10
 
@@ -41,6 +42,11 @@
 @property (nonatomic, strong) UILabel *noDataLabel;
 
 @property (nonatomic, assign) NSInteger catid;
+
+/**
+ 关注动态
+ */
+@property (nonatomic, strong) NSMutableArray *followListArray;
 
 @end
 
@@ -68,7 +74,6 @@ static NSString *cellIdentifier = @"ThreadSummaryCell";
         self.pageType = pageType;
         [self initData];
     }
-    
     return self;
 }
 
@@ -90,29 +95,26 @@ static NSString *cellIdentifier = @"ThreadSummaryCell";
     if (self) {
         [self initData];
     }
-    
     return self;
 }
 
+#pragma mark -  生命周期 Life Circle
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    
     self.tableView.delegate = self;
     self.tableView.dataSource = self;
     self.tableView.fd_debugLogEnabled = YES;
     self.tableView.backgroundColor = DZSUI_BackgroundColor;
-    
     [self.tableView registerClass:[BBSUIThreadSummaryCell class] forCellReuseIdentifier:cellIdentifier];
     
-    if (_pageType == PageTypeHistory || self.currentForum)
+    #pragma mark - ==========PageTypeHistory
+    if (_pageType == PageTypeHistory || self.currentForum || _pageType == PageTypeAttion)
     {
         UIView *tableHeaderView = [[UIView alloc] initWithFrame:(CGRect){0, 0, DZSUIScreen_width, 5}];
         tableHeaderView.backgroundColor = DZSUI_BackgroundColor;
-        
         [self.tableView setTableHeaderView:tableHeaderView];
     }
-    
     [self configureUI];
 }
 
@@ -144,7 +146,6 @@ static NSString *cellIdentifier = @"ThreadSummaryCell";
         }
     }
     
-
     self.tableView.mj_footer = [MJRefreshBackNormalFooter footerWithRefreshingBlock:^{
         weakSelf.currentIndex++;
         [weakSelf requestData];
@@ -153,14 +154,56 @@ static NSString *cellIdentifier = @"ThreadSummaryCell";
     self.tableView.estimatedRowHeight = 135;
     self.tableView.rowHeight = UITableViewAutomaticDimension;
     [self.tableView.mj_header beginRefreshing];
-    
 }
 
-
+#pragma mark - 数据加载
 - (void)initData
 {
     self.currentIndex = 1;
     self.orderType = BBSUIThreadOrderPostTime;
+}
+
+- (void)requestData
+{
+    if (self.pageType == PageTypeHomePage)  [self _getHomePageData];
+    if (self.pageType == PageTypeSearch)    [self _getSearchData];
+    if (self.pageType == PageTypeHistory)   [self _getHistoryData];
+    if (self.pageType == PageTypePortal)    [self _getPortalData];
+    if (self.pageType == PageTypeAttion)    [self _getAttionData];
+    
+    if (_pageType == PageTypePortal)
+    {
+        [self _requestPortalBanner];
+    }
+    else
+    {
+        [self _requestBanner];
+    }
+}
+
+
+-(void)refreshData:(BBSUIThreadOrderType)orderType
+{
+    if (self.orderType == orderType) {
+        return;
+    }
+    
+    [self.tableView setScrollsToTop:YES];
+    
+    self.orderType = orderType;
+    self.currentIndex = 1;
+    [self.tableView.mj_header beginRefreshing];
+}
+
+- (void)refresh
+{
+    [self.tableView setContentOffset:CGPointMake(0,-60) animated:NO];
+    
+    __weak typeof(self) theTableVC = self;
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        theTableVC.currentIndex = 1;
+        [theTableVC.tableView.mj_header beginRefreshing];
+    });
 }
 
 - (NSInteger)orderType
@@ -176,9 +219,7 @@ static NSString *cellIdentifier = @"ThreadSummaryCell";
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    
     BBSUIThreadSummaryCell *cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier];
-    
     if (!cell) {
         cell = [[BBSUIThreadSummaryCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellIdentifier];
     }
@@ -193,7 +234,7 @@ static NSString *cellIdentifier = @"ThreadSummaryCell";
 
         cell.cellType = BBSUIThreadSummaryCellTypeForums;
     }
-    else if (_pageType == PageTypeHistory) {
+    else if (_pageType == PageTypeHistory || _pageType == PageTypeAttion) {
         cell.cellType = BBSUIThreadSummaryCellTypeHistory;   // 历史用的是板块的界面
         [self configureCell:cell atIndexPath:indexPath];
     }
@@ -207,6 +248,14 @@ static NSString *cellIdentifier = @"ThreadSummaryCell";
         cell.cellType = BBSUIThreadSummaryCellTypeHomepage;
     }
     
+    __weak typeof(self)weakSelf = self;
+    cell.addressOnClickBlock = ^(BBSThread *threadModel) {
+        CLLocationCoordinate2D coordinate = {threadModel.latitude,threadModel.longitude};
+        BBSUILBSShowLocationViewController *showLocationVC = [[BBSUILBSShowLocationViewController alloc] initWithCoordinate:coordinate title:threadModel.poiTitle];
+        UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:showLocationVC];
+        [weakSelf presentViewController:nav animated:YES completion:nil];
+    };
+    
     return cell;
 }
 
@@ -218,15 +267,13 @@ static NSString *cellIdentifier = @"ThreadSummaryCell";
 
 - (void)configureCell:(BBSUIThreadSummaryCell *)cell atIndexPath:(NSIndexPath *)indexPath {
     cell.fd_enforceFrameLayout = NO; // Enable to use "-sizeThatFits:"
-
     cell.threadModel = self.threadListArray[indexPath.row];
 }
 
-
-#pragma mark - uitableview delegate
+#pragma mark - UITableview delegate
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    
+    [tableView deselectRowAtIndexPath:indexPath animated:YES];
     BBSThread *thread = _threadListArray[indexPath.row];
     
     thread.select = YES;
@@ -261,6 +308,15 @@ static NSString *cellIdentifier = @"ThreadSummaryCell";
         ((BBSUIPortalDetailViewController *)detailVC).hasContent = YES;
         [_selectedArray addObject:@(thread.aid)];
     }
+    else if (_pageType == PageTypeAttion
+             && [thread.type isEqualToString:@"portal"])
+    {
+        detailVC = [[BBSUIPortalDetailViewController alloc] initWithThreadModel:thread];
+        ((BBSUIPortalDetailViewController *)detailVC).catname = self.catname;
+        ((BBSUIPortalDetailViewController *)detailVC).allowcomment = self.allowcomment;
+        ((BBSUIPortalDetailViewController *)detailVC).hasContent = YES;
+        [_selectedArray addObject:@(thread.aid)];
+    }
     else
     {
         detailVC = [[BBSUIThreadDetailViewController alloc] initWithThreadModel:thread];
@@ -277,7 +333,6 @@ static NSString *cellIdentifier = @"ThreadSummaryCell";
 
 - (UITableViewCellEditingStyle)tableView:(UITableView *)tableView editingStyleForRowAtIndexPath:(NSIndexPath *)indexPath {
     // 收藏列表可做删除操作，帖子列表不删除
-    
     if (self.pageType == PageTypeHistory) {
         return UITableViewCellEditingStyleDelete;
     }else{
@@ -307,7 +362,13 @@ static NSString *cellIdentifier = @"ThreadSummaryCell";
 {
     if (!_noDataView) {
         if (self.currentForum.fid == 0) {
-            _noDataView = [[BBSUIBaseView alloc] initWithFrame:CGRectMake(0, 183, DZSUIScreen_width, DZSUIScreen_height - 64 - 40 - 183)];
+
+            if (self.pageType == PageTypeAttion) {
+                _noDataView = [[BBSUIBaseView alloc] initWithFrame:CGRectMake(0, 0, DZSUIScreen_width, DZSUIScreen_height )];
+            }else {
+                _noDataView = [[BBSUIBaseView alloc] initWithFrame:CGRectMake(0, 183, DZSUIScreen_width, DZSUIScreen_height - 64 - 40 - 183)];
+            }
+            
             _noDataImageView = [[UIImageView alloc] initWithFrame:CGRectMake((DZSUIScreen_width - 80) / 2, 80, 80, 80)];
             [_noDataImageView setImage:[UIImage BBSImageNamed:@"/Common/wnr@2x.png"]];
             [_noDataView addSubview:_noDataImageView];
@@ -318,58 +379,15 @@ static NSString *cellIdentifier = @"ThreadSummaryCell";
             [_noDataLabel setTextColor:[UIColor grayColor]];
             [_noDataLabel setText:@"暂无内容"];
             [_noDataView addSubview:_noDataLabel];
+            
         }
     }
     
     return _noDataView;
 }
 
-#pragma mark - public methods
--(void)refreshData:(BBSUIThreadOrderType)orderType
-{
-    if (self.orderType == orderType) {
-        return;
-    }
-    
-    [self.tableView setScrollsToTop:YES];
-    
-    
-    self.orderType = orderType;
-    self.currentIndex = 1;
-    [self.tableView.mj_header beginRefreshing];
-}
 
-- (void)refresh
-{
-    [self.tableView setContentOffset:CGPointMake(0,-60) animated:NO];
-    
-    __weak typeof(self) theTableVC = self;
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        theTableVC.currentIndex = 1;
-        [theTableVC.tableView.mj_header beginRefreshing];
-    });
-    
-}
-
-
-- (void)requestData
-{
-    if (self.pageType == PageTypeHomePage)  [self getHomePageData];
-    if (self.pageType == PageTypeSearch)    [self getSearchData];
-    if (self.pageType == PageTypeHistory)   [self getHistoryData];
-    if (self.pageType == PageTypePortal)    [self getPortalData];
-    
-    if (_pageType == PageTypePortal)
-    {
-        [self _requestPortalBanner];
-    }
-    else
-    {
-        [self _requestBanner];
-    }
-    
-}
-
+#pragma mark - 添加banner
 - (void)_requestPortalBanner
 {
     __weak typeof(self) theView = self;
@@ -383,13 +401,10 @@ static NSString *cellIdentifier = @"ThreadSummaryCell";
                                      initWithFrame:CGRectMake(0, 0, [UIScreen mainScreen].bounds.size.width,
                                                               183)];
         myView.automaticScrollDelay = 4;
-        
         myView.cycleViewStyle = CycleViewStyleBoth;
-        
         myView.pageControlTintColor = [UIColor blackColor];
         
         myView.pageControlCurrentColor = [UIColor whiteColor];
-        
         myView.titleLabelTextColor = [UIColor whiteColor];
         
         myView.delegate = theView;
@@ -401,7 +416,6 @@ static NSString *cellIdentifier = @"ThreadSummaryCell";
                 
                 [pictureArray addObject:banner.picture ? banner.picture : @""];
                 [titleArray addObject:banner.title ? banner.title : @""];
-                
             }];
             
             myView.picDataArray = [pictureArray copy];
@@ -411,8 +425,6 @@ static NSString *cellIdentifier = @"ThreadSummaryCell";
                 myView.isAutomaticScroll = YES;
             }
             
-            
-            
         }else{
             myView.picDataArray = @[@""];
             myView.isAutomaticScroll = NO;
@@ -420,15 +432,15 @@ static NSString *cellIdentifier = @"ThreadSummaryCell";
             myView.titleDataArray = @[@"请前往开发者后台设置Banner"];
         }
         [theView.tableView setTableHeaderView:myView];
-        
     }];
 }
 
 
 - (void)_requestBanner
 {
+    #pragma mark - ==========PageTypeHistory
     // 搜索和历史记录界面不显示banner
-    if (_pageType == PageTypeHistory || _pageType == PageTypeSearch) {
+    if (_pageType == PageTypeHistory || _pageType == PageTypeSearch || _pageType == PageTypeAttion) {
         return;
     }
     
@@ -508,16 +520,17 @@ static NSString *cellIdentifier = @"ThreadSummaryCell";
     }
 }
 
-- (void)getHomePageData {
+- (void)_getHomePageData {
     // TODO: 帖子列表数据
     NSString *selectTypeString = [self selectTypeStringFromSelectType:self.selectType];
     NSString *orderTypeString = [self orderTypeStringFromOrderType:self.orderType];
     
     __weak typeof(self) weakSelf = self;
+    NSLog(@"=====%@", self.currentForum);
+    NSLog(@"===22333==%ld", (long)self.currentForum.fid);
     [BBSSDK getThreadListWithFid:self.currentForum.fid orderType:orderTypeString selectType:selectTypeString pageIndex:self.currentIndex pageSize:BBSUIPageSize result:^(NSArray *threadList, NSError *error) {
         
         if (!error) {
-            
             if (_selectedArray.count)
             {
                 for (BBSThread *obj in threadList)
@@ -550,7 +563,7 @@ static NSString *cellIdentifier = @"ThreadSummaryCell";
                         [self.noDataImageView setImage:[UIImage BBSImageNamed:@"/Common/wnr@2x.png"]];
                         [self.noDataLabel setText:@"暂无内容"];
                     }else{
-                        [weakSelf.view configureTipViewWithTipMessage:@"暂无内容" hasData:weakSelf.threadListArray.count != 0 hasError:YES reloadButtonBlock:^(id sender) {
+                        [weakSelf.view bbs_configureTipViewWithTipMessage:@"暂无内容" hasData:weakSelf.threadListArray.count != 0 hasError:YES reloadButtonBlock:^(id sender) {
                             [weakSelf.tableView.mj_header beginRefreshing];
                             [weakSelf requestData];
                         }];
@@ -573,7 +586,7 @@ static NSString *cellIdentifier = @"ThreadSummaryCell";
                 [self.noDataImageView setImage:[UIImage BBSImageNamed:@"/Common/wwl@2x.png"]];
                 [self.noDataLabel setText:@"网络不佳，请再次刷新"];
             }else{
-                [weakSelf.view configureTipViewWithTipMessage:@"网络不佳，请再次刷新" hasData:weakSelf.threadListArray.count != 0 hasError:YES reloadButtonBlock:^(id sender) {
+                [weakSelf.view bbs_configureTipViewWithTipMessage:@"网络不佳，请再次刷新" hasData:weakSelf.threadListArray.count != 0 hasError:YES reloadButtonBlock:^(id sender) {
                     [weakSelf.tableView.mj_header beginRefreshing];
                     [weakSelf requestData];
                 }];
@@ -586,7 +599,7 @@ static NSString *cellIdentifier = @"ThreadSummaryCell";
     }];
 }
 
-- (void)getSearchData {
+- (void)_getSearchData {
     __weak typeof(self) weakSelf = self;
     [BBSSDK searchWithType:@"all" wd:_keyword pageIndex:self.currentIndex pageSize:BBSUIPageSize result:^(NSArray *threadList, NSError *error)
     {
@@ -616,7 +629,7 @@ static NSString *cellIdentifier = @"ThreadSummaryCell";
 
             if (weakSelf.currentIndex == 1) {
 
-                [weakSelf.view configureTipViewWithTipMessage:@"暂无内容" hasData:weakSelf.threadListArray.count != 0 hasError:YES reloadButtonBlock:^(id sender) {
+                [weakSelf.view bbs_configureTipViewWithTipMessage:@"暂无内容" hasData:weakSelf.threadListArray.count != 0 hasError:YES reloadButtonBlock:^(id sender) {
                     [weakSelf.tableView.mj_header beginRefreshing];
                     [weakSelf requestData];
                     
@@ -631,7 +644,7 @@ static NSString *cellIdentifier = @"ThreadSummaryCell";
         else
         {
             NSLog(@"%@",error);
-            [weakSelf.view configureTipViewWithTipMessage:@"网络不佳，请再次刷新" hasData:weakSelf.threadListArray.count != 0 hasError:YES reloadButtonBlock:^(id sender) {
+            [weakSelf.view bbs_configureTipViewWithTipMessage:@"网络不佳，请再次刷新" hasData:weakSelf.threadListArray.count != 0 hasError:YES reloadButtonBlock:^(id sender) {
                 [weakSelf.tableView.mj_header beginRefreshing];
                 [weakSelf requestData];
             }];
@@ -643,7 +656,7 @@ static NSString *cellIdentifier = @"ThreadSummaryCell";
 
 }
 
-- (void)getHistoryData {
+- (void)_getHistoryData {
     NSArray *array;
     __weak typeof(self) weakSelf = self;
     if (self.currentIndex == 1 || self.threadListArray.count == 0) {
@@ -666,7 +679,7 @@ static NSString *cellIdentifier = @"ThreadSummaryCell";
     
     if (self.currentIndex == 1) {
         
-        [self.view configureTipViewWithTipMessage:@"暂无内容" hasData:self.threadListArray.count != 0 hasError:YES reloadButtonBlock:^(id sender) {
+        [self.view bbs_configureTipViewWithTipMessage:@"暂无内容" hasData:self.threadListArray.count != 0 hasError:YES reloadButtonBlock:^(id sender) {
             [weakSelf.tableView.mj_header beginRefreshing];
             [weakSelf requestData];
             
@@ -680,7 +693,7 @@ static NSString *cellIdentifier = @"ThreadSummaryCell";
     
 }
 
-- (void)getPortalData {
+- (void)_getPortalData {
     // TODO: 帖子列表数据
 
     __weak typeof(self) weakSelf = self;
@@ -721,7 +734,7 @@ static NSString *cellIdentifier = @"ThreadSummaryCell";
                         [self.noDataImageView setImage:[UIImage BBSImageNamed:@"/Common/wnr@2x.png"]];
                         [self.noDataLabel setText:@"暂无内容"];
                     }else{
-                        [weakSelf.view configureTipViewWithTipMessage:@"暂无内容" hasData:weakSelf.threadListArray.count != 0 hasError:YES reloadButtonBlock:^(id sender) {
+                        [weakSelf.view bbs_configureTipViewWithTipMessage:@"暂无内容" hasData:weakSelf.threadListArray.count != 0 hasError:YES reloadButtonBlock:^(id sender) {
                             [weakSelf.tableView.mj_header beginRefreshing];
                             [weakSelf requestData];
                         }];
@@ -755,7 +768,7 @@ static NSString *cellIdentifier = @"ThreadSummaryCell";
                 [self.noDataImageView setImage:[UIImage BBSImageNamed:@"/Common/wwl@2x.png"]];
                 [self.noDataLabel setText:@"网络不佳，请再次刷新"];
             }else{
-                [weakSelf.view configureTipViewWithTipMessage:@"网络不佳，请再次刷新" hasData:weakSelf.threadListArray.count != 0 hasError:YES reloadButtonBlock:^(id sender) {
+                [weakSelf.view bbs_configureTipViewWithTipMessage:@"网络不佳，请再次刷新" hasData:weakSelf.threadListArray.count != 0 hasError:YES reloadButtonBlock:^(id sender) {
                     [weakSelf.tableView.mj_header beginRefreshing];
                     [weakSelf requestData];
                 }];
@@ -764,10 +777,84 @@ static NSString *cellIdentifier = @"ThreadSummaryCell";
         
         [weakSelf.tableView.mj_header endRefreshing];
         [weakSelf.tableView.mj_footer endRefreshing];
-        
     }];
 }
 
+//MARK:--================关注动态=====================
+- (void)_getAttionData
+{
+    __weak typeof(self) weakSelf = self;
+    [BBSSDK getFollowThreadsListWithPageIndex:self.currentIndex pageSize:BBSUIPageSize result:^(NSArray *followList, NSError *error) {
+        if (!error) {
+            
+            if (weakSelf.currentIndex == 1) {
+                weakSelf.threadListArray = [NSMutableArray arrayWithArray:followList];
+            }else{
+                [weakSelf.threadListArray addObjectsFromArray:followList];
+            }
+            
+            [weakSelf.tableView reloadData];
+            [weakSelf.tableView.mj_footer setHidden:NO];
+            
+            if (followList.count < BBSUIPageSize) {
+                [weakSelf.tableView.mj_footer endRefreshingWithNoMoreData];
+            }
+            
+            if (weakSelf.currentIndex == 1) {
+                
+                if (followList.count == 0) {
+                    if (self.currentForum.fid == 0) {
+                        [self.tableView addSubview:self.noDataView];
+                        [self.noDataImageView setImage:[UIImage BBSImageNamed:@"/Common/wnr@2x.png"]];
+                        [self.noDataLabel setText:@"暂无内容"];
+                    }else{
+                        [weakSelf.view bbs_configureTipViewWithTipMessage:@"暂无内容" hasData:weakSelf.threadListArray.count != 0 hasError:YES reloadButtonBlock:^(id sender) {
+                            [weakSelf.tableView.mj_header beginRefreshing];
+                            [weakSelf requestData];
+                        }];
+                    }
+                }
+                weakSelf.tableView.tableFooterView = nil;
+            }
+            
+            else if (followList.count == 0)
+            {
+                UILabel *footLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, DZSUIScreen_width, 50)];
+                footLabel.textColor = [UIColor lightGrayColor];
+                footLabel.text = @"以上已为全部内容";
+                footLabel.textAlignment = NSTextAlignmentCenter;
+                footLabel.font = [UIFont systemFontOfSize:13];
+                weakSelf.tableView.tableFooterView = footLabel;
+            }
+            
+            if (followList.count > 0) {
+                if (_noDataView.superview) {
+                    [_noDataView removeFromSuperview];
+                }
+            }
+        }
+        else
+        {
+            NSLog(@"%@",error);
+            
+            if (self.currentForum.fid == 0) {
+                [self.view addSubview:self.noDataView];
+                [self.noDataImageView setImage:[UIImage BBSImageNamed:@"/Common/wwl@2x.png"]];
+                [self.noDataLabel setText:@"网络不佳，请再次刷新"];
+            }else{
+                [weakSelf.view bbs_configureTipViewWithTipMessage:@"网络不佳，请再次刷新" hasData:weakSelf.threadListArray.count != 0 hasError:YES reloadButtonBlock:^(id sender) {
+                    [weakSelf.tableView.mj_header beginRefreshing];
+                    [weakSelf requestData];
+                }];
+            }
+        }
+        
+        [weakSelf.tableView.mj_header endRefreshing];
+        [weakSelf.tableView.mj_footer endRefreshing];
+    }];
+}
+
+#pragma mark ============最新 热门 精华============
 - (NSString *)selectTypeStringFromSelectType:(BBSUIThreadSelectType)selectType
 {
     NSString *selectTypeString = nil;
@@ -783,7 +870,6 @@ static NSString *cellIdentifier = @"ThreadSummaryCell";
     {
         selectTypeString = @"displayOrder";
     }
-    
     return selectTypeString ? : @"latest";
 }
 
@@ -796,37 +882,14 @@ static NSString *cellIdentifier = @"ThreadSummaryCell";
     {
         orderTypeString = @"createdOn";
     }
-    
     return orderTypeString ? : @"lastPost";
 }
-
-//- (void) setTableView:(UITableView *)tableView {
-//    
-//    [self.tableView removeFromSuperview];
-//    
-//    [self.view addSubview:tableView];
-//    
-//}
-//
-//- (UITableView *) tableView {
-//    
-//    for (UIView *v in self.view.subviews) {
-//        
-//        if ([v isKindOfClass:[UITableView class]]) {
-//            
-//            return (UITableView *)v;
-//            
-//        }
-//    }
-//    
-//    return nil;
-//}
 
 - (void)setKeyword:(NSString *)keyword
 {
     _keyword = keyword;
     self.currentIndex = 1;
-    [self getSearchData];
+    [self _getSearchData];
 }
 
 #pragma mark - cycleviewdelegate

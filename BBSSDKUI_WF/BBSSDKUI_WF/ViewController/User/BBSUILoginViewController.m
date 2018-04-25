@@ -16,9 +16,8 @@
 #import "BBSUIEmailSendViewController.h"
 #import "BBSUIRetrievePasswordViewController.h"
 #import "BBSUIBindAccountViewController.h"
-#import <ShareSDK/IMOBFShareComponent.h>
-#import <MOBFoundation/MOBFComponentManager.h>
-#import <ShareSDK/IMOBFSocialUser.h>
+#import "BBSUILBSLocationManager.h"
+#import <BBSSDK/BBSSDK+ShareSDK.h>
 
 #define THEMEBACKGROUNDCOLOR DZSUIColorFromHex(0x6285F6)
 #define TYPELOGIN self.loginType == BBSLoginTypeLogin
@@ -58,6 +57,7 @@
     self.titleLabel.text = @"登录";
     self.titleLabel.textColor = [UIColor whiteColor];
     [self configUI];
+    [[BBSUILBSLocationManager shareManager] startLocation];
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -515,44 +515,38 @@
     CGFloat elementViewW = 0;
     NSMutableArray <UIButton *>*marrButton = [NSMutableArray array];
     
-    NSArray *components = [[MOBFComponentManager defaultManager] getComponents:@protocol(IMOBFShareComponent)];
-    if (components.count > 0) {
-        id<IMOBFShareComponent>  ShareComponent = components[0];
+    
+    NSArray *arrPlatforms = [BBSSDK activePlatformsShareSDK];
+    
+    NSLog(@"____ %@",arrPlatforms);
+    
+    if ([arrPlatforms containsObject:@998]
+        || [arrPlatforms containsObject:@6]
+        || [arrPlatforms containsObject:@24]) // qq
+    {
+        //                SSDKPlatformTypeQQ
         
-        if (ShareComponent && [ShareComponent conformsToProtocol:@protocol(IMOBFShareComponent)])
-        {
-            NSArray *arrPlatforms = [ShareComponent activePlatforms];
-            
-            NSLog(@"____ %@",arrPlatforms);
-            
-            if ([arrPlatforms containsObject:@998]
-                || [arrPlatforms containsObject:@6]
-                || [arrPlatforms containsObject:@24]) // qq
-            {
-                //                SSDKPlatformTypeQQ
-                
-                elementViewW += 92;
-                UIButton *qqBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-                [qqBtn setImage:[UIImage BBSImageNamed:@"/Login&Register/QQ_login.png"] forState:UIControlStateNormal];
-                [qqBtn addTarget:self action:@selector(_qqLoginAction) forControlEvents:UIControlEventTouchUpInside];
-                
-                [elementView addSubview:qqBtn];
-                [marrButton addObject:qqBtn];
-            }
-            if ([arrPlatforms containsObject:@997]
-                || [arrPlatforms containsObject:@22]
-                || [arrPlatforms containsObject:@23]) // 微信
-            {
-                elementViewW += 92;
-                UIButton *wxBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-                [wxBtn setImage:[UIImage BBSImageNamed:@"/Login&Register/weixin_login.png"] forState:UIControlStateNormal];
-                [wxBtn addTarget:self action:@selector(_wxLoginAction) forControlEvents:UIControlEventTouchUpInside];
-                
-                [elementView addSubview:wxBtn];
-                [marrButton addObject:wxBtn];
-            }
-        }
+        elementViewW += 92;
+        UIButton *qqBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+        [qqBtn setImage:[UIImage BBSImageNamed:@"/Login&Register/QQ_login.png"] forState:UIControlStateNormal];
+        [qqBtn addTarget:self action:@selector(_qqLoginAction) forControlEvents:UIControlEventTouchUpInside];
+        
+        [elementView addSubview:qqBtn];
+        [marrButton addObject:qqBtn];
     }
+    if ([arrPlatforms containsObject:@997]
+        || [arrPlatforms containsObject:@22]
+        || [arrPlatforms containsObject:@23]) // 微信
+    {
+        elementViewW += 92;
+        UIButton *wxBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+        [wxBtn setImage:[UIImage BBSImageNamed:@"/Login&Register/weixin_login.png"] forState:UIControlStateNormal];
+        [wxBtn addTarget:self action:@selector(_wxLoginAction) forControlEvents:UIControlEventTouchUpInside];
+        
+        [elementView addSubview:wxBtn];
+        [marrButton addObject:wxBtn];
+    }
+    
     
     [elementView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.width.mas_equalTo(elementViewW);
@@ -684,11 +678,11 @@
     NSString *userName = nil;
     NSString *email = nil;
     
-    if ([_usernameTextField.text isUserName])
+    if ([_usernameTextField.text bbs_isUserName])
     {
         userName = _usernameTextField.text;
     }
-    else if ([_usernameTextField.text isEmail])
+    else if ([_usernameTextField.text bbs_isEmail])
     {
         email = _usernameTextField.text;
     }
@@ -698,14 +692,16 @@
         return ;
     }
     
-    if(![_passwordTextField.text isPassword])
+    if(![_passwordTextField.text bbs_isPassword])
     {
          [self showBottomAlertWithText:@"密码格式错误"];
         return ;
     }
+
+    BBSLocationCoordinate *coordinate = [[BBSLocationCoordinate alloc] initWithLatitude:[BBSUILBSLocationManager shareManager].latitude longitude:[BBSUILBSLocationManager shareManager].lontitue];
     
     [SVProgressHUD setStatus:@"正在登陆..."];
-    [BBSSDK loginWithUserName:userName email:email password:_passwordTextField.text questionid:_questionID answer:_verifyAnswerTextField.text result:^(BBSUser *user,id res,NSError *error) {
+    [BBSSDK loginWithUserName:userName email:email password:_passwordTextField.text questionid:_questionID answer:_verifyAnswerTextField.text coordinate:coordinate result:^(BBSUser *user,id res,NSError *error) {
         
 //        NSLog(@"/////////////  %@ - %@",user,error);
         
@@ -788,101 +784,89 @@
         authType = 997;
         authTypeName = @"wechat";
     }
+    [SVProgressHUD show];
     
-    NSArray *components = [[MOBFComponentManager defaultManager] getComponents:@protocol(IMOBFShareComponent)];
-    if (components.count > 0) {
-        id<IMOBFShareComponent>  ShareComponent = components[0];
-        
-        if (ShareComponent && [ShareComponent conformsToProtocol:@protocol(IMOBFShareComponent)])
+    [BBSSDK authLoginWithAuthType:authTypeName result:^(NSInteger state,BBSShareUser *shareUser, NSError *error) {
+        if (error)
         {
-            [SVProgressHUD show];
+            NSLog(@"_________   %@", error);
+            [SVProgressHUD dismiss];
+            if (error.code == -1009)
+            {
+                UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"暂无网络，请检查你的网络连接" message:nil delegate:nil cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
+                [alert show];
+            }
+            else
+            {
+                UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"授权失败" message:nil delegate:nil cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
+                [alert show];
+            }
             
-            //            [ShareComponent authorize:authType settings:nil onStateChanged]
-            [ShareComponent authorize:authType settings:nil onStateChanged:^(NSInteger state, id<IMOBFSocialUser> user, NSError *error) {
-                if (error)
-                {
-                    NSLog(@"_________   %@", error);
-                    [SVProgressHUD dismiss];
-                    if (error.code == -1009)
-                    {
-                        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"暂无网络，请检查你的网络连接" message:nil delegate:nil cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
-                        [alert show];
-                    }
-                    else
-                    {
-                        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"授权失败" message:nil delegate:nil cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
-                        [alert show];
-                    }
-                    
-                    return;
-                }
-                else
-                {
-                    NSString *openID = user.uid;
-                    NSString *nickName = user.nickname;
-                    NSDictionary *rawData = user.rawData;
-                    
-                    if (!openID)
-                    {
-                        [SVProgressHUD dismiss];
-                        return;
-                    }
-                    
-                    NSLog(@"rawData = %@  %@",rawData, openID);
-                    [BBSSDK authLoginWithOpenid:openID
-                                        unionid:rawData[@"unionid"]
-                                       authType:authTypeName
-                                      createNew:nil
-                                       userName:nickName
-                                          email:nil
-                                       password:nil
-                                     questionId:nil
-                                         answer:nil
-                                         result:^(BBSUser *user, id res, NSError *error) {
-                                             
-                                             [SVProgressHUD dismiss];
-                                             if (!error)
-                                             {
-                                                 NSLog(@"login Sucess，token:%@",user.token);
-                                                 //登录成功，可以通过BBSUser 或者res拿到数据
-                                                 [BBSUIContext shareInstance].currentUser = user;
-
-                                                 [SVProgressHUD showSuccessWithStatus:@"登录成功"];
-                                                 [SVProgressHUD dismissWithDelay:2.5 completion:^{
-                                                     [self dismissViewControllerAnimated:YES completion:nil];
-                                                 }];
-                                                 return ;
-                                             }
-                                             else if (error.code == 900613)
-                                             {
-                                                 NSDictionary *params = @{@"openID": openID,
-                                                                          @"rawData": rawData,
-                                                                          @"nickName": nickName,
-                                                                          @"authTypeName": authTypeName
-                                                                          };
-                                                 
-                                                 // 绑定
-                                                 BBSUILoginViewController *bindVC = [BBSUILoginViewController new];
-                                                 bindVC.loginType = BBSLoginTypeBindAccount;
-                                                 bindVC.params = params;
-                                                 [self.navigationController pushViewController:bindVC animated:YES];
-                                             }
-                                             else
-                                             {
-                                                 [self showTopAlertWithText:error.userInfo[@"description"]];
-                                             }
-                                             
-                                         }];
-                    
-                }
-                
-            }];
+            return;
         }
-    }
-    else
-    {
-        NSLog(@"没有接入ShareSdk");
-    }
+        else
+        {
+            NSString *openID = shareUser.uid;
+            NSString *nickName = shareUser.nickname;
+            NSDictionary *rawData = shareUser.rawData;
+            
+            if (!openID)
+            {
+                [SVProgressHUD dismiss];
+                return;
+            }
+            
+            BBSLocationCoordinate *coordinate = [[BBSLocationCoordinate alloc] initWithLatitude:[BBSUILBSLocationManager shareManager].latitude longitude:[BBSUILBSLocationManager shareManager].lontitue];
+            NSLog(@"rawData = %@  %@",rawData, openID);
+            [BBSSDK authLoginWithOpenid:openID
+                                unionid:rawData[@"unionid"]
+                               authType:authTypeName
+                              createNew:nil
+                               userName:nickName
+                                  email:nil
+                               password:nil
+                             questionId:nil
+                                 answer:nil
+                             coordinate:coordinate
+                                 result:^(BBSUser *user, id res, NSError *error) {
+                                     
+                                     [SVProgressHUD dismiss];
+                                     if (!error)
+                                     {
+                                         NSLog(@"login Sucess，token:%@",user.token);
+                                         //登录成功，可以通过BBSUser 或者res拿到数据
+                                         [BBSUIContext shareInstance].currentUser = user;
+                                         
+                                         [SVProgressHUD showSuccessWithStatus:@"登录成功"];
+                                         [SVProgressHUD dismissWithDelay:2.5 completion:^{
+                                             [self dismissViewControllerAnimated:YES completion:nil];
+                                         }];
+                                         return ;
+                                     }
+                                     else if (error.code == 900613)
+                                     {
+                                         NSDictionary *params = @{@"openID": openID,
+                                                                  @"rawData": rawData,
+                                                                  @"nickName": nickName,
+                                                                  @"authTypeName": authTypeName
+                                                                  };
+                                         
+                                         // 绑定
+                                         BBSUILoginViewController *bindVC = [BBSUILoginViewController new];
+                                         bindVC.loginType = BBSLoginTypeBindAccount;
+                                         bindVC.params = params;
+                                         [self.navigationController pushViewController:bindVC animated:YES];
+                                     }
+                                     else
+                                     {
+                                         [self showTopAlertWithText:error.userInfo[@"description"]];
+                                     }
+                                     
+                                 }];
+            
+        }
+        
+    }];
 }
 
 - (void)_bindAccountAction
@@ -892,11 +876,11 @@
     NSString *userName = nil;
     NSString *email = nil;
     
-    if ([_usernameTextField.text isUserName])
+    if ([_usernameTextField.text bbs_isUserName])
     {
         userName = _usernameTextField.text;
     }
-    else if ([_usernameTextField.text isEmail])
+    else if ([_usernameTextField.text bbs_isEmail])
     {
         email = _usernameTextField.text;
     }
@@ -906,14 +890,14 @@
         return ;
     }
     
-    if(![_passwordTextField.text isPassword])
+    if(![_passwordTextField.text bbs_isPassword])
     {
         [self showBottomAlertWithText:@"密码格式错误"];
         return ;
     }
     
     [SVProgressHUD show];
-    
+    BBSLocationCoordinate *coordinate = [[BBSLocationCoordinate alloc] initWithLatitude:[BBSUILBSLocationManager shareManager].latitude longitude:[BBSUILBSLocationManager shareManager].lontitue];
     [BBSSDK authLoginWithOpenid:_params[@"openID"]
                         unionid:_params[@"rawData"][@"unionid"]
                        authType:_params[@"authTypeName"]
@@ -923,6 +907,7 @@
                        password:_passwordTextField.text
                      questionId:@(_questionID)
                          answer:_verifyAnswerTextField.text
+                     coordinate:coordinate
                          result:^(BBSUser *user, id res, NSError *error) {
                              
                              [SVProgressHUD dismiss];
@@ -983,7 +968,7 @@
 - (void)_enterAction
 {
     [SVProgressHUD show];
-    
+    BBSLocationCoordinate *coordinate = [[BBSLocationCoordinate alloc] initWithLatitude:[BBSUILBSLocationManager shareManager].latitude longitude:[BBSUILBSLocationManager shareManager].lontitue];
     [BBSSDK authLoginWithOpenid:_params[@"openID"]
                         unionid:_params[@"rawData"][@"unionid"]
                        authType:_params[@"authTypeName"]
@@ -993,6 +978,7 @@
                        password:nil
                      questionId:nil
                          answer:nil
+                     coordinate:coordinate
                          result:^(BBSUser *user, id res, NSError *error) {
                              
                              [SVProgressHUD dismiss];

@@ -10,7 +10,7 @@
 #import "Masonry.h"
 #import <BBSSDK/BBSUser.h>
 #import "BBSUIContext.h"
-#import "NSString+Paragraph.h"
+#import "NSString+BBSUIParagraph.h"
 
 @interface BBSUIModifySignatureViewController ()
 
@@ -60,7 +60,7 @@
     ({
         UITextField *signature = [UITextField new];
         [viewBg addSubview:signature];
-        signature.attributedText = [NSString stringWithString:currentUser.sightml fontSize:15 defaultColorValue:@"3C3C3C" lineSpace:0 wordSpace:0];
+        signature.attributedText = [NSString bbs_stringWithString:currentUser.sightml fontSize:15 defaultColorValue:@"3C3C3C" lineSpace:0 wordSpace:0];
         
         [signature mas_makeConstraints:^(MASConstraintMaker *make) {
             make.left.equalTo(@10);

@@ -69,6 +69,7 @@
     [self addGestureRecognizer:tap];
 }
 
+#pragma mark -============BBSForum===========
 - (void)setForum:(BBSForum *)forum moreForumFlag:(BOOL)moreForumFlag result:(void (^)(BBSForum *))handler
 {
     self.clickHandler = handler;

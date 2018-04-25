@@ -13,7 +13,8 @@
 #import "MJRefresh.h"
 #import "BBSUIContext.h"
 #import "BBSUIThreadDetailViewController.h"
-#import "UIView+TipView.h"
+#import "UIView+BBSUITipView.h"
+#import "BBSUILBSShowLocationViewController.h"
 #define BBSUIPageSize       10
 
 @interface BBSUICollectionView ()<UITableViewDataSource,UITableViewDelegate>
@@ -117,7 +118,7 @@
             [weakSelf.collectionTableView.mj_footer endRefreshing];
             
             if (weakSelf.currentIndex == 1) {
-                [self configureTipViewWithTipMessage:@"暂无内容" hasData:weakSelf.marrData.count != 0 hasError:YES reloadButtonBlock:^(id sender) {
+                [self bbs_configureTipViewWithTipMessage:@"暂无内容" hasData:weakSelf.marrData.count != 0 hasError:YES reloadButtonBlock:^(id sender) {
                     [weakSelf.collectionTableView.mj_header beginRefreshing];
                     [weakSelf requestData];
                 }];
@@ -141,7 +142,7 @@
             [weakSelf.collectionTableView.mj_footer endRefreshing];
             
             if (weakSelf.currentIndex == 1) {
-                [self configureTipViewWithTipMessage:@"暂无内容" hasData:weakSelf.marrData.count != 0 hasError:YES reloadButtonBlock:^(id sender) {
+                [self bbs_configureTipViewWithTipMessage:@"暂无内容" hasData:weakSelf.marrData.count != 0 hasError:YES reloadButtonBlock:^(id sender) {
                     [weakSelf.collectionTableView.mj_header beginRefreshing];
                     [weakSelf requestData];
                 }];
@@ -165,7 +166,7 @@
             [weakSelf.collectionTableView.mj_footer endRefreshing];
             
             if (weakSelf.currentIndex == 1) {
-                [self configureTipViewWithFrame:CGRectMake(0, 339, DZSUIScreen_width, 339) tipMessage:@"暂无内容" noDataImage:nil hasData:weakSelf.marrData.count != 0 hasError:YES reloadButtonBlock:^(id sender) {
+                [self bbs_configureTipViewWithFrame:CGRectMake(0, 339, DZSUIScreen_width, 339) tipMessage:@"暂无内容" noDataImage:nil hasData:weakSelf.marrData.count != 0 hasError:YES reloadButtonBlock:^(id sender) {
                     [weakSelf.collectionTableView.mj_header beginRefreshing];
                     [weakSelf requestData];
                 }];
@@ -198,6 +199,14 @@
     cell.selectionStyle = UITableViewCellSelectionStyleNone;
     cell.collectionViewType = _type;
     cell.collection = _marrData[indexPath.row];
+    
+    __weak typeof(self)weakSelf = self;
+    cell.addressOnClickBlock = ^(BBSThread *threadModel) {
+        CLLocationCoordinate2D coordinate = {threadModel.latitude,threadModel.longitude};
+        BBSUILBSShowLocationViewController *showLocationVC = [[BBSUILBSShowLocationViewController alloc] initWithCoordinate:coordinate title:threadModel.poiTitle];
+        UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:showLocationVC];
+        [[MOBFViewController currentViewController].navigationController presentViewController:nav animated:YES completion:nil];
+    };
     
     return cell;
 }

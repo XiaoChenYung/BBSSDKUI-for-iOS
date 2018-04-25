@@ -225,13 +225,13 @@
 
 - (void)commitButtonHandler:(UIButton *)button
 {
-    if (![self.userNameTextField.text isUserName]) {
+    if (![self.userNameTextField.text bbs_isUserName]) {
         UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"提示" message:@"用户名不符合格式" delegate:nil cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
         [alert show];
         return;
     }
     
-    if (![self.emailTextField.text isEmail]) {
+    if (![self.emailTextField.text bbs_isEmail]) {
         UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"提示" message:@"邮箱不符合格式" delegate:nil cancelButtonTitle:@"确定" otherButtonTitles:nil, nil];
         [alert show];
         return;

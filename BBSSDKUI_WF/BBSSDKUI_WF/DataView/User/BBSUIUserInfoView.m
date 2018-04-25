@@ -7,7 +7,7 @@
 //
 
 #import "BBSUIUserInfoView.h"
-#import "UIViewExt.h"
+#import "UIView+BBSUIExt.h"
 #import "Masonry.h"
 #import "BBSUIUserInfoTableViewCell.h"
 #import <MOBFoundation/MOBFViewController.h>
@@ -23,7 +23,7 @@
 #import "BBSUIZoomImageView.h"
 #import "BBSUIUserOtherInfoViewController.h"
 #import "BBSUIPickerView.h"
-#import "NSString+Paragraph.h"
+#import "NSString+BBSUIParagraph.h"
 #import "BBSUICoreDataManage.h"
 
 #define BBSUIAvatarImageViewWidth 50
@@ -104,7 +104,7 @@
 
 - (void)configureUI
 {
-    self.headerView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.width, BBSUIUserTableViewHeaderViewHeight)];
+    self.headerView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.bbs_width, BBSUIUserTableViewHeaderViewHeight)];
     [self.headerView setBackgroundColor:[UIColor whiteColor]];
     self.avatarImageView = [[BBSUIZoomImageView alloc] init];
     [self.headerView addSubview:self.avatarImageView];
@@ -314,7 +314,7 @@
                 make.left.equalTo(@90);
             }];
 
-            signatureLabel.attributedText = [NSString stringWithString:self.currentUser.sightml fontSize:15 defaultColorValue:@"3C3C3C" lineSpace:0 wordSpace:0];
+            signatureLabel.attributedText = [NSString bbs_stringWithString:self.currentUser.sightml fontSize:15 defaultColorValue:@"3C3C3C" lineSpace:0 wordSpace:0];
             signatureLabel.textAlignment = NSTextAlignmentRight;
             [userInfoCell setTitle:@"个性签名"];
             userInfoCell.selectionStyle = UITableViewCellSelectionStyleNone;
@@ -503,7 +503,7 @@
         __weak typeof(self) weakSelf = self;
         vc.SightmlBlock = ^(NSString *sightml){
             [weakSelf editUserInfoWithGender:-1 birthday:nil residence:nil sightml:sightml token:_currentUser.token avatarBigUrl:nil avatarMiddleUrl:nil avatarSmallUrl:nil success:^{
-                weakSelf.signatureLabel.attributedText = [NSString stringWithString:sightml fontSize:15 defaultColorValue:@"3C3C3C" lineSpace:0 wordSpace:0];
+                weakSelf.signatureLabel.attributedText = [NSString bbs_stringWithString:sightml fontSize:15 defaultColorValue:@"3C3C3C" lineSpace:0 wordSpace:0];
                 weakSelf.signatureLabel.textAlignment = NSTextAlignmentRight;
                 
                 _currentUser.sightml = sightml;

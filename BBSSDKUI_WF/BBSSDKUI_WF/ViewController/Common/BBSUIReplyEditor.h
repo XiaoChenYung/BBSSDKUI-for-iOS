@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h>
 
-typedef void (^FinishEditHandler)(BOOL cancelled,NSArray <UIImage *>*,NSString *);
+typedef void (^FinishEditHandler)(BOOL cancelled,NSArray <UIImage *>*,NSString *,NSDictionary *);
 
 @interface BBSUIReplyEditor : UIViewController
 

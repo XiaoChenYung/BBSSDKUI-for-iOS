@@ -7,7 +7,7 @@
 //
 
 #import "BBSUIThreadListView.h"
-#import "LBSegmentControl.h"
+#import "BBSUILBSegmentControl.h"
 #import <MOBFoundation/MOBFViewController.h>
 #import "BBSUIUserEditViewController.h"
 #import "BBSUIEmailSendViewController.h"
@@ -16,7 +16,7 @@
 #import "BBSThread+BBSUI.h"
 #import "MJRefresh.h"
 #import "BBSUIThreadSummaryCell.h"
-#import "UIView+TipView.h"
+#import "UIView+BBSUITipView.h"
 #import "BBSUIThreadDetailViewController.h"
 #import "BBSUIThreadListTableViewController.h"
 #import "BBSUIBannerPreviewViewController.h"
@@ -26,9 +26,9 @@
 #import "BBSUIForumViewController.h"
 
 
-@interface BBSUIThreadListView()<LBSegmentControlDelegate>
+@interface BBSUIThreadListView()<BBSUILBSegmentControlDelegate>
 
-@property (nonatomic, strong) LBSegmentControl *segmentControl;
+@property (nonatomic, strong) BBSUILBSegmentControl *segmentControl;
 
 @property (nonatomic, strong) NSArray *threadListViewContrllers;
 
@@ -78,28 +78,24 @@
     if (self) {
         [self configureUI];
     }
-    
     return self;
 }
-
 
 - (void)configureUI
 {
     [self addSortSegmentControl];
-    
     self.currentSelectType = 0;
-    
     [self _makeRefreshWindow];
-
 }
 
+#pragma mark - 添加tableView
 - (void)addSortSegmentControl
 {
     PageType pageType = self.pageType;
     
     __block NSMutableArray *vcs = [NSMutableArray new];
     __block NSMutableArray *titles = [NSMutableArray new];
-    // 门户
+    // 资讯
     if (pageType == PageTypePortal)
     {
         [BBSSDK getPortalCategories:^(NSArray *categories, NSError *error) {
@@ -107,7 +103,6 @@
             if (!error && categories.count)
             {
                 self.categoriesList = categories.mutableCopy;
-                
                 [self.categoriesList enumerateObjectsUsingBlock:^(BBSPortalCatefories * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
                     
                     BBSUIThreadListTableViewController *vc = [[BBSUIThreadListTableViewController alloc] initWithCatid:obj.catid];
@@ -121,10 +116,9 @@
                 [self _addSortSegmentControlWithVCs:vcs titles:titles];
             }
         }];
-        
     }
     else
-    {
+    {//论坛
         BBSUIThreadListTableViewController *vc = [[BBSUIThreadListTableViewController alloc] initWithForum:self.currentForum
                                                                                                 selectType:BBSUIThreadSelectTypeLatest];
         BBSUIThreadListTableViewController *vc1 = [[BBSUIThreadListTableViewController alloc] initWithForum:self.currentForum
@@ -139,30 +133,30 @@
         
         [self _addSortSegmentControlWithVCs:vcs titles:titles];
     }
-    
 }
 
+#pragma mark - 添加最新 热门 精华
 - (void)_addSortSegmentControlWithVCs:(NSMutableArray *)vcs titles:(NSMutableArray *)titles
 {
     self.threadListViewContrllers = vcs;
-    
     if (self.currentForum) {
-        self.segmentControl = [[LBSegmentControl alloc] initStaticTitlesWithFrame:CGRectMake(0, 64, DZSUIScreen_width, 40) titleFontSize:16 isIntegrated:NO];
+        self.segmentControl = [[BBSUILBSegmentControl alloc] initStaticTitlesWithFrame:CGRectMake(0, 64, DZSUIScreen_width, 40) titleFontSize:16 isIntegrated:NO];
     }else{
         
         CGFloat headerY = 0;
+        //CGFloat headerY = 200;
         if (self.pageType == PageTypeHomePage)
         {
             headerY = 105;
             [self _requestForumHeader];
-            self.segmentControl = [[LBSegmentControl alloc] initStaticTitlesWithFrame:CGRectMake(0, headerY, DZSUIScreen_width, 40) titleFontSize:16 isIntegrated:NO];
+            //self.segmentControl = [[LBSegmentControl alloc] initStaticTitlesWithFrame:CGRectMake(0, headerY+200, DZSUIScreen_width, 40) titleFontSize:16 isIntegrated:NO];
+            self.segmentControl = [[BBSUILBSegmentControl alloc] initStaticTitlesWithFrame:CGRectMake(0, headerY, DZSUIScreen_width, 40) titleFontSize:16 isIntegrated:NO];
             self.segmentControl.viewHeight = DZSUIScreen_height - 210;
         }
         else
-        {
-            self.segmentControl = [[LBSegmentControl alloc] initScrollTitlesWithFrame:CGRectMake(0, headerY, DZSUIScreen_width, 40)];
+        {//资讯
+            self.segmentControl = [[BBSUILBSegmentControl alloc] initScrollTitlesWithFrame:CGRectMake(0, headerY, DZSUIScreen_width, 40)];
         }
-        
     }
     self.segmentControl.titles = titles;
     self.segmentControl.viewControllers = self.threadListViewContrllers;
@@ -174,28 +168,28 @@
     self.segmentControl.delegate = self;
 //    self.segmentControl.isIntegrated = YES;
     [self addSubview:self.segmentControl];
+    
 }
 
+#pragma mark - 全部财经体育
 - (void)_requestForumHeader
 {
-    
     __weak typeof (self) theView = self;
+    //全部 财经 体育
     _forumHeader = [[BBSUIForumHeader alloc] initWithFrame:CGRectMake(0, 0, DZSUIScreen_width, 100)];
     [_forumHeader setResultHandler:^(BBSForum *forum){
         [theView _pushForumVC:forum];
     }];
-    
     [self addSubview:_forumHeader];
     
     [BBSSDK getForumListWithFup:0 result:^(NSArray *forumsList, NSError *error) {
-        
         [theView.forumHeader setForumList:forumsList];
-        
     }];
     
     UIView *line = [[UIView alloc] initWithFrame:CGRectMake(0, 100, DZSUIScreen_width, 5)];
     line.backgroundColor = DZSUIColorFromHex(0xF9F9F9);
     [self addSubview:line];
+
 }
 
 - (void)_pushForumVC:(BBSForum *)forum
@@ -263,7 +257,7 @@
     self.refreshWindow = nil;
 }
 
-#pragma mark - 
+#pragma mark - 切换 最新热门精华
 - (void)selectIndex:(NSInteger)index
 {
     self.currentSelectType = index;

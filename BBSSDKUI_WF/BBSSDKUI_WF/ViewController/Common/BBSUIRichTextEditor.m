@@ -18,16 +18,16 @@
 {
     [super viewDidLoad];
      self.enabledToolbarItems = @[
-                                  ZSSRichTextEditorToolbarBold,
-                                ZSSRichTextEditorToolbarItalic,
-//                                  ZSSRichTextEditorToolbarStrikeThrough,
-//                                  ZSSRichTextEditorToolbarUnorderedList,
-//                                  ZSSRichTextEditorToolbarH1,
-//                                  ZSSRichTextEditorToolbarH2,
-//                                  ZSSRichTextEditorToolbarH3,
-//                                  ZSSRichTextEditorToolbarH4
-                                  ZSSRichTextEditorToolbarStrikeThrough,
-                                  ZSSRichTextEditorToolbarUnorderedList
+                                  BBSUIRichTextEditorToolbarBold,
+                                BBSUIRichTextEditorToolbarItalic,
+//                                  BBSUIRichTextEditorToolbarStrikeThrough,
+//                                  BBSUIRichTextEditorToolbarUnorderedList,
+//                                  BBSUIRichTextEditorToolbarH1,
+//                                  BBSUIRichTextEditorToolbarH2,
+//                                  BBSUIRichTextEditorToolbarH3,
+//                                  BBSUIRichTextEditorToolbarH4
+                                  BBSUIRichTextEditorToolbarStrikeThrough,
+                                  BBSUIRichTextEditorToolbarUnorderedList
                                   ];
     
     self.toolbarItemTintColor = [UIColor darkGrayColor];

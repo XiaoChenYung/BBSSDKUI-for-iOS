@@ -58,6 +58,8 @@
         {
             isMore = YES;
             item = [[BBSUIForumHeaderItem alloc] initWithFrame:CGRectMake(BBS_WIDTH(self) / 5 * 4, 0, BBS_WIDTH(self) / 5, BBS_HEIGHT(self))];
+            
+#pragma mark ===============_forumList========================
             [item setForum:isMore ? nil : _forumList[i] moreForumFlag:isMore result:self.resultHandler];
             [self addSubview:item];
         }

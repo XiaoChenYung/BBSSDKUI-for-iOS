@@ -13,6 +13,7 @@
 #import "BBSUIContext.h"
 #import "BBSUIEmailSendViewController.h"
 #import "BBSUIUserEditViewController.h"
+#import "BBSUILBSLocationManager.h"
 
 @interface BBSUIRegistViewController ()<UITextFieldDelegate>
 
@@ -246,25 +247,26 @@
 {
     [self.view endEditing:YES];
     
-    if (![_usernameTextField.text isUserName])
+    if (![_usernameTextField.text bbs_isUserName])
     {
         [self showBottomAlertWithText:@"用户名格式错误"];
         return ;
     }
     
-    if(![_emailTextField.text isEmail])
+    if(![_emailTextField.text bbs_isEmail])
     {
         [self showBottomAlertWithText:@"邮箱格式错误"];
         return;
     }
     
-    if(![_passwordTextField.text isPassword])
+    if(![_passwordTextField.text bbs_isPassword])
     {
         [self showBottomAlertWithText:@"密码格式错误"];
         return;
     }
 
-    [BBSSDK registUserWithUserName:_usernameTextField.text email:_emailTextField.text password:_passwordTextField.text result:^(BBSUser *user, NSError *error) {
+    BBSLocationCoordinate *coordinate = [[BBSLocationCoordinate alloc] initWithLatitude:[BBSUILBSLocationManager shareManager].latitude longitude:[BBSUILBSLocationManager shareManager].lontitue];
+    [BBSSDK registUserWithUserName:_usernameTextField.text email:_emailTextField.text password:_passwordTextField.text coordinate:coordinate result:^(BBSUser *user, NSError *error) {
         if (!error)
         {
             //登录成功，可以通过BBSUser 或者res拿到数据

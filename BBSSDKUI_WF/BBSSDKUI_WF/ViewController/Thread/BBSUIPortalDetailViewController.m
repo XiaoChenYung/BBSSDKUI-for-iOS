@@ -14,6 +14,7 @@
 #import <BBSSDK/BBSSDK.h>
 #import <BBSSDK/BBSThreadAttachment.h>
 #import <BBSSDK/BBSComment.h>
+#import <BBSSDK/BBSLocation.h>
 #import "BBSJSImageDownload.h"
 #import "BBSUIImagePreviewHUD.h"
 #import "BBSUICheckAttachmentWebViewController.h"
@@ -24,16 +25,16 @@
 #import "BBSUILoginViewController.h"
 #import "BBSUIProcessHUD.h"
 #import "UIImage+BBSFunction.h"
-#import "UIView+Badge.h"
+#import "UIView+BBSUIBadge.h"
 #import "BBSUIUserOtherInfoViewController.h"
-#import "PopoverView.h"
+#import "BBSUIPopoverView.h"
 #import "BBSUIAccusationViewController.h"
 #import "BBSUIProcessHUD.h"
 #import "MBProgressHUD.h"
 #import "BBSUICoreDataManage.h"
 #import "BBSUIShareView.h"
-#import <MobLink/IMOBFLinkComponent.h>
-#import <MOBFoundation/MOBFComponentManager.h>
+#import <BBSSDK/BBSMOBFScene.h>
+#import "BBSUILBSShowLocationViewController.h"
 
 @interface BBSUIPortalDetailViewController ()
 
@@ -56,7 +57,7 @@
     return @"/portal/detail";
 }
 
-- (instancetype)initWithMobLinkScene:(id<IMOBFScene>)scene;
+- (instancetype)initWithMobLinkScene:(BBSMOBFScene *)scene;
 {
     self = [super init];
     if (self)
@@ -234,7 +235,7 @@
 - (void)updateUI
 {
     if (_threadModel.commentnum > 0) {
-        [_commentButton yee_MakeBadgeText:[NSString stringWithFormat:@"%zd", _threadModel.commentnum] textColor:[UIColor whiteColor] backColor:[UIColor redColor] Font:[UIFont systemFontOfSize:12]];
+        [_commentButton bbs_MakeBadgeText:[NSString stringWithFormat:@"%zd", _threadModel.commentnum] textColor:[UIColor whiteColor] backColor:[UIColor redColor] Font:[UIFont systemFontOfSize:12]];
     }
     // ??? 
 //    if (_threadModel.favid != 0) {
@@ -273,6 +274,7 @@
     [self registOpenAuthor];
     [self registLikeArticle];
     [self registRelated];
+    [self registShowAddress];
 }
 
 #pragma mark - 注册js方法
@@ -567,12 +569,12 @@
         NSString *name = comment[@"author"];
         NSInteger pid = [comment[@"pid"] integerValue];
         
-        [self.replyEditor showWithUserName:name finishEdit:^(BOOL cancelled, NSArray<UIImage *> *images, NSString *content) {
+        [self.replyEditor showWithUserName:name finishEdit:^(BOOL cancelled, NSArray<UIImage *> *images, NSString *content, NSDictionary *locationInfo) {
             if (cancelled)
             {
                 return ;
             }
-            [theController uploadCommentWithImages:images content:content prePid:pid];
+            [theController uploadCommentWithImages:images content:content prePid:pid locationInfo:locationInfo];
         }];
     }];
 }
@@ -810,6 +812,25 @@
     
 }
 
+- (void)registShowAddress{
+    __weak typeof(self) theWebController = self;
+    [self.jsContext registerJSMethod:@"showAddress" block:^(NSArray *arguments) {
+        NSDictionary *comment = nil;
+        
+        if (arguments.count > 0 && [arguments[0] isKindOfClass:[NSDictionary class]])
+        {
+            comment = arguments[0];
+        }
+        NSString *poiTitle = comment[@"POITitle"];
+        float latitude = [comment[@"lat"] floatValue];
+        float longitude = [comment[@"lon"] floatValue];
+        CLLocationCoordinate2D coordinate = {latitude,longitude};
+        BBSUILBSShowLocationViewController *showLocationVC = [[BBSUILBSShowLocationViewController alloc] initWithCoordinate:coordinate title:poiTitle];
+        UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:showLocationVC];
+        [theWebController presentViewController:nav animated:YES completion:nil];
+    }];
+    
+}
 
 #pragma mark - click event
 
@@ -856,14 +877,14 @@
 - (void)moreButtonHandler:(UIButton *)button
 {
     
-    PopoverView *orderPopoverView = [PopoverView popoverView];
+    BBSUIPopoverView *orderPopoverView = [BBSUIPopoverView popoverView];
     [orderPopoverView showToView:button withActions:[self moreActions] button:nil];
 }
 
-- (NSArray<PopoverAction *> *)moreActions {
+- (NSArray<BBSUIPopoverAction *> *)moreActions {
     
     __weak typeof(self) theController = self;
-    PopoverAction *createdOnOrderAction = [PopoverAction actionWithSelectedImage:nil deselectedImage:nil title:@"举报" handler:^(PopoverAction *action) {
+    BBSUIPopoverAction *createdOnOrderAction = [BBSUIPopoverAction actionWithSelectedImage:nil deselectedImage:nil title:@"举报" handler:^(BBSUIPopoverAction *action) {
         
         if (![BBSUIContext shareInstance].currentUser)
         {
@@ -905,18 +926,18 @@
     __weak typeof(self) weakSelf = self ;
     
     
-    [self.replyEditor showWithUserName:_threadModel.author finishEdit:^(BOOL cancelled, NSArray<UIImage *> *images, NSString *content) {
+    [self.replyEditor showWithUserName:_threadModel.author finishEdit:^(BOOL cancelled, NSArray<UIImage *> *images, NSString *content, NSDictionary *locationInfo) {
         
         if (cancelled)
         {
             return ;
         }
         
-        [weakSelf uploadCommentWithImages:images content:content prePid:0];
+        [weakSelf uploadCommentWithImages:images content:content prePid:0 locationInfo:locationInfo];
     }];
 }
 
-- (void)uploadCommentWithImages:(NSArray *)images content:(NSString *)content prePid:(NSInteger)pid
+- (void)uploadCommentWithImages:(NSArray *)images content:(NSString *)content prePid:(NSInteger)pid locationInfo:(NSDictionary *)locationInfo
 {
     if (!(content.length || images.count))
     {
@@ -932,7 +953,7 @@
     
     if (!images.count)
     {
-        [self postCommentWithHTML:content pid:pid];
+        [self postCommentWithHTML:content pid:pid locationInfo:locationInfo];
         return;
     }
     
@@ -975,7 +996,7 @@
                     {
                         NSLog(@"%@",comment);
                         
-                        [self postCommentWithHTML:comment pid:pid];
+                        [self postCommentWithHTML:comment pid:pid locationInfo:locationInfo];
                     }
                 }
                 
@@ -985,9 +1006,26 @@
     }
 }
 
-- (void)postCommentWithHTML:(NSString *)html pid:(NSInteger)pid
+- (void)postCommentWithHTML:(NSString *)html pid:(NSInteger)pid locationInfo:(NSDictionary *)locationInfo
 {
-    [BBSSDK postPortalCommentWithAid:_threadModel.aid uid:_threadModel.authorId message:html result:^(BBSComment *comment, NSError *error) {
+    
+    NSString *address = @"";
+    NSString *poiTitle = @"";
+    float lat = 0;
+    float lng = 0;
+    BBSLocation *location = nil;
+    if (locationInfo) {
+        poiTitle = locationInfo[@"name"];
+        address = locationInfo[@"address"];
+        NSArray *arr = [locationInfo[@"location"] componentsSeparatedByString:@","];
+        if ([arr count] == 2) {
+            lat = [[locationInfo[@"location"] componentsSeparatedByString:@","].firstObject floatValue];
+            lng = [[locationInfo[@"location"] componentsSeparatedByString:@","].lastObject floatValue];
+        }
+        location = [[BBSLocation alloc] initWithPOITitle:poiTitle address:address latitude:lat longitude:lng];
+    }
+    
+    [BBSSDK postPortalCommentWithAid:_threadModel.aid uid:_threadModel.authorId message:html location:location result:^(BBSComment *comment, NSError *error) {
         if (!error)
         {
             [self postCommentSuccess:comment prePid:pid comment:html];
@@ -1119,7 +1157,9 @@
     postDic[@"postip"] = comment.postip;
     postDic[@"status"] = @(comment.status);
     postDic[@"deviceName"] = comment.fromType;
-    
+    postDic[@"POITitle"] = comment.poiTitle;
+    postDic[@"lat"] = @(comment.latitude);
+    postDic[@"lon"] = @(comment.longitude);
     return postDic;
 }
 

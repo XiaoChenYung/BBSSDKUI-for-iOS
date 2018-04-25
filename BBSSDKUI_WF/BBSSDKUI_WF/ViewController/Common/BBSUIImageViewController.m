@@ -10,7 +10,7 @@
 #import "Masonry.h"
 #import "YYAnimatedImageView.h"
 #import "YYImage.h"
-#import "NSString+md5.h"
+#import "NSString+BBSUIMD5.h"
 
 @interface BBSUIImageViewController ()<UIScrollViewDelegate>
 
@@ -99,7 +99,7 @@
 - (NSString *)setURL:(NSString *)urlStr imageData:(NSData *)imageData
 {
     NSFileManager *fileManager = [NSFileManager defaultManager];
-    NSString *filePath = ImagePath([NSString md5:urlStr]);
+    NSString *filePath = ImagePath([NSString bbs_md5:urlStr]);
     if (![fileManager fileExistsAtPath:filePath]) {
         [fileManager createFileAtPath:filePath contents:nil attributes:nil];
         [imageData writeToFile:filePath atomically:NO];

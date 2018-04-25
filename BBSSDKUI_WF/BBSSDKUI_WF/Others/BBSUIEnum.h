@@ -28,7 +28,8 @@ typedef NS_ENUM(NSInteger, PageType) {
     PageTypeForumToHome = 1,    // 从forum过来的homePage
     PageTypeSearch      = 2,
     PageTypeHistory     = 3,
-    PageTypePortal      = 4     // 资讯
+    PageTypePortal      = 4,     // 资讯
+    PageTypeAttion      = 5      //关注动态
 };
 
 typedef NS_ENUM(NSInteger, BBSUIThreadListViewType){

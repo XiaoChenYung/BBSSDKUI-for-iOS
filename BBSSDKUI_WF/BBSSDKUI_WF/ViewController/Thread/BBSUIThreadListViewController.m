@@ -8,7 +8,7 @@
 
 #import "BBSUIThreadListViewController.h"
 #import "BBSUIThreadListView.h"
-#import "PopoverView.h"
+#import "BBSUIPopoverView.h"
 #import "BBSUIContext.h"
 #import "BBSUILoginViewController.h"
 #import "BBSUIFastPostViewController.h"
@@ -16,8 +16,8 @@
 #import "BBSUIMainStyleNavigationController.h"
 #import "BBSUISearchViewController.h"
 #import "Masonry.h"
-#import "UIViewExt.h"
-#import "BBSUIStatusBarTip.h"
+#import "UIView+BBSUIExt.h"
+#import "BBSUIStatusBarTip.h"#import "BBSUITribuneSegementView.h"
 
 @interface BBSUIThreadListViewController ()<iBBSUIFastPostViewControllerDelegate>
 
@@ -52,21 +52,19 @@
     return self;
 }
 
+#pragma mark -  生命周期 Life Circle
 - (void)viewDidLoad {
     [super viewDidLoad];
-    // Do any additional setup after loading the view.
     if ([BBSUIContext shareInstance].isIphoneX)
     {
         _iphoneXTopPadding = 10;
     }
     
-    //帖子列表视图
+    //资讯和论坛公用的view
     _threadListView = [[BBSUIThreadListView alloc] initWithFrame:CGRectMake(0, 0, CGRectGetWidth(self.view.bounds), CGRectGetHeight(self.view.bounds))
                                                            forum:self.currentForum
                                                         pageType:self.pageType];
-    
     [self.view addSubview:_threadListView];
-    
     //设置标题
     [self setNavigationBarTitle];
 }
@@ -93,12 +91,11 @@
     
     [super viewWillDisappear:animated];
 }
-
+#pragma mark - UI#pragma mark -导航头
 - (void)setNavigationBarTitle
 {
     if (!self.currentForum) {
         self.title = @"所有";
-        
         return;
     }
     
@@ -119,21 +116,10 @@
     
     self.titleView = [[UIView alloc] init];
     [self.view addSubview:self.titleView];
-//    [self.titleView mas_makeConstraints:^(MASConstraintMaker *make) {
-//        make.centerX.equalTo(self.view.mas_centerX);
-//        make.top.equalTo(self.view).with.offset(20);
-//        make.size.mas_equalTo(CGSizeMake(200, 44));
-//    }];
     [self.titleView setFrame:CGRectMake(50, 20 + _iphoneXTopPadding, BBS_WIDTH(self.view) - 100, 44)];
     
     UILabel *titleLabel = [UILabel new];
     [self.titleView addSubview:titleLabel];
-//    [titleButton mas_makeConstraints:^(MASConstraintMaker *make) {
-//        make.top.equalTo(self.titleView).with.offset(0);
-//        make.left.equalTo(self.titleView).with.offset(0);
-//        make.right.equalTo(self.titleView).with.offset(0);
-//        make.bottom.equalTo(self.titleView).with.offset(0);
-//    }];
     if (self.currentForum) {
         [titleLabel setText:self.currentForum.name];
     }else{
@@ -148,39 +134,22 @@
     [titleLabel setFrame:CGRectMake((BBS_WIDTH(self.titleView) - buttonSize.width) / 2, (BBS_HEIGHT(self.titleView) - buttonSize.height) / 2, buttonSize.width, buttonSize.height)];
     [titleLabel setTextColor:[UIColor blackColor]];
     
-    UIImage *arrowImage = [UIImage BBSImageNamed:@"Forum/DownArrow.png"];
-//    [titleButton setImage:arrowImage forState:UIControlStateNormal];
-//    [titleButton setTitleEdgeInsets:UIEdgeInsetsMake(0, -arrowImage.size.width * 2, 0, 0)];
-//    CGSize titleSize = [titleButton.titleLabel.text sizeWithAttributes:@{NSFontAttributeName: titleButton.titleLabel.font}];
-//    [titleButton setImageEdgeInsets:UIEdgeInsetsMake(0, titleSize.width + arrowImage.size.width + 5, 0, -titleSize.width + arrowImage.size.width - 5)];
-//    [titleButton addTarget:self action:@selector(titleButtonHandler:) forControlEvents:UIControlEventTouchUpInside];
-    _arrowImageView = [[UIImageView alloc] initWithFrame:CGRectMake(BBS_RIGHT(titleLabel) + 5, (BBS_HEIGHT(self.titleView) - 14) / 2, 14, 14)];
-    [_arrowImageView setContentMode:UIViewContentModeScaleAspectFit];
-    [_arrowImageView setImage:arrowImage];
-    [self.titleView addSubview:_arrowImageView];
-
+//    _arrowImageView = [[UIImageView alloc] initWithFrame:CGRectMake(BBS_RIGHT(titleLabel) + 5, (BBS_HEIGHT(self.titleView) - 14) / 2, 14, 14)];//    [_arrowImageView setContentMode:UIViewContentModeScaleAspectFit];//    [_arrowImageView setImage:arrowImage];//    [self.titleView addSubview:_arrowImageView];
     //状态栏
     [UIApplication sharedApplication].statusBarStyle = UIStatusBarStyleDefault;
-    
-    UITapGestureRecognizer *titleTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(titleViewTappedHandler:)];
-    titleTap.numberOfTouchesRequired = 1;
-    [self.titleView addGestureRecognizer:titleTap];
-    
-    [self setupRightBarButton];
+    //    titleTap.numberOfTouchesRequired = 1;//    [self.titleView addGestureRecognizer:titleTap];//    [self setupRightBarButton];    [self setupRightBarButton];
 }
-
+#pragma mark - Action
 - (void)titleViewTappedHandler:(UITapGestureRecognizer *)tap
-{
-//    UIImage *img = [button.currentImage BBSImageRotation:UIImageOrientationDown];
-//    [button setImage:img forState:UIControlStateNormal];
-    
+{    
     [_arrowImageView setImage:[_arrowImageView.image BBSImageRotation:UIImageOrientationDown]];
-    
-    PopoverView *orderPopoverView = [PopoverView popoverView];
+
+    BBSUIPopoverView *orderPopoverView = [BBSUIPopoverView popoverView];
     orderPopoverView.showShade = YES; // 显示阴影背景
     orderPopoverView.selectType = self.threadListView.currentSelectType;
     orderPopoverView.orderIndex = self.threadListView.currentOrderType;
     [orderPopoverView showToView:self.titleView withActions:[self orderTypeActions] button:_arrowImageView];
+    
 }
 
 - (CGSize)sizeWithText:(NSString *)text font:(UIFont *)font maxSize:(CGSize)maxSize
@@ -194,7 +163,7 @@
     [self.navigationController popViewControllerAnimated:YES];
 }
 
-- (void)searchAction:(UIButton *)sender {
+- (void)searchAction:(UIButton *)sender{
     BBSUISearchViewController *vc = [BBSUISearchViewController new];
     [[MOBFViewController currentViewController].navigationController pushViewController:vc animated:YES];
 }
@@ -206,7 +175,6 @@
     postThread.frame = CGRectMake(DZSUIScreen_width - postThreadButtonWidth - 10, 25 + _iphoneXTopPadding, 30, 30);
     [postThread setImage:[UIImage BBSImageNamed:@"Home/postThreadBlack.png"] forState:UIControlStateNormal];
     [postThread addTarget:self action:@selector(editThread:) forControlEvents:UIControlEventTouchUpInside];
-//    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:postThread];
     [self.view addSubview:postThread];
     
     UIButton *searchBtn = [UIButton buttonWithType:UIButtonTypeCustom];
@@ -215,9 +183,8 @@
     [searchBtn setImage:searchScaleImage forState:UIControlStateNormal];
     [searchBtn addTarget:self action:@selector(searchAction:) forControlEvents:UIControlEventTouchUpInside];
     
-//    [self.view addSubview:searchBtn];
 }
-
+#pragma mark -发帖
 - (void)editThread:(id)sender
 {
     if (![BBSUIContext shareInstance].currentUser)
@@ -231,7 +198,6 @@
     {
 //        BBSUIFastPostViewController *editVC = [BBSUIFastPostViewController shareInstance];
 //        [editVC addPostThreadObserver:self];
-//
 //        [self.navigationController pushViewController:editVC animated:YES];
         self.isPresent = YES;
         BBSUIFastPostViewController *editVC = [BBSUIFastPostViewController shareInstance];
@@ -248,24 +214,24 @@
     UIImage *img = [button.currentImage BBSImageRotation:UIImageOrientationDown];
     [button setImage:img forState:UIControlStateNormal];
     
-    PopoverView *orderPopoverView = [PopoverView popoverView];
+    BBSUIPopoverView *orderPopoverView = [BBSUIPopoverView popoverView];
     orderPopoverView.showShade = YES; // 显示阴影背景
     orderPopoverView.selectType = self.threadListView.currentSelectType;
     orderPopoverView.orderIndex = self.threadListView.currentOrderType;
     [orderPopoverView showToView:button withActions:[self orderTypeActions] button:button];
 }
 
-- (NSArray<PopoverAction *> *)orderTypeActions {
+- (NSArray<BBSUIPopoverAction *> *)orderTypeActions {
     
     __weak typeof(self) theThreadListVC = self;
-    PopoverAction *createdOnOrderAction = [PopoverAction actionWithSelectedImage:nil deselectedImage:nil title:@"按回复时间排序" handler:^(PopoverAction *action) {
+    BBSUIPopoverAction *createdOnOrderAction = [BBSUIPopoverAction actionWithSelectedImage:nil deselectedImage:nil title:@"按回复时间排序" handler:^(BBSUIPopoverAction *action) {
 
         theThreadListVC.currentOrderType = 0;
         [theThreadListVC.threadListView requestDataWithOrderType:theThreadListVC.currentOrderType];
         
     }];
     // 加好友 action
-    PopoverAction *lastPostOrderAction = [PopoverAction actionWithSelectedImage:nil deselectedImage:nil title:@"按发帖时间排序" handler:^(PopoverAction *action) {
+    BBSUIPopoverAction *lastPostOrderAction = [BBSUIPopoverAction actionWithSelectedImage:nil deselectedImage:nil title:@"按发帖时间排序" handler:^(BBSUIPopoverAction *action) {
         
         theThreadListVC.currentOrderType = 1;
         [theThreadListVC.threadListView requestDataWithOrderType:theThreadListVC.currentOrderType];
@@ -305,7 +271,6 @@
 }
 
 
-#pragma mark - life cycle
 - (void)dealloc
 {
     [[BBSUIFastPostViewController shareInstance] removePostThreadObserver:self];

@@ -17,7 +17,9 @@
 #import "BBSUIFansViewController.h"
 #import "BBSUICollectionView.h"
 #import "BBSUILoginViewController.h"
-#import "NSString+Paragraph.h"
+#import "NSString+BBSUIParagraph.h"
+#import "BBSUIAttentionDynamicViewController.h"
+
 
 #define BBSUIInformationCellHeight 65
 #define BBSUIUserLogoutButtonHeight 50
@@ -59,6 +61,7 @@
     return self;
 }
 
+#pragma mark - initUI
 - (void)configUI{
     self.backgroundColor = DZSUIColorFromHex(0xeaedf2);
     _currentUser = [BBSUIContext shareInstance].currentUser;
@@ -108,7 +111,7 @@
             make.edges.equalTo(self).with.insets(UIEdgeInsetsMake(0, 0, NavigationBar_Height-20, 0));
         }];
     }
-
+    
     [self setTableHeaderView];
 }
 
@@ -173,6 +176,7 @@
     }
 }
 
+#pragma mark - createTab 表格头
 - (void)setTableHeaderView {
     [self setCountButtonTitle];
     [_tableHeaderView.addressButton setTitle:[NSString stringWithFormat:@"%@ %@ %@",_currentUser.resideprovince,_currentUser.residecity,_currentUser.residedist] forState:UIControlStateNormal];
@@ -180,14 +184,12 @@
     
     if (self.userType == UserTypeMe)
     {
-        _tableHeaderView.originLabel.attributedText = [NSString stringWithString:_currentUser.sightml fontSize:12 defaultColorValue:@"6A7081" lineSpace:0 wordSpace:0];
+        _tableHeaderView.originLabel.attributedText = [NSString bbs_stringWithString:_currentUser.sightml fontSize:12 defaultColorValue:@"6A7081" lineSpace:0 wordSpace:0];
     }else
     {
-        _tableHeaderView.originLabel.attributedText = [NSString stringWithString:_currentUser.sightml fontSize:12 defaultColorValue:@"FFFFFF" lineSpace:0 wordSpace:0];
+        _tableHeaderView.originLabel.attributedText = [NSString bbs_stringWithString:_currentUser.sightml fontSize:12 defaultColorValue:@"FFFFFF" lineSpace:0 wordSpace:0];
         _tableHeaderView.originLabel.textAlignment = NSTextAlignmentCenter;
     }
-    
-    
     
     if (_currentUser.avatar) {
         MOBFImageGetter *getter = [MOBFImageGetter sharedInstance];
@@ -220,12 +222,16 @@
     if (_tableHeaderView == nil) {
         
         CGFloat height;
+        //========
+        //MARK:=====修改头部高度=====
         if (_userType == UserTypeMe) {
-            height = 150;
+            height = 150+30;
         }else{
             height = 339;
         }
         _tableHeaderView = [[BBSUIUserOtherInfoTableHeaderView alloc] initWithFrame:CGRectMake(0, 0, self.bounds.size.width, height) :_userType];
+//        _tableHeaderView = [[BBSUIUserOtherInfoTableHeaderView alloc] initWithFrame:CGRectMake(0, 0, self.bounds.size.width, 200)];
+        
         
         _tableHeaderView.avatarImageView.image = [UIImage BBSImageNamed:@"/User/AvatarDefault.png"];
         if (_currentUser.avatar) {
@@ -253,20 +259,20 @@
         _tableHeaderView.nameLabel.text = _currentUser.userName;
         if (self.userType == UserTypeMe)
         {
-            _tableHeaderView.originLabel.attributedText = [NSString stringWithString:_currentUser.sightml fontSize:12 defaultColorValue:@"6A7081" lineSpace:0 wordSpace:0];
+            _tableHeaderView.originLabel.attributedText = [NSString bbs_stringWithString:_currentUser.sightml fontSize:12 defaultColorValue:@"6A7081" lineSpace:0 wordSpace:0];
         }else
         {
-            _tableHeaderView.originLabel.attributedText = [NSString stringWithString:_currentUser.sightml fontSize:12 defaultColorValue:@"FFFFFF" lineSpace:0 wordSpace:0];
+            _tableHeaderView.originLabel.attributedText = [NSString bbs_stringWithString:_currentUser.sightml fontSize:12 defaultColorValue:@"FFFFFF" lineSpace:0 wordSpace:0];
             _tableHeaderView.originLabel.textAlignment = NSTextAlignmentCenter;
         }
         [_tableHeaderView.addressButton setTitle:[NSString stringWithFormat:@"%@ %@ %@",_currentUser.resideprovince,_currentUser.residecity,_currentUser.residedist] forState:UIControlStateNormal];
-        
         
         [_tableHeaderView.attentionCountButton addTarget:self action:@selector(attenTionBtnAction) forControlEvents:UIControlEventTouchUpInside];
         [_tableHeaderView.fansCountButton addTarget:self action:@selector(fansBtnAction) forControlEvents:UIControlEventTouchUpInside];
         [_tableHeaderView.noticeButton addTarget:self action:@selector(noticeBtnAction) forControlEvents:UIControlEventTouchUpInside];
         
         [self setCountButtonTitle];
+        
     }
     return _tableHeaderView;
 }
@@ -275,6 +281,7 @@
     NSLog(@"ddddddddddddd");
 }
 
+#pragma mark -
 - (void)setCountButtonTitle {
 
     UIColor *colorDefault;
@@ -371,7 +378,7 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
     if (_userType == UserTypeMe) {
-        return 3;
+        return 4;
     }
     return 2;
 }
@@ -408,6 +415,12 @@
             detailText = [NSString stringWithFormat:@"%lu",(long)[[BBSUICoreDataManage shareManager] historyCount]];
             imageName = @"/User/History.png";
             break;
+        case 3:
+            text = @"关注动态";
+            //==============
+            //detailText = [NSString stringWithFormat:@"%lu",(long)[[BBSUICoreDataManage shareManager] historyCount]];
+            imageName = @"/User/icon_UserAttion.png";
+            break;
             
         default:
             break;
@@ -441,18 +454,22 @@
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
-    if (indexPath.row == 0) {
+    if (indexPath.row == 0) {//文章收藏
         BBSUICollectionViewController *VC = [BBSUICollectionViewController new];
         VC.collectionViewType = CollectionViewTypeThreadFavorites;
         [[MOBFViewController currentViewController].navigationController pushViewController:VC animated:YES];
     }
-    if (indexPath.row == 1) {
+    if (indexPath.row == 1) {//我的帖子
         BBSUICollectionViewController *VC = [BBSUICollectionViewController new];
         VC.collectionViewType = CollectionViewTypeThreadList;
         [[MOBFViewController currentViewController].navigationController pushViewController:VC animated:YES];
     }
-    if (indexPath.row == 2) {
+    if (indexPath.row == 2) {//浏览记录
         BBSUIHistoryViewController *VC = [BBSUIHistoryViewController new];
+        [[MOBFViewController currentViewController].navigationController pushViewController:VC animated:YES];
+    }
+    if (indexPath.row == 3) {//关注动态
+        BBSUIAttentionDynamicViewController *VC = [BBSUIAttentionDynamicViewController new];
         [[MOBFViewController currentViewController].navigationController pushViewController:VC animated:YES];
     }
 }
@@ -521,6 +538,7 @@
     return self;
 }
 
+#pragma mark - 头像 名称 关注 粉丝
 - (void)configUI {
     // 头像
     self.avatarImageView =
@@ -584,7 +602,6 @@
         viewLine;
     });
     
-    
     self.attentionCountButton =
     ({
         UIButton *attentCount = [UIButton new];
@@ -608,7 +625,7 @@
     [[MOBFViewController currentViewController].navigationController popViewControllerAnimated:YES];
 }
 
-
+#pragma mark - 布局其他人
 - (void)settingFrame_other{
     self.backgroundColor = THEMEBACKGROUNDCOLOR;
     
@@ -640,27 +657,40 @@
         make.size.mas_equalTo(CGSizeMake(200, 12));
     }];
     
+    //======
     [self.divViewLine mas_makeConstraints:^(MASConstraintMaker *make) {
         make.bottom.equalTo(@-21);
         make.width.equalTo(@1).priorityHigh();
         make.height.equalTo(@10);
         make.centerX.equalTo(self);
+        
     }];
     
+    //关注
     [self.attentionCountButton mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.bottom.equalTo(@-21);
+        make.bottom.equalTo(@-5);
         make.left.equalTo(@0);
         make.right.mas_equalTo(self.divViewLine.mas_left);
-        make.height.equalTo(@15);
+        make.height.equalTo(@46);
     }];
     
+    //粉丝
     [self.fansCountButton mas_makeConstraints:^(MASConstraintMaker *make) {
         make.right.equalTo(@0);
         make.left.mas_equalTo(self.divViewLine.mas_right);
         make.bottom.height.equalTo(self.attentionCountButton);
     }];
     
-    // 关注
+    //MARK:=====分割线====
+    UIView *lineView = [UIView new];
+    [self addSubview:lineView];
+    [lineView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.left.right.equalTo(@0);
+        make.top.mas_equalTo(self.fansCountButton.mas_bottom).offset(0);
+        make.size.height.equalTo(@5);
+    }];
+    lineView.backgroundColor = [UIColor clearColor];
+    
     self.noticeButton =
     ({
         UIButton *notice = [UIButton new];
@@ -690,6 +720,7 @@
     });
 }
 
+#pragma mark - 布局我
 - (void)settingFrame_me{
     CGFloat avatarWH = 72;
     
@@ -742,20 +773,26 @@
         make.top.mas_equalTo(self.addressButton.mas_bottom).offset(20);
     }];
     
+    //竖线
     [self.divViewLine mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.bottom.equalTo(@-14);
+        make.bottom.equalTo(@-19);
         make.width.equalTo(@1).priorityHigh();
-        make.height.equalTo(@10);
+        make.height.equalTo(@15);
         make.centerX.equalTo(self);
     }];
     
+    //关注
     [self.attentionCountButton mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.bottom.equalTo(@-14);
+        //make.bottom.equalTo(@-14);
         make.left.equalTo(@0);
         make.right.mas_equalTo(self.divViewLine.mas_left);
-        make.height.equalTo(@15);
+        //make.height.equalTo(@15);
+        make.bottom.equalTo(@-5);
+        make.height.equalTo(@46);
+        
     }];
     
+    //粉丝
     [self.fansCountButton mas_makeConstraints:^(MASConstraintMaker *make) {
         make.right.equalTo(@0);
         make.left.mas_equalTo(self.divViewLine.mas_right);
@@ -773,15 +810,16 @@
         make.right.equalTo(@-5);
     }];
     
+    //MARK:============ 白线===========
     self.horizontalViewLine =
     ({
         UIView *viewLine = [UIView new];
-        viewLine.backgroundColor = DZSUIColorFromHex(0xDDE1EB);
+        viewLine.backgroundColor = DZSUIColorFromHex(0xEAEDF2);
         [self addSubview:viewLine];
         
         [viewLine mas_makeConstraints:^(MASConstraintMaker *make) {
             make.left.right.equalTo(@0);
-            make.bottom.mas_equalTo(self.divViewLine.mas_top).offset(-14);
+            make.bottom.mas_equalTo(self.divViewLine.mas_top).offset(-14-9);
             make.height.equalTo(@1);
         }];
         viewLine;
@@ -797,15 +835,14 @@
     }];
     
     UIView *viewLine2 = [[UIView alloc] init];
-    viewLine2.backgroundColor = DZSUIColorFromHex(0xDDE1EB);
+    viewLine2.backgroundColor = DZSUIColorFromHex(0xEAEDF2);
     [self addSubview:viewLine2];
     [viewLine2 mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.right.equalTo(@0);
         make.bottom.mas_equalTo(@-1);
-        make.height.equalTo(@1);
+        make.height.equalTo(@5);
     }];
-    viewLine2.hidden = YES;
-    
+    //viewLine2.hidden = YES;
     [self bringSubviewToFront:self.avatarImageView];
 }
 

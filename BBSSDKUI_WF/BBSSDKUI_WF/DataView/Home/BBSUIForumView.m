@@ -7,31 +7,43 @@
 //
 
 #import "BBSUIForumView.h"
-//#import "BBSUIForumHeaderView.h"
-#import "UIViewExt.h"
+#import "UIView+BBSUIExt.h"
 #import <BBSSDK/BBSSDK.h>
 #import "BBSUIForumSummaryCellTableViewCell.h"
-#import "UIView+TipView.h"
+#import "UIView+BBSUITipView.h"
 #import "BBSUICacheManager.h"
 #import "BBSForum+BBSUI.h"
 #import "BBSUIThreadListViewController.h"
 #import <MOBFoundation/MOBFViewController.h>
 #import "MJRefreshNormalHeader.h"
 #import "BBSUIContext.h"
+#import "BBSUIForumDetailViewController.h"
+#import "BBSUIForumHeaderFooterView.h"
+
 
 #define BBSUIPageSize 10
 
-@interface BBSUIForumView ()<UITableViewDelegate, UITableViewDataSource, BBSUIForumSummaryCellDelegate>
+@interface BBSUIForumView ()<UITableViewDelegate, UITableViewDataSource, BBSUIForumSummaryCellDelegate, BBSUIForumHeaderFooterViewDelegate>
 
 @property (nonatomic, strong) UITableView *forumTableView;
 
-//@property (nonatomic, strong) BBSUIForumHeaderView *forumHeaderView;
-
+/**
+ 置顶版块的数据
+ */
 @property (nonatomic, strong) NSMutableArray *stickArray;
 
+/**
+ 论坛列表的数组
+ */
 @property (nonatomic, strong) NSMutableArray *commonArray;
 
+/**
+ 所有的数组
+ */
 @property (nonatomic, strong) NSMutableArray *allForumArray;
+
+@property (nonatomic, strong) NSMutableArray *allDataArr;
+
 
 @property (nonatomic, assign) BOOL isEditing;
 
@@ -39,16 +51,16 @@
 
 @implementation BBSUIForumView
 
--(instancetype)initWithFrame:(CGRect)frame
+- (instancetype)initWithFrame:(CGRect)frame
 {
     self = [super initWithFrame:frame];
     if (self) {
         _isEditing = NO;
+
         [self getStickForumData];
         [self configureUI];
         [self requestData];
     }
-    
     return self;
 }
 
@@ -61,10 +73,10 @@
         [self configureUI];
         [self requestData];
     }
-    
     return self;
 }
 
+#pragma mark - initUI
 - (void)configureUI
 {
     //设置tableview
@@ -81,41 +93,169 @@
     self.forumTableView.mj_header = [MJRefreshNormalHeader headerWithRefreshingBlock:^{
         [weakSelf requestData];
     }];
+    
+    if ([MOBFDevice versionCompare:@"11.0"] >= 0)
+    {
+        [self.forumTableView setValue:@0 forKey:@"contentInsetAdjustmentBehavior"];
+    }
+    
     [self.forumTableView setSeparatorStyle:UITableViewCellSeparatorStyleNone];
-    [self.forumTableView.mj_header beginRefreshing];
+    //[self.forumTableView.mj_header beginRefreshing];
+    [self.forumTableView.mj_header endRefreshing];
 }
 
+#pragma mark - 数据加载
+- (void)requestData
+{
+    __weak typeof(self) weakSelf = self;
+    [BBSSDK getForumListWithFup:0 result:^(NSArray *forumsList, NSError *error) {
+        if (!error) {
+            [weakSelf bbs_configureTipViewWithTipMessage:@"" hasData:YES];
+            [forumsList enumerateObjectsUsingBlock:^(BBSForum *  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+                obj.isSticked = NO;
+                obj.isExpect = YES;
+            }];
+            //allForumArray 所有数据
+            weakSelf.allForumArray = [NSMutableArray arrayWithArray:forumsList];
+//            [self.stickArray enumerateObjectsUsingBlock:^(BBSForum *obj, NSUInteger idx, BOOL * _Nonnull stop) {
+//                obj.hasEdited = NO;
+//            }];
+            [self.allDataArr enumerateObjectsUsingBlock:^(NSArray *objArray, NSUInteger idx, BOOL * _Nonnull stop) {
+                [objArray enumerateObjectsUsingBlock:^(BBSForum *model, NSUInteger idx, BOOL * _Nonnull stop) {
+                    model.hasEdited = NO;
+                }];
+            }];
+            
+            [weakSelf _handelAllData:weakSelf.allForumArray];
+            [weakSelf devideForums];
+            
+            [weakSelf.forumTableView reloadData];
+            [self.forumTableView.mj_header endRefreshing];
+        }
+        else
+        {
+            //[weakSelf.forumTableView setHidden:YES];
+            [weakSelf bbs_configureTipViewWithTipMessage:@"网络不佳，请再次刷新" hasData:weakSelf.allForumArray.count != 0 hasError:YES reloadButtonBlock:^(id sender) {
+                [weakSelf requestData];
+            }];
+        }
+        [self.forumTableView.mj_header endRefreshing];
+    }];
+}
+
+#pragma mark - ********对数据进行分组处理************
+- (void)_handelAllData:(NSArray *)allData
+{
+    NSMutableDictionary *res = @{}.mutableCopy;
+    for (BBSForum *obj in allData)
+    {
+        NSString *string = [NSString stringWithFormat:@"%ld", (long)obj.fup];
+        NSLog(@"----sss---%@", string);
+        if (res[string])
+        {
+            [res[string] addObject:obj];
+        }
+        else
+        {
+            res[string] = [NSMutableArray arrayWithObject:obj];
+        }
+    }
+    
+    NSLog(@"-----%@",res.allValues);
+    //self.allDataArr = [NSMutableArray arrayWithArray:res.allValues];
+    
+    NSMutableArray *dataArray = [NSMutableArray arrayWithArray:res.allValues];
+    NSMutableArray *zeroArr = [NSMutableArray array];
+    
+//    [dataArray enumerateObjectsUsingBlock:^(NSArray *objArray, NSUInteger idx, BOOL * _Nonnull stop) {
+//        [objArray enumerateObjectsUsingBlock:^(BBSForum *obj, NSUInteger idx, BOOL * _Nonnull stop) {
+//            if ([obj.name isEqualToString:@"全部"]) {
+//                [zeroArr addObject:obj];
+//            }
+//        }];
+//    }];
+//
+//    [dataArray removeLastObject];
+//    [dataArray insertObject:zeroArr atIndex:0];
+    for (NSMutableArray *arr in dataArray) {
+        for (BBSForum *forum in arr) {
+            if ([forum.name isEqualToString:@"全部"]) {
+                [zeroArr addObject:forum];
+                [arr removeObject:forum];
+                break;
+            }
+        }
+    }
+    
+    [dataArray enumerateObjectsUsingBlock:^(NSArray *obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        if (obj.count <= 0) {
+            [dataArray removeObjectAtIndex:idx];
+        }
+    }];
+    [dataArray insertObject:zeroArr atIndex:0];
+
+    self.allDataArr = [NSMutableArray arrayWithArray:dataArray];
+}
+
+- (void)devideForums
+{
+    if (!self.commonArray) {
+        self.commonArray = [NSMutableArray new];
+    }else{
+        [self.commonArray removeAllObjects];
+    }
+    
+    //====有新的section 论坛列表标题
+    //每一个数组中都有被置顶的，然后每个数组都处理一下
+    
+    BOOL isIn = NO;
+    BBSForum *tmpForum = nil;
+    /*
+     allForumArray 所有数据
+     stickArray 置顶版块数据
+     commonArray 论坛版块数据
+     isSticked YES置顶 NO不置顶
+     */
+    for (int i = 0; i < self.allForumArray.count; i++) {
+        tmpForum = self.allForumArray[i];
+        for (int j = 0; j < self.stickArray.count; j++) {
+            //==
+            BBSForum *stickForum = self.stickArray[j];
+            if (tmpForum.fid == stickForum.fid) {
+                stickForum.isSticked = YES;
+                isIn = YES;
+            }
+        }
+        if (isIn) {
+            tmpForum.isSticked = YES;
+        }else{
+            tmpForum.isSticked = NO;
+            [self.commonArray addObject:tmpForum];
+        }
+        
+        [self.allDataArr enumerateObjectsUsingBlock:^(NSMutableArray *objArr, NSUInteger idx, BOOL * _Nonnull stop) {
+            [objArr enumerateObjectsUsingBlock:^(BBSForum *model, NSUInteger idx, BOOL * _Nonnull stop) {
+                if (model.isSticked) {
+                    [objArr removeObject:model];
+                }
+            }];
+        }];
+        isIn = NO;
+    }
+    [self _handelAllData:self.commonArray];
+    
+}
+
+#pragma mark - 设置置顶版块header
 - (void)configureStickForumsView
 {
-//    if (!self.stickArray.count) {
-
-//        self.forumTableView.tableHeaderView = [[UIView alloc] initWithFrame:CGRectMake(0.0f, 0.0f, 0.0f, 0.001f)];
-        [self.forumTableView reloadData];
-
-//    }
-//    else{
-//        
-//        __weak typeof(self) theStickForumView = self;
-//        if (!self.forumHeaderView) {
-//            self.forumHeaderView = [[BBSUIForumHeaderView alloc] initWithFrame:CGRectMake(0, 0, DZSUIScreen_width, 0) selectHander:^(BBSForum *forum) {
-//                [theStickForumView selectForum:forum];
-//            }];
-//        }
-//        if (self.stickArray.count <= 4) {
-//            self.forumHeaderView.height = 130;
-//        }else{
-//            self.forumHeaderView.height = 220;
-//        }
-//        
-//        [self.forumHeaderView setStickForumArray:self.stickArray];
-//        [self.forumTableView setTableHeaderView:self.forumHeaderView];
-//        [self.forumTableView.tableHeaderView setUserInteractionEnabled:YES];
-//        
-//    }
+    [self.forumTableView reloadData];
 }
 
+#pragma mark - 沙盒中取出来
 - (void)getStickForumData
 {
+    //stickArray 置顶版块的数组  从沙盒里面取出来
     self.stickArray = (NSMutableArray *)[[BBSUICacheManager sharedInstance] getStickForumsWithUid:[BBSUIContext shareInstance].currentUser.uid];
     if (!self.stickArray) {
         self.stickArray = [[NSMutableArray alloc] init];
@@ -128,40 +268,35 @@
     [self.forumTableView reloadData];
 }
 
-- (void)deleteStickForum
-{
-    NSMutableArray *tmpStickArray = [NSMutableArray array];
-    for (BBSForum *stickForum in self.stickArray) {
-        BOOL isIn = NO;
-        for (BBSForum *tmpForum in self.allForumArray) {
-            if (tmpForum.fid == stickForum.fid && [tmpForum.name isEqualToString:stickForum.name]) {
-                isIn = YES;
-                break;
-            }
-        }
-        
-        if (isIn) {
-            [tmpStickArray addObject:stickForum];
-        }
-    }
-    
-    self.stickArray = tmpStickArray;
-    [self configureStickForumsView];
-}
-
-#pragma mark - uitableview datasource
+#pragma mark - UITableview datasource
 -(NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
-    return 2;
+    return self.allDataArr.count + 1;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    if (section == 0) {
-        return self.stickArray.count;
-    }else{
-        return [self.commonArray count];
+    
+    if (section == 0)
+    {
+        return  self.stickArray.count;
     }
+    else
+    {
+        
+        NSArray *sArr = self.allDataArr[section-1];
+        for (BBSForum *model in sArr) {
+            if (model.isExpect)
+            {
+                return sArr.count;
+            }
+            else
+            {
+                return 0;
+            }
+        }
+    }
+    return 0;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -173,21 +308,28 @@
         cell = [[BBSUIForumSummaryCellTableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:forumCellIdentifier];
     }
     
+    /*
+     allForumArray 所有数据
+     stickArray 置顶版块数据
+     commonArray 论坛版块数据
+     isSticked YES置顶 NO不置顶
+     */
     if (indexPath.section == 0) {
         cell.stickForumArray = self.stickArray;
         cell.forumModel = self.stickArray[indexPath.row];
         [cell.stickButton setHidden:!self.isEditing];
         [cell setStickButtonHidden:!self.isEditing];
         cell.delegate = self;
-        [cell.seperateView setHidden:((indexPath.row + 1) == self.stickArray.count)];
-
-    }else{
+        //[cell.seperateView setHidden:((indexPath.row + 1) == self.stickArray.count)];
+    }
+    else
+    {
         cell.stickForumArray = self.stickArray;
-        cell.forumModel = self.commonArray[indexPath.row];
+        cell.forumModel = self.allDataArr[indexPath.section - 1][indexPath.row];
         [cell.stickButton setHidden:!self.isEditing];
         [cell setStickButtonHidden:!self.isEditing];
         cell.delegate = self;
-        [cell.seperateView setHidden:((indexPath.row + 1) == self.commonArray.count)];
+        //[cell.seperateView setHidden:((indexPath.row + 1) == self.commonArray.count)];
     }
 
     return cell;
@@ -198,38 +340,33 @@
     return 60.0f;
 }
 
-#pragma mark - uitableview delegate
+
+#pragma mark - UITableview delegate
 - (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
 {
-    UIView *headerView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, DZSUIScreen_width, 32)];
-    UILabel *titleLabel = [[UILabel alloc] init];
+    BBSUIForumHeaderFooterView *headerView = [BBSUIForumHeaderFooterView sectionHeadViewWithTableView:tableView section:section allData:self.allDataArr];
+    headerView.deleagte = self;
+    headerView.sectionTag = section;
+    [headerView updateHeaderView:self.allDataArr isSelectForum:NO];
     
-    [headerView setBackgroundColor:[UIColor clearColor]];
-    [titleLabel setFont:[UIFont systemFontOfSize:12]];
-    [titleLabel setTextColor:DZSUIColorFromHex(0x6A7081)];
-    [titleLabel setTextAlignment:NSTextAlignmentLeft];
-    [headerView addSubview:titleLabel];
-    if (section == 0) {
-        [titleLabel setFrame:CGRectMake(15, 0, DZSUIScreen_width, 32)];
-        [titleLabel setText:@"置顶版块"];
-        
-        CGFloat editButtonWidth = 30;
-        UIButton *editButton = [UIButton buttonWithType:UIButtonTypeCustom];
-        [editButton setFrame:CGRectMake(CGRectGetWidth(headerView.frame) - 15 - editButtonWidth, 0, editButtonWidth, 32)];
-        [editButton setTitleColor:DZSUIColorFromHex(0x6A7081) forState:UIControlStateNormal];
-        if (self.isEditing) {
-            [editButton setTitle:@"完成" forState:UIControlStateNormal];
-        }else{
-            [editButton setTitle:@"编辑" forState:UIControlStateNormal];
+    if (section > 0) {
+        NSArray *arr = self.allDataArr[section - 1];
+        if (arr.count > 0) {
+            BBSForum *forum = arr[0];
+            headerView.isclicked = forum.isExpect;
         }
-        [editButton.titleLabel setTextAlignment:NSTextAlignmentRight];
-        [editButton.titleLabel setFont:[UIFont systemFontOfSize:12]];
-        [editButton addTarget:self action:@selector(editButtonHandler:) forControlEvents:UIControlEventTouchUpInside];
-        [headerView addSubview:editButton];
-    }else{
-        [titleLabel setFrame:CGRectMake(15, -17, DZSUIScreen_width, 32)];
-        [titleLabel setText:@"论坛列表"];
     }
+    
+//    if (self.stickArray.count > 0) {
+//        BBSForum *stickForum = self.stickArray[0];
+//        headerView.isEdited = stickForum.hasEdited;
+//    }
+    [self.allDataArr enumerateObjectsUsingBlock:^(NSArray *objArray, NSUInteger idx, BOOL * _Nonnull stop) {
+        [objArray enumerateObjectsUsingBlock:^(BBSForum *model, NSUInteger idx, BOOL * _Nonnull stop) {
+            headerView.isEdited = model.hasEdited;
+        }];
+    }];
+
     
     return headerView;
 }
@@ -246,115 +383,58 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
-    
+
     BBSUIForumSummaryCellTableViewCell *selectCell = [tableView cellForRowAtIndexPath:indexPath];
     BBSForum *forum = selectCell.forumModel;
-//    BBSForum *forum = self.allForumArray[indexPath.row];
     [self selectForum:forum];
 }
 
-#pragma mark - BBSUIForumSummaryCellDelegate
+#pragma mark - BBSUIForumSummaryCell  Delegate
+//MARK: 存入到沙盒中 ??stickArray 增加数据
 - (void)stickChanged:(BBSUIForumSummaryCellTableViewCell *)cell
 {
-//    [self configureStickForumsView];
-//    [BBSUICacheManager sharedInstance].stickForums = self.stickArray;
     [[BBSUICacheManager sharedInstance] setStickForums:self.stickArray uid:[BBSUIContext shareInstance].currentUser.uid];
+    
     [self devideForums];
     [self.forumTableView reloadData];
 }
 
 - (void)selectForum:(BBSForum *)forum
 {
-    BBSUIThreadListViewController *threadListViewController = [[BBSUIThreadListViewController alloc] initWithForum:forum];
+    BBSUIForumDetailViewController *threadListViewController = [[BBSUIForumDetailViewController alloc] init];
     threadListViewController.pageType = PageTypeForumToHome;
-    
+    threadListViewController.currentForum = forum;
+
     if ([MOBFViewController currentViewController].navigationController) {
         [[MOBFViewController currentViewController].navigationController pushViewController:threadListViewController animated:YES];
     }
 }
 
-#pragma mark - ui handler
-- (void)editButtonHandler:(UIButton *)button
+#pragma mark - BBSUIForumHeaderFooterView delegate
+- (void)editForumHeaderView
 {
-    self.isEditing = !self.isEditing;
+     self.isEditing = !self.isEditing;
+//    [self.stickArray enumerateObjectsUsingBlock:^(BBSForum *obj, NSUInteger idx, BOOL * _Nonnull stop) {
+//        obj.hasEdited = !obj.hasEdited ;
+//    }];
+    [self.allDataArr enumerateObjectsUsingBlock:^(NSArray *objArray, NSUInteger idx, BOOL * _Nonnull stop) {
+        [objArray enumerateObjectsUsingBlock:^(BBSForum *model, NSUInteger idx, BOOL * _Nonnull stop) {
+            model.hasEdited = !model.hasEdited;
+        }];
+    }];
+    
+    [self.forumTableView reloadData];
+    
+}
+
+- (void)expectForumHeaderView:(NSInteger)section
+{
+    NSArray *expectArr = self.allDataArr[section - 1];
+    [expectArr enumerateObjectsUsingBlock:^(BBSForum *model, NSUInteger idx, BOOL * _Nonnull stop) {
+        model.isExpect = !model.isExpect;
+
+    }];
     [self.forumTableView reloadData];
 }
-
-#pragma mark - request
-- (void)requestData
-{
-    __weak typeof(self) weakSelf = self;
-    [BBSSDK getForumListWithFup:0 result:^(NSArray *forumsList, NSError *error) {
-        
-        if (!error) {
-//            [weakSelf.forumTableView setHidden:NO];
-            
-            [forumsList enumerateObjectsUsingBlock:^(BBSForum *  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-                obj.isSticked = NO;
-            }];
-            
-            
-//            for (int i = 0; i < forumsList.count; i++) {
-//                BBSForum *originForum = forumsList[i];
-//                for (int j = 0; j < weakSelf.stickArray.count; j++) {
-//                    BBSForum *stickForum = weakSelf.stickArray[j];
-//                    if (originForum.fid == stickForum.fid) {
-//                        stickForum.isSticked = YES;
-//                    }
-//                }
-//            }
-            
-            weakSelf.allForumArray = [NSMutableArray arrayWithArray:forumsList];
-            
-            //删除置顶版块中不属于当前应用的版块
-//            [weakSelf deleteStickForum];
-            [weakSelf devideForums];
-           
-            [weakSelf.forumTableView reloadData];
-            
-            
-        }else
-        {
-//            [weakSelf.forumTableView setHidden:YES];
-            [weakSelf configureTipViewWithTipMessage:@"网络不佳，请再次刷新" hasData:weakSelf.allForumArray.count != 0 hasError:YES reloadButtonBlock:^(id sender) {
-                [weakSelf requestData];
-            }];
-        }
-        
-        [self.forumTableView.mj_header endRefreshing];
-        
-    }];
-}
-
-- (void)devideForums
-{
-    if (!self.commonArray) {
-        self.commonArray = [NSMutableArray new];
-    }else{
-        [self.commonArray removeAllObjects];
-    }
-    
-    BOOL isIn = NO;
-    BBSForum *tmpForum = nil;
-    for (int i = 0; i < self.allForumArray.count; i++) {
-        tmpForum = self.allForumArray[i];
-        for (int j = 0; j < self.stickArray.count; j++) {
-            BBSForum *stickForum = self.stickArray[j];
-            if (tmpForum.fid == stickForum.fid) {
-                stickForum.isSticked = YES;
-                isIn = YES;
-            }
-        }
-        if (isIn) {
-            tmpForum.isSticked = YES;
-        }else{
-            tmpForum.isSticked = NO;
-            [self.commonArray addObject:tmpForum];
-        }
-        
-        isIn = NO;
-    }
-}
-
 
 @end

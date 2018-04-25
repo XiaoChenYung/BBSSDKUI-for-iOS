@@ -19,14 +19,13 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    // Do any additional setup after loading the view.
     
     self.forumView = [[BBSUIForumView alloc] initWithFrame:CGRectMake(0,
                                                                   0,
                                                                   CGRectGetWidth(self.view.frame),
                                                                   CGRectGetHeight(self.view.frame) - NavigationBar_Height)];
     [self.view addSubview:self.forumView];
-    
+    self.title = @"所有版块";
     self.automaticallyAdjustsScrollViewInsets=NO; 
 }
 

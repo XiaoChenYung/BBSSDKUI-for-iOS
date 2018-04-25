@@ -24,7 +24,12 @@
         return _managedObjectModel;
     }
     // bundleWithIdentifier:@"BBSSDKUI"
-    NSURL *modelURL = [[NSBundle mainBundle] URLForResource:@"BBSSDKUI" withExtension:@"momd"];
+    //NSURL *modelURL = [[NSBundle mainBundle] URLForResource:@"BBSSDKUI" withExtension:@"momd"];
+    
+    NSString *bundlePath = [[NSBundle mainBundle] pathForResource:@"BBSSDKUI" ofType:@"bundle"];
+    NSBundle *bbsuiBundle = [NSBundle bundleWithPath:bundlePath];
+    NSURL *modelURL = [bbsuiBundle URLForResource:@"BBSSDKUI" withExtension:@"momd"];
+    
     _managedObjectModel = [[NSManagedObjectModel alloc] initWithContentsOfURL:modelURL];
     
     //    _managedObjectModel = [NSManagedObjectModel mergedModelFromBundles:nil];

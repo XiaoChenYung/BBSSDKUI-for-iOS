@@ -15,11 +15,14 @@ typedef enum : NSUInteger {
     BBSUIThreadSummaryCellTypeHomepage,
     BBSUIThreadSummaryCellTypeForums,
     BBSUIThreadSummaryCellTypeSearch,
-    BBSUIThreadSummaryCellTypeHistory,
-    BBSUIThreadSummaryCellTypePortal
+    BBSUIThreadSummaryCellTypeHistory,//历史
+    BBSUIThreadSummaryCellTypePortal,
+    BBSUIThreadSummaryCellTypeAttion//关注
 } BBSUIThreadSummaryCellType;
 
 @interface BBSUIThreadSummaryCell : UITableViewCell
+
+@property (nonatomic, copy)void (^addressOnClickBlock)(BBSThread *threadModel);
 
 @property (nonatomic, strong) BBSThread *threadModel;
 

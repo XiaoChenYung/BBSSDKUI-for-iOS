@@ -58,7 +58,7 @@
 
 
 #import "Masonry.h"
-#import "NSString+Paragraph.h"
+#import "NSString+BBSUIParagraph.h"
 
 @interface BBSUISystemInformationView ()
 
@@ -149,7 +149,7 @@
 }
 
 - (void)setContext:(NSString *)context{
-    self.textView.attributedText = [NSString stringWithString:context fontSize:14 defaultColorValue:@"6A7081" lineSpace:20 wordSpace:1.4];
+    self.textView.attributedText = [NSString bbs_stringWithString:context fontSize:14 defaultColorValue:@"6A7081" lineSpace:20 wordSpace:1.4];
 }
 
 /**

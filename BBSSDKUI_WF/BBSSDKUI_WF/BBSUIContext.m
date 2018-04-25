@@ -41,6 +41,7 @@ static NSString * const kLastFastPostTime = @"com.bbsui.lastFastPostTime";
     {
         _currentUser = [[MOBFDataService sharedInstance] cacheDataForKey:kCurrentUser domain:@"BBSUI"];
     }
+    
     return _currentUser ;
 }
 
