@@ -24,6 +24,10 @@
 #define DZSUIScreen_width [UIScreen mainScreen].bounds.size.width
 #define DZSUIScreen_height [UIScreen mainScreen].bounds.size.height
 
+#define IS_IPHONE_6 (fabs((double)[[UIScreen mainScreen] bounds].size.height - (double )667) < DBL_EPSILON )
+
+#define IS_IPHONE_6_PLUS (fabs((double)[[UIScreen mainScreen] bounds].size.height - (double )736) < DBL_EPSILON )
+
 #define BBSStatusBar_Height      ([[UIApplication sharedApplication] statusBarFrame].size.height)
 
 

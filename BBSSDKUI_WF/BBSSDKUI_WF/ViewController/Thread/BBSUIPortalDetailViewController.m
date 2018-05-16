@@ -35,6 +35,7 @@
 #import "BBSUIShareView.h"
 #import <BBSSDK/BBSMOBFScene.h>
 #import "BBSUILBSShowLocationViewController.h"
+#import "BBSUILBSLocationProxy.h"
 
 @interface BBSUIPortalDetailViewController ()
 
@@ -327,7 +328,7 @@
                 {
                     if (self.isViewLoaded && self.view.window)
                     {
-                        BBSUIAlert(@"获取详情失败:%@,code:%zd",error.userInfo[@"description"],error.code);
+                        BBSUIAlert(@"获取详情失败:%@",error.userInfo[@"description"]);
                     }
                 }
             }];
@@ -349,6 +350,26 @@
         NSInteger pageSize = 0;
         NSString *callback = nil;
         
+//        if (arguments.count > 0 && [arguments[0] isKindOfClass:[NSNumber class]])
+//        {
+//            aid = [arguments[0] integerValue];
+//        }
+//
+//        if (arguments.count > 1 && [arguments[1] isKindOfClass:[NSNumber class]])
+//        {
+//            page = [arguments[2] integerValue];
+//        }
+//
+//        if (arguments.count > 2 && [arguments[2] isKindOfClass:[NSNumber class]])
+//        {
+//            pageSize = [arguments[3] integerValue];
+//        }
+//
+//        if (arguments.count > 3 && [arguments[3] isKindOfClass:[NSString class]])
+//        {
+//            callback = arguments[3];
+//        }
+        
         if (arguments.count > 0 && [arguments[0] isKindOfClass:[NSNumber class]])
         {
             aid = [arguments[0] integerValue];
@@ -356,12 +377,12 @@
         
         if (arguments.count > 1 && [arguments[1] isKindOfClass:[NSNumber class]])
         {
-            page = [arguments[2] integerValue];
+            page = [arguments[1] integerValue];
         }
         
         if (arguments.count > 2 && [arguments[2] isKindOfClass:[NSNumber class]])
         {
-            pageSize = [arguments[3] integerValue];
+            pageSize = [arguments[2] integerValue];
         }
         
         if (arguments.count > 3 && [arguments[3] isKindOfClass:[NSString class]])
@@ -392,7 +413,7 @@
             
             if (error && self.isViewLoaded && self.view.window)
             {
-                BBSUIAlert(@"获取详情失败:%@,code:%zd",error.userInfo[@"description"],error.code);
+                BBSUIAlert(@"获取详情失败:%@",error.userInfo[@"description"]);
             }
             
         }];
@@ -1049,11 +1070,12 @@
     
     if (error.code == 9001200)
     {
-        //        [BBSUIDataService cacheThreadDraft:nil];
+        //[BBSUIDataService cacheThreadDraft:nil];
         [self presentLogin];
     }
 }
 
+#pragma mark - 回复成功
 - (void)postCommentSuccess:(BBSComment *)post prePid:(NSInteger)pid comment:(NSString *)comment
 {
     MBProgressHUD *HUD = [[MBProgressHUD alloc] initWithView:self.view];
@@ -1190,6 +1212,15 @@
     {
         _replyEditor = [[BBSUIReplyEditor alloc] init];
         _replyEditor.isPortal = YES;
+        
+        if ([[BBSUILBSLocationProxy sharedInstance] isLBSUsable])
+        {
+            _replyEditor.isHiddenLBSMenu = NO;
+        }
+        else
+        {
+            _replyEditor.isHiddenLBSMenu = YES;
+        }
     }
     
     return _replyEditor;

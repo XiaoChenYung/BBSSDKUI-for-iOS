@@ -58,7 +58,8 @@
     return self;
 }
 
-- (void)configUI{
+- (void)configUI
+{
     self.backgroundColor = DZSUIColorFromHex(0xeaedf2);
     _currentUser = [BBSUIContext shareInstance].currentUser;
     
@@ -71,7 +72,9 @@
         _tableView.backgroundColor = DZSUI_BackgroundColor;
         _tableView.tableHeaderView = self.tableHeaderView;
         [self addSubview: _tableView];
-    }else{
+    }
+    else
+    {
 
         _threadTableView = [[BBSUICollectionView alloc] initWithFrame:self.bounds type:CollectionViewTypeOtherUserThreadList];
         __weak UIView *headView = self.tableHeaderView;
@@ -79,31 +82,33 @@
         [self addSubview: _threadTableView];
     
     }
-    
+    /**
+     退出
+     */
+    UIButton *logoutButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    [self addSubview:logoutButton];
+    [logoutButton mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.left.equalTo(@15);
+        make.bottom.right.equalTo(@-15);
+        make.height.equalTo(@BBSUIUserLogoutButtonHeight);
+    }];
+    [logoutButton setTitle:@"退出" forState:UIControlStateNormal];
+    [logoutButton setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+    [logoutButton.titleLabel setFont:[UIFont systemFontOfSize:18]];
+    [logoutButton setBackgroundColor:[UIColor whiteColor]];
+    [logoutButton.layer setCornerRadius:3];
+    [logoutButton.layer setMasksToBounds:YES];
+    [logoutButton addTarget:self action:@selector(logoutButtonHandler:) forControlEvents:UIControlEventTouchUpInside];
+    logoutButton.hidden = YES;
     if (_userType == UserTypeMe) {
         [_tableView mas_makeConstraints:^(MASConstraintMaker *make) {
             make.edges.equalTo(self).with.insets(UIEdgeInsetsMake(0, 0, NavigationBar_Height-20, 0));
         }];
-        
-        /**
-         退出
-         */
-        UIButton *logoutButton = [UIButton buttonWithType:UIButtonTypeCustom];
-        [self addSubview:logoutButton];
-        [logoutButton mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.left.equalTo(@15);
-            make.bottom.right.equalTo(@-15);
-            make.height.equalTo(@BBSUIUserLogoutButtonHeight);
-        }];
-        [logoutButton setTitle:@"退出" forState:UIControlStateNormal];
-        [logoutButton setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
-        [logoutButton.titleLabel setFont:[UIFont systemFontOfSize:18]];
-        [logoutButton setBackgroundColor:[UIColor whiteColor]];
-        [logoutButton.layer setCornerRadius:3];
-        [logoutButton.layer setMasksToBounds:YES];
-        [logoutButton addTarget:self action:@selector(logoutButtonHandler:) forControlEvents:UIControlEventTouchUpInside];
+        logoutButton.hidden = NO;
     }
-    else{
+    else
+    {
+        logoutButton.hidden = YES;
         if ([BBSUIContext shareInstance].isIphoneX)
         {
             [_threadTableView mas_makeConstraints:^(MASConstraintMaker *make) {
@@ -326,7 +331,7 @@
 - (void)logoutButtonHandler:(UIButton *)button
 {
     [BBSUIContext shareInstance].currentUser = nil;
-    //    [BBSUIDataService cacheThreadDraft:nil];
+    //[BBSUIDataService cacheThreadDraft:nil];
     [BBSSDK logout:^(NSError *error) {
         NSLog(@"error = %@", error);
     }];

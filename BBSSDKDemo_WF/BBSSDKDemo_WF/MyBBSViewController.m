@@ -12,6 +12,7 @@
 
 #define BBSUIAlert(_S_, ...)     [[[UIAlertView alloc] initWithTitle:@"提示" message:[NSString stringWithFormat:(_S_), ##__VA_ARGS__] delegate:nil cancelButtonTitle:@"知道了" otherButtonTitles:nil] show]
 
+//#define checkAppkeyUrl @"http://10.18.97.58:8808/api/app/check"
 #define checkAppkeyUrl @"http://admin.mob.com/api/app/check"
 
 @interface MyBBSViewController ()
@@ -113,7 +114,7 @@
         }
         
     } onFault:^(NSError *error) {
-        
+
         BBSUIAlert(@"网络请求错误 ：%@",error.localizedDescription);
         
     } onUploadProgress:nil];

@@ -12,6 +12,7 @@
 
 #define BBSUIAlert(_S_, ...)     [[[UIAlertView alloc] initWithTitle:@"提示" message:[NSString stringWithFormat:(_S_), ##__VA_ARGS__] delegate:nil cancelButtonTitle:@"知道了" otherButtonTitles:nil] show]
 
+//#define checkAppkeyUrl @"http://10.18.97.58:8808/api/app/check"
 #define checkAppkeyUrl @"http://admin.mob.com/api/app/check"
 
 @interface MyBBSViewController ()
@@ -47,7 +48,6 @@
     {
         _appSecretTextField.text = appsecret;
     }
-    
 }
 
 - (void)skip:(id)sender
@@ -61,7 +61,10 @@
     NSString *appkey = _appkeyTextField.text;
     NSString *secret = _appSecretTextField.text;
 
-
+//    NSString *appkey = @"22d7210bfed6c ";
+//    NSString *secret = @"e1048cd2edb378f87dc213aa3d8716fa";
+//
+    
     NSMutableDictionary *params = [NSMutableDictionary dictionary];
     params[@"appkey"] = appkey;
     params[@"appsecret"] = secret;

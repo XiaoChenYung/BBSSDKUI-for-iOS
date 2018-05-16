@@ -80,7 +80,19 @@
 - (void)configureUI
 {
     //设置tableview
-    self.forumTableView = [[UITableView alloc] initWithFrame:self.bounds style:UITableViewStyleGrouped];
+    //self.forumTableView = [[UITableView alloc] initWithFrame:self.bounds style:UITableViewStyleGrouped];
+    CGFloat subheight = 0;
+    if (IS_IPHONE_6)
+    {
+        subheight = 40;
+    }
+    else
+    {
+        subheight = 50;
+    }
+    
+    self.forumTableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, DZSUIScreen_width, DZSUIScreen_height - subheight) style:UITableViewStyleGrouped];
+
     [self addSubview:self.forumTableView];
     self.forumTableView.sectionHeaderHeight = 40;
     [self.forumTableView setDelegate:self];
@@ -111,15 +123,12 @@
     [BBSSDK getForumListWithFup:0 result:^(NSArray *forumsList, NSError *error) {
         if (!error) {
             [weakSelf bbs_configureTipViewWithTipMessage:@"" hasData:YES];
-            [forumsList enumerateObjectsUsingBlock:^(BBSForum *  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-                obj.isSticked = NO;
-                obj.isExpect = YES;
-            }];
+            NSMutableArray *forumArray = [NSMutableArray arrayWithArray:forumsList];
+            [self _deleteAllforumNameModel:forumArray];
+            [self _handelAllData:forumArray];
             //allForumArray 所有数据
-            weakSelf.allForumArray = [NSMutableArray arrayWithArray:forumsList];
-//            [self.stickArray enumerateObjectsUsingBlock:^(BBSForum *obj, NSUInteger idx, BOOL * _Nonnull stop) {
-//                obj.hasEdited = NO;
-//            }];
+            weakSelf.allForumArray = [NSMutableArray arrayWithArray:forumArray];
+
             [self.allDataArr enumerateObjectsUsingBlock:^(NSArray *objArray, NSUInteger idx, BOOL * _Nonnull stop) {
                 [objArray enumerateObjectsUsingBlock:^(BBSForum *model, NSUInteger idx, BOOL * _Nonnull stop) {
                     model.hasEdited = NO;
@@ -144,6 +153,21 @@
 }
 
 #pragma mark - ********对数据进行分组处理************
+- (void)_deleteAllforumNameModel:(NSMutableArray *)forumArray
+{
+    [forumArray enumerateObjectsUsingBlock:^(BBSForum *  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        if ([obj.name isEqualToString:@"全部"]) {
+            [forumArray removeObject:obj];
+        }
+    }];
+    
+    [forumArray enumerateObjectsUsingBlock:^(BBSForum *  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        obj.isSticked = NO;
+        obj.isExpect = YES;
+        
+    }];
+}
+
 - (void)_handelAllData:(NSArray *)allData
 {
     NSMutableDictionary *res = @{}.mutableCopy;
@@ -162,39 +186,29 @@
     }
     
     NSLog(@"-----%@",res.allValues);
-    //self.allDataArr = [NSMutableArray arrayWithArray:res.allValues];
+    self.allDataArr = [NSMutableArray arrayWithArray:res.allValues];
     
-    NSMutableArray *dataArray = [NSMutableArray arrayWithArray:res.allValues];
-    NSMutableArray *zeroArr = [NSMutableArray array];
-    
-//    [dataArray enumerateObjectsUsingBlock:^(NSArray *objArray, NSUInteger idx, BOOL * _Nonnull stop) {
-//        [objArray enumerateObjectsUsingBlock:^(BBSForum *obj, NSUInteger idx, BOOL * _Nonnull stop) {
-//            if ([obj.name isEqualToString:@"全部"]) {
-//                [zeroArr addObject:obj];
-//            }
-//        }];
-//    }];
+//    NSMutableArray *dataArray = [NSMutableArray arrayWithArray:res.allValues];
+//    NSMutableArray *zeroArr = [NSMutableArray array];
 //
-//    [dataArray removeLastObject];
+//    for (NSMutableArray *arr in dataArray) {
+//        for (BBSForum *forum in arr) {
+//            if ([forum.name isEqualToString:@"全部"]) {
+//                [zeroArr addObject:forum];
+//                [arr removeObject:forum];
+//                break;
+//            }
+//        }
+//    }
+//
+//    [dataArray enumerateObjectsUsingBlock:^(NSArray *obj, NSUInteger idx, BOOL * _Nonnull stop) {
+//        if (obj.count <= 0) {
+//            [dataArray removeObjectAtIndex:idx];
+//        }
+//    }];
 //    [dataArray insertObject:zeroArr atIndex:0];
-    for (NSMutableArray *arr in dataArray) {
-        for (BBSForum *forum in arr) {
-            if ([forum.name isEqualToString:@"全部"]) {
-                [zeroArr addObject:forum];
-                [arr removeObject:forum];
-                break;
-            }
-        }
-    }
-    
-    [dataArray enumerateObjectsUsingBlock:^(NSArray *obj, NSUInteger idx, BOOL * _Nonnull stop) {
-        if (obj.count <= 0) {
-            [dataArray removeObjectAtIndex:idx];
-        }
-    }];
-    [dataArray insertObject:zeroArr atIndex:0];
-
-    self.allDataArr = [NSMutableArray arrayWithArray:dataArray];
+//
+//    self.allDataArr = [NSMutableArray arrayWithArray:dataArray];
 }
 
 - (void)devideForums
@@ -260,6 +274,11 @@
     if (!self.stickArray) {
         self.stickArray = [[NSMutableArray alloc] init];
     }
+    
+    [self.stickArray enumerateObjectsUsingBlock:^(BBSForum *obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        NSLog(@"====333==%@=%ld",obj.name, (long)obj.todayposts);
+    }];
+    
 }
 
 - (void)reloadStickData
@@ -393,6 +412,9 @@
 //MARK: 存入到沙盒中 ??stickArray 增加数据
 - (void)stickChanged:(BBSUIForumSummaryCellTableViewCell *)cell
 {
+    [self.stickArray enumerateObjectsUsingBlock:^(BBSForum *obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        NSLog(@"====55555==%@=%ld",obj.name, (long)obj.todayposts);
+    }];
     [[BBSUICacheManager sharedInstance] setStickForums:self.stickArray uid:[BBSUIContext shareInstance].currentUser.uid];
     
     [self devideForums];

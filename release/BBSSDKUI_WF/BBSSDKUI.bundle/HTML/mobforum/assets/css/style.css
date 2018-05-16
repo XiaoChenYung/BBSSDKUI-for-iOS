@@ -115,7 +115,17 @@ button:active,input[type=button]:active {
 }[v-cloak] {
      display: none
  }
-
+.location{
+	display:inline-block;
+	font-family: PingFangSC-Regular;
+	font-size: 10px;
+	color: #ACADB8;
+	letter-spacing: 0;
+	line-height: 10px;
+	padding:5px 10px 5px 20px;
+	background: #F2F3F7 url('../images/location.png') no-repeat 5px;
+	margin-bottom:.5rem;
+}
 .author {
     padding: .5rem 1rem .5rem .75rem;
     display: -webkit-box;
@@ -194,7 +204,7 @@ button:active,input[type=button]:active {
 .article-title {
     font-size: 1.1rem;
     color: #2d3037;
-    padding-bottom: .7rem
+    padding-bottom: .4rem
 }
 
 .article-text {

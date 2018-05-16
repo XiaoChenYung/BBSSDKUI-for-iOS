@@ -24,6 +24,8 @@
 
 @property(nonatomic ,strong) BBSForum *forum;
 
+@property (nonatomic, assign) BOOL isEnterVc;
+
 + (instancetype)shareInstance ;
 
 - (void)addPostThreadObserver:(id<iBBSUIFastPostViewControllerDelegate>) observer;

@@ -55,14 +55,14 @@
     [self.contentView addSubview:self.forumNameLabel];
     [self.forumNameLabel setBackgroundColor:[UIColor clearColor]];
     [self.forumNameLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-    make.left.equalTo(self.forumImageView.mas_right).with.offset(10);
-    
+        make.left.equalTo(self.forumImageView.mas_right).with.offset(10);
         make.top.equalTo(self).with.offset(12);
         //make.size.mas_equalTo(CGSizeMake(70, 15));
     }];
     [self.forumNameLabel setFont:[UIFont boldSystemFontOfSize:14.0f]];
     self.forumNameLabel.textColor = DZSUIColorFromHex(0x29292F);
-    self.forumNameLabel.adjustsFontSizeToFitWidth = YES;
+    //self.forumNameLabel.adjustsFontSizeToFitWidth = YES;
+    
     
     //版块统计数字
     self.forumCountLab = [UILabel new];
@@ -178,8 +178,14 @@
     }
     [self.todayUpdateLabel setText:@" 今日:0 "];
     self.forumCountLab.text = [NSString stringWithFormat:@" 今日:%ld", forum.todayposts];
+    if (forum.todayposts > 0) {
+        self.forumCountLab.hidden = NO;
+    }else {
+        self.forumCountLab.hidden = YES;
+    }
     
     [self changeButtonStatus];
+    [self.contentView layoutIfNeeded];
 }
 
 - (void) hiddForumCountLabel

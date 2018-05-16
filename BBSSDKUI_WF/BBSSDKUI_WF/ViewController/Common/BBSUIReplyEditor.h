@@ -18,4 +18,6 @@ typedef void (^FinishEditHandler)(BOOL cancelled,NSArray <UIImage *>*,NSString *
 
 @property (nonatomic, assign) BOOL isPortal;
 
+@property (nonatomic,assign) BOOL isHiddenLBSMenu;
+
 @end

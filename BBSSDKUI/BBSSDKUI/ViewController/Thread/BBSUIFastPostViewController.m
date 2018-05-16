@@ -20,6 +20,8 @@
 #import "UIImageView+WebCache.h"
 #import "BBSUIExpressionViewConfiguration.h"
 #import "BBSUILBSLocationViewController.h"
+#import "BBSUILBSShowLocationViewController.h"
+#import "BBSUILBSLocationProxy.h"
 
 @interface BBSUIFastPostViewController ()<UINavigationControllerDelegate,UIImagePickerControllerDelegate,UITextFieldDelegate>
 {
@@ -53,6 +55,8 @@
 
 @property (nonatomic, assign) NSInteger forumCount;
 
+@property (nonatomic, strong) BBSUILBSLocationViewController *locationVC;
+@property (nonatomic, strong) UINavigationController *locationNav;
 
 @end
 
@@ -114,13 +118,13 @@
     {
         self.hideNameButton.hidden = NO;
     }
-    
     self.hideNameButton.selected = NO;
-}
-
-- (void)viewDidAppear:(BOOL)animated
-{
-    [super viewDidAppear:animated];
+     NSString *originHtml = [self.editor getHTML];
+    if (originHtml.length <= 0) {
+        self.editor.placeholder = @"写点什么";
+        [self.editor.editorView reload];
+    }
+    
 }
 
 #pragma mark - 初始化UI
@@ -198,9 +202,15 @@
             make.left.right.bottom.equalTo(self.view);
             make.top.equalTo(self.titleTextField.mas_bottom).offset(5);
         }];
+        
+        if ([BBSUILBSLocationProxy sharedInstance].isLBSUsable) {
+            editor.isHiddenLBSMenu = NO;
+        }else{
+            editor.isHiddenLBSMenu = YES;
+        }
+        
         editor ;
     });
-    
 }
 
 - (void)setNavigationItems
@@ -241,8 +251,8 @@
     
     //楼主
     UIButton *checkMasterButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    checkMasterButton.frame = CGRectMake(0, 0, 100, 44);
-    [checkMasterButton setTitle:@" 仅楼主可见" forState:UIControlStateNormal];
+    checkMasterButton.frame = CGRectMake(0, 0, 130, 44);
+    [checkMasterButton setTitle:@" 回帖仅楼主可见" forState:UIControlStateNormal];
     [checkMasterButton setImage:[UIImage BBSImageNamed:@"/Thread/hideName@3x.png"] forState: UIControlStateNormal];
     [checkMasterButton setImage:[UIImage BBSImageNamed:@"/Thread/hideNameSelect@3x.png"] forState: UIControlStateSelected];
     [checkMasterButton setTitleColor:[UIColor grayColor] forState:UIControlStateNormal];
@@ -267,11 +277,13 @@
     }
 }
 
+#pragma mark - 取消
+
 - (void)cancelButtonHandler:(UIButton *)button
 {
+     self.checkMasterButton.selected = NO;
     [self dismissViewControllerAnimated:YES completion:nil];
 }
-
 
 #pragma mark - Image Picker Delegate
 
@@ -350,6 +362,8 @@
     [self presentViewController:cameraVc animated:YES completion:nil];
 }
 
+#pragma mark ----------expressionView--------
+
 - (void)expressionView:(BBSUIExpressionView *)expressionView didSelectImageName:(NSString *)imageName
 {
     NSString *originHtml = [self.editor getHTML];
@@ -378,8 +392,11 @@
 
 - (void)openLBS{
     __weak typeof(self)weakSelf = self;
-    BBSUILBSLocationViewController *locationVC = [[BBSUILBSLocationViewController alloc] init];
-    locationVC.locationSelectBlock = ^(id locationInfo) {
+    if (_locationVC == nil) {
+        _locationVC = [[BBSUILBSLocationViewController alloc] init];
+    }
+    
+    _locationVC.locationSelectBlock = ^(id locationInfo) {
         NSDictionary *info = (NSDictionary *)locationInfo;
         weakSelf.locationInfo = info;
         if (info == nil) {
@@ -388,13 +405,33 @@
             weakSelf.editor.addressTag = [info valueForKey:@"name"];
         }
     };
+    _locationVC.preLocationDic = self.locationInfo;
     if (self.navigationController == nil) {
-        UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:locationVC];
-        locationVC.isPresent = YES;
-        [self presentViewController:nav animated:YES completion:nil];
+        if (_locationNav == nil) {
+             _locationNav = [[UINavigationController alloc] initWithRootViewController:_locationVC];
+        }
+        _locationVC.isPresent = YES;
+        [self presentViewController:_locationNav animated:YES completion:nil];
     }else{
-        [self.navigationController pushViewController:locationVC animated:YES];
+        [self.navigationController pushViewController:_locationVC animated:YES];
     }
+}
+
+- (void)showLBS
+{
+    NSString *poiTitle = self.locationInfo[@"name"];
+    CGFloat lat = 0;
+    CGFloat lon = 0;
+    NSArray *arr = [self.locationInfo[@"location"] componentsSeparatedByString:@","];
+    if ([arr count] == 2) {
+        lat = [[self.locationInfo[@"location"] componentsSeparatedByString:@","].firstObject floatValue];
+        lon = [[self.locationInfo[@"location"] componentsSeparatedByString:@","].lastObject floatValue];
+    }
+    
+    CLLocationCoordinate2D coordinate = {lat,lon};
+    BBSUILBSShowLocationViewController *showLocationVC = [[BBSUILBSShowLocationViewController alloc] initWithCoordinate:coordinate title:poiTitle];
+    UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:showLocationVC];
+    [self presentViewController:nav animated:YES completion:nil];
 }
 
 #pragma mark - 选择版块
@@ -425,15 +462,13 @@
 
     [self.navigationController pushViewController:vc animated:YES];
 
-    
-   
 }
 
 #pragma mark -发帖Action
 - (void)publishButtonHandler:(UIButton *)button
 {
-    [self.editor hideKeyboard];
-    
+    //[self.editor hideKeyboard];
+    [self.titleTextField becomeFirstResponder];
     // 验证发帖间隔是否符合要求
     NSDictionary *settings = [BBSUIContext shareInstance].settings;
     if (settings[@"floodctrl"] && [settings[@"floodctrl"] integerValue] != 0)
@@ -485,7 +520,7 @@
     [self dismissViewControllerAnimated:YES completion:nil];
     
     [self postThread];
-    
+    self.checkMasterButton.selected = NO;
  }
 
 - (void)hideNamebtnHandler:(UIButton *)button
@@ -514,6 +549,7 @@
 #pragma mark -发帖请求数据
 - (void)postThread
 {
+    
     __block NSMutableString *urlHtml = [self.editor getHTML].mutableCopy;
     
 //    NSLog(@"---------------------------------------");
@@ -542,7 +578,7 @@
 //        }
     }];
     
-//    NSLog(@"   =====  ®%@",urlHtml);
+    //NSLog(@"   =====  ®%@",urlHtml);
     
     NSString *title = self.titleTextField.text;
     
@@ -623,7 +659,6 @@
             }
         });
     }
-
 }
 
 - (void)postThreadWithHTML:(NSString *)html
@@ -687,7 +722,14 @@
     
     [self.editor setHTML:@""];
     self.titleTextField.text = @"";
+    [self.editor.editorView reload];
     self.forum = nil;
+    
+    self.editor.addressTag = nil;
+    self.locationInfo = nil;
+    self.locationNav = nil;
+    self.locationVC = nil;
+    [[NSUserDefaults standardUserDefaults] setObject:@"" forKey:@"selectName"];
 }
 
 - (void)postError:(NSError *)error title:(NSString *)title html:(NSString *)html

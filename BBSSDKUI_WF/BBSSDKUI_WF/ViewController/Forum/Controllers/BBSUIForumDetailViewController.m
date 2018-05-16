@@ -540,6 +540,7 @@ static NSString *cellIdentifier = @"ThreadSummaryCell";
         //        [self.navigationController pushViewController:editVC animated:YES];
         self.isPresent = YES;
         BBSUIFastPostViewController *editVC = [BBSUIFastPostViewController shareInstance];
+        editVC.isEnterVc = YES;
         [editVC setForum:_currentForum];
         
         [editVC addPostThreadObserver:self];
@@ -576,12 +577,10 @@ static NSString *cellIdentifier = @"ThreadSummaryCell";
     }
 }
 
-
 - (void)dealloc
 {
     [[BBSUIFastPostViewController shareInstance] removePostThreadObserver:self];
 }
-
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];

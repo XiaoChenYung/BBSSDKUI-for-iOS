@@ -72,9 +72,9 @@
         NSString *bannerTitle = _titleDataArray[0];
         if ([bannerTitle isKindOfClass:[NSString class]]) {
             [_titleLabel setText:bannerTitle];
+            
         }
     }
-    
     [self reloadImageViews];
 }
 

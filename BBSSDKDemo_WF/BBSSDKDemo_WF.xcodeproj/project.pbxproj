@@ -278,7 +278,6 @@
 		2FA041AE207CCDF4004CE72B /* YYSpriteSheetImage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YYSpriteSheetImage.m; sourceTree = "<group>"; };
 		2FA04216207CCDF4004CE72B /* MobLink.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = MobLink.framework; sourceTree = "<group>"; };
 		2FA04218207CCDF4004CE72B /* MOBFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = MOBFoundation.framework; sourceTree = "<group>"; };
-		2FA04219207CCDF4004CE72B /* MOBFoundation1.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = MOBFoundation1.framework; sourceTree = "<group>"; };
 		2FA0421B207CCDF4004CE72B /* ShareSDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = ShareSDK.framework; sourceTree = "<group>"; };
 		2FA0421E207CCDF4004CE72B /* ShareSDKConfigFile.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = ShareSDKConfigFile.bundle; sourceTree = "<group>"; };
 		2FA0421F207CCDF4004CE72B /* ShareSDKConfigFile.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = ShareSDKConfigFile.framework; sourceTree = "<group>"; };
@@ -940,7 +939,6 @@
 			isa = PBXGroup;
 			children = (
 				2FA04218207CCDF4004CE72B /* MOBFoundation.framework */,
-				2FA04219207CCDF4004CE72B /* MOBFoundation1.framework */,
 			);
 			path = Required;
 			sourceTree = "<group>";
@@ -1827,7 +1825,7 @@
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CODE_SIGN_ENTITLEMENTS = BBSSDKDemo_WF/BBSSDKDemo.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer: 永超 李 (6L4556Q7ET)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: 永超 李 (6L4556Q7ET)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
 				DEVELOPMENT_TEAM = LW5266U92D;
 				ENABLE_BITCODE = NO;
@@ -1848,7 +1846,7 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = com.mob.bbssdk.sample;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "2cddc84c-08a8-4766-a3d4-54dea4142fb7";
+				PROVISIONING_PROFILE = "fe45b599-0f28-4150-8b13-e21fbd469184";
 				PROVISIONING_PROFILE_SPECIFIER = BBSSDKSampleDevelopment;
 			};
 			name = Debug;
@@ -1860,7 +1858,7 @@
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CODE_SIGN_ENTITLEMENTS = BBSSDKDemo_WF/BBSSDKDemo.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer: 永超 李 (6L4556Q7ET)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: 永超 李 (6L4556Q7ET)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
 				DEVELOPMENT_TEAM = LW5266U92D;
 				ENABLE_BITCODE = NO;
@@ -1881,7 +1879,7 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = com.mob.bbssdk.sample;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "2cddc84c-08a8-4766-a3d4-54dea4142fb7";
+				PROVISIONING_PROFILE = "fe45b599-0f28-4150-8b13-e21fbd469184";
 				PROVISIONING_PROFILE_SPECIFIER = BBSSDKSampleDevelopment;
 			};
 			name = Release;

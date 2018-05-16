@@ -320,13 +320,13 @@ static NSString *cellIdentifier = @"ThreadSummaryCell";
         //加载广告条
         [BBSSDK getBannerList:^(NSArray *bannnerList, NSError *error) {
             
+            BBSUIThreadBanner *myView = [[BBSUIThreadBanner alloc]
+                                         initWithFrame:CGRectMake(0, 0, [UIScreen mainScreen].bounds.size.width,
+                                                                  183)];
             if (bannnerList.count > 0) {
                 
                 theView.bannerArray = bannnerList;
                 
-                BBSUIThreadBanner *myView = [[BBSUIThreadBanner alloc]
-                                             initWithFrame:CGRectMake(0, 0, [UIScreen mainScreen].bounds.size.width,
-                                                                      183)];
                 NSMutableArray *pictureArray = [NSMutableArray array];
                 [bannnerList enumerateObjectsUsingBlock:^(BBSBanner *  _Nonnull banner, NSUInteger idx, BOOL * _Nonnull stop) {
                     
@@ -350,6 +350,13 @@ static NSString *cellIdentifier = @"ThreadSummaryCell";
                 
                 myView.delegate = theView;
                 [theView.tableView setTableHeaderView:myView];
+            }
+            else
+            {
+                myView.picDataArray = @[@""];
+                myView.isAutomaticScroll = NO;
+                myView.scrollEnabled = NO;
+                myView.titleDataArray = @[@"请前往开发者后台设置Banner"];
             }
             
         }];

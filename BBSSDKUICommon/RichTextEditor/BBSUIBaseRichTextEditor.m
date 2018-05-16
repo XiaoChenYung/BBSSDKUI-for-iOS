@@ -429,6 +429,7 @@ static CGFloat kDefaultScale = 0.5;
         [_lbsTagView setTitle:@"  地址" forState:UIControlStateNormal];
         [_lbsTagView setTitleColor:[UIColor colorWithRed:154.0/255.0 green:156.0/255.0 blue:170.0/255.0 alpha:1.0] forState:UIControlStateNormal];
         [_lbsTagView setImage:[UIImage BBSImageNamed:@"/LBS/LBS_min_icon@2x.png"] forState:UIControlStateNormal];
+        [_lbsTagView addTarget:self action:@selector(showLbsButtonHandler:) forControlEvents:UIControlEventTouchUpInside];
         _lbsTagView.titleLabel.font = [UIFont systemFontOfSize:11];
         [_lbsTagView.layer setCornerRadius:2];
         [_lbsTagView.layer setMasksToBounds:YES];
@@ -498,6 +499,15 @@ static CGFloat kDefaultScale = 0.5;
         CGRect frame = _lbsTagView.frame;
         frame.size.width = titleSize.width + 8 * 2 + 16;
         _lbsTagView.frame = frame;
+    }
+}
+
+- (void)setIsHiddenLBSMenu:(BOOL)isHiddenLBSMenu{
+    _isHiddenLBSMenu = isHiddenLBSMenu;
+    if (isHiddenLBSMenu == YES) {
+        self.lbsItem.customView.hidden = YES;
+    }else{
+        self.lbsItem.customView.hidden = NO;
     }
 }
 
@@ -2379,6 +2389,18 @@ static CGFloat kDefaultScale = 0.5;
     if ([self.parentViewController respondsToSelector:@selector(openLBS)]) {
         [self.parentViewController performSelector:@selector(openLBS) withObject:nil];
     }
+}
+
+- (void)showLbsButtonHandler:(id)sender
+{
+//    if ([self.parentViewController respondsToSelector:@selector(showLBS)]) {
+//        [self.parentViewController performSelector:@selector(showLBS) withObject:nil];
+//    }
+    //===openLBS
+    if ([self.parentViewController respondsToSelector:@selector(openLBS)]) {
+        [self.parentViewController performSelector:@selector(openLBS) withObject:nil];
+    }
+    
 }
 
 - (void)faceButtonHandler:(id)sender

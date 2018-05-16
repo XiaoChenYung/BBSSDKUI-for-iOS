@@ -295,7 +295,10 @@
   details.goComment()
   }
   
-  
+  /* 打开导航地图 */
+  function showAddress(address){
+  $mob.native.showAddress(address);
+  }
   
   /*定义BBSSDKNative全局属性*/
   window.BBSSDKNative = {
@@ -318,6 +321,7 @@
   likeArticle:likeArticle,
   //2017-08-23新增接口
   goComment:goComment,
-  likeThread:likeThread
+  likeThread:likeThread,
+  showAddress:showAddress
   }
   })(Zepto);

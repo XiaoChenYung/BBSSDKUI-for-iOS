@@ -15,4 +15,6 @@
 
 - (instancetype)initWithFid:(NSInteger)fid tid:(NSInteger)tid;
 
+
+
 @end

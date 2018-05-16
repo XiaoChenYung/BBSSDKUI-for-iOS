@@ -37,6 +37,7 @@
 #import "BBSUILBSLocationViewController.h"
 #import <BBSSDK/BBSMOBFScene.h>
 #import "BBSUILBSShowLocationViewController.h"
+#import "BBSUILBSLocationProxy.h"
 
 @interface BBSUIThreadDetailViewController ()
 
@@ -52,6 +53,8 @@
 @property (nonatomic, assign) BOOL                  isFavirated;
 @property (nonatomic, strong) BBSUICommentTextView  *commentTextView; //回复视图
 
+@property (nonatomic, strong) BBSUILBSLocationViewController *locationVC;
+@property (nonatomic, strong) UINavigationController *locationNav;
 
 @end
 
@@ -112,6 +115,9 @@
     [super viewWillAppear:YES];
     
     [self.navigationController setNavigationBarHidden:NO];
+    if (self.locationVC.isPresent) {
+        [self.commentTextView.countNumTextView becomeFirstResponder];
+    }
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
@@ -233,31 +239,62 @@
     tipLabel.layer.cornerRadius = 2;
     [tipLabel setText:@"写点评论..."];
     [tipLabel setTextAlignment:NSTextAlignmentCenter];
-    
 }
 
+#pragma mark - 底部评论view
 - (BBSUICommentTextView *)commentTextView
 {
     if (!_commentTextView) {
         _commentTextView =[BBSUICommentTextView topTextView];
         __weak typeof(self)weakSelf = self;
-        _commentTextView.openLBS = ^{
-                BBSUILBSLocationViewController *locationVC = [[BBSUILBSLocationViewController alloc] init];
-                locationVC.locationSelectBlock = ^(id locationInfo) {
-                    NSDictionary *info = (NSDictionary *)locationInfo;
-                    if (info == nil) {
-                        weakSelf.commentTextView.addressLBS = nil;
-                        
-                    }else{
-                        weakSelf.commentTextView.addressLBS = info;
-                    }
-                };
-
-                UINavigationController *nav = [[UINavigationController alloc]  initWithRootViewController:locationVC];
-                locationVC.isPresent = YES;
-            [weakSelf presentViewController:nav animated:YES completion:nil];
-
+        _locationVC =  [[BBSUILBSLocationViewController alloc] init];
+        _locationNav = [[UINavigationController alloc]  initWithRootViewController:_locationVC];
+        _locationVC.locationSelectBlock = ^(id locationInfo) {
+            NSDictionary *info = (NSDictionary *)locationInfo;
+            if (info == nil) {
+                weakSelf.commentTextView.addressLBS = nil;
+                
+            }else {
+                weakSelf.commentTextView.addressLBS = info;
+            }
         };
+        _commentTextView.openLBS = ^{
+            
+            weakSelf.locationVC.isPresent = YES;
+            weakSelf.locationVC.preLocationDic = weakSelf.commentTextView.addressLBS;
+            [weakSelf presentViewController:weakSelf.locationNav animated:YES completion:nil];
+        };
+        
+        _commentTextView.showLBS = ^{
+            NSDictionary *locationInfo = weakSelf.commentTextView.addressLBS;
+            NSString *address = @"";
+            NSString *poiTitle = @"";
+            float lat = 0;
+            float lng = 0;
+            BBSLocation *location = nil;
+            if (locationInfo) {
+                address = locationInfo[@"address"];
+                poiTitle = locationInfo[@"name"];
+                NSArray *arr = [locationInfo[@"location"] componentsSeparatedByString:@","];
+                if ([arr count] == 2) {
+                    lat = [[locationInfo[@"location"] componentsSeparatedByString:@","].firstObject floatValue];
+                    lng = [[locationInfo[@"location"] componentsSeparatedByString:@","].lastObject floatValue];
+                }
+                location = [[BBSLocation alloc] initWithPOITitle:poiTitle address:address latitude:lat longitude:lng];
+            }
+            //MARK:---------------coordinate---------------------
+            CLLocationCoordinate2D coordinate = {lat,lng};
+            BBSUILBSShowLocationViewController *showLocationVC = [[BBSUILBSShowLocationViewController alloc] initWithCoordinate:coordinate title:poiTitle];
+            UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:showLocationVC];
+            [weakSelf presentViewController:nav animated:YES completion:nil];
+            
+        };
+        
+        if ([[BBSUILBSLocationProxy sharedInstance] isLBSUsable]) {
+            _commentTextView.isHiddenLBSMenu = NO;
+        }else{
+            _commentTextView.isHiddenLBSMenu = YES;
+        }
         
         [self.view addSubview:_commentTextView];
     }
@@ -365,7 +402,7 @@
                     if (error.code == 99999) {
                         BBSUIAlert(@"未连接网络");
                     }else{
-                        BBSUIAlert(@"获取详情失败:%@,code:%zd",error.userInfo[@"description"],error.code);
+                        BBSUIAlert(@"获取详情失败:%@",error.userInfo[@"description"]);
                     }
                 }
             }
@@ -401,6 +438,7 @@
         if (arguments.count > 2 && [arguments[2] isKindOfClass:[NSNumber class]])
         {
             page = [arguments[2] integerValue];
+           
         }
         
         if (arguments.count > 3 && [arguments[3] isKindOfClass:[NSNumber class]])
@@ -417,6 +455,8 @@
         {
             callback = arguments[5];
         }
+        
+        NSLog(@"====pppp====%ld", (long)page);
         
         [BBSSDK getPostListWithFid:fid tid:tid authorId:authorID pageIndex:page pageSize:pageSize result:^(NSArray *postList, NSError *error) {
             
@@ -441,7 +481,7 @@
             
             if (error && self.isViewLoaded && self.view.window)
             {
-                BBSUIAlert(@"获取详情失败:%@,code:%zd",error.userInfo[@"description"],error.code);
+                BBSUIAlert(@"获取详情失败:%@",error.userInfo[@"description"]);
             }
             
         }];
@@ -1015,6 +1055,8 @@
     return @[createdOnOrderAction];
 }
 
+#pragma mark - 点击写点评论
+
 - (void)replyViewTap:(UITapGestureRecognizer *)tap
 {
     if (![BBSUIContext shareInstance].currentUser)
@@ -1029,6 +1071,7 @@
     [self.commentTextView setSendHandler:^(NSArray<UIImage *> *images, NSString *content) {
         [weakSelf uploadCommentWithImages:images content:content prePid:0];
     }];
+    
 }
 
 - (void)uploadCommentWithImages:(NSArray *)images content:(NSString *)content prePid:(NSInteger)pid
@@ -1099,10 +1142,11 @@
         });
     }
 }
-//
+
+#pragma mark - ----回复可见-----
+
 - (void)postCommentWithHTML:(NSString *)html pid:(NSInteger)pid
 {
-    
     NSString *address = @"";
     NSString *poiTitle = @"";
     float lat = 0;
@@ -1124,10 +1168,39 @@
         if (!error)
         {
             [self postCommentSuccess:post prePid:pid comment:html];
+            if (pid == 0 && _threadModel.replyShow == 1)
+            {
+                [self _reLoadWebView];
+            }
         }
         else
         {
             [self postCommentError:error];
+        }
+    }];
+}
+
+
+
+- (void)_reLoadWebView
+{
+    __weak typeof(self) theWebController = self;
+    [BBSSDK getThreadDetailWithFid:theWebController.fid tid:theWebController.tid result:^(BBSThread *thread, NSError *error) {
+        if (!error && thread)
+        {
+            _threadModel = thread;
+            [[BBSUICoreDataManage shareManager] addHistoryWithThread:thread];
+            [theWebController updateUI];
+            NSDictionary * res = [theWebController dictionaryWithThread:thread];
+            [theWebController.webView stringByEvaluatingJavaScriptFromString:[NSString stringWithFormat:@"%@(%@)", @"details.getArticle", [MOBFJson jsonStringFromObject:res]]];
+            
+        }
+        else
+        {
+            if (theWebController.isViewLoaded && theWebController.view.window)
+            {
+                BBSUIAlert(@"获取详情失败:%@",error.userInfo[@"description"]);
+            }
         }
     }];
 }
@@ -1153,12 +1226,12 @@
     [HUD hideAnimated:YES afterDelay:2];
 }
 
+#pragma mark - 评论成功
 - (void)postCommentSuccess:(BBSPost *)post prePid:(NSInteger)pid comment:(NSString *)comment
 {
     //更新评论数量
     NSInteger commentCount = [self.commentButton.titleLabel.text integerValue];
     [self.commentButton setTitle:[NSString stringWithFormat:@"%zd", commentCount + 1] forState:UIControlStateNormal];
-    
     
     MBProgressHUD *HUD = [[MBProgressHUD alloc] initWithView:self.view];
     [self.view addSubview:HUD];
@@ -1169,11 +1242,14 @@
     [HUD showAnimated:YES];
     [HUD hideAnimated:YES afterDelay:2];
     
-    //    post.message = comment;
+    //post.message = comment;
     [self updateComment:post prePid:pid];
     if (self.commentTextView) {
         if (self.commentTextView.superview) {
+            [self.commentTextView.imagePickerView removeFromSuperview];
+            [self.commentTextView.expView removeFromSuperview];
             [self.commentTextView removeFromSuperview];
+            [self.commentTextView.bgView removeFromSuperview];
         }
         self.commentTextView = nil;
     }

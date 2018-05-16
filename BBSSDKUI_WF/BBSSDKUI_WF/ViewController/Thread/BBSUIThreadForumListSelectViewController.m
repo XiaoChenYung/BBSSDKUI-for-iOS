@@ -86,7 +86,19 @@
 - (void)configureUI
 {
     //设置tableview
-    self.forumTableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, DZSUIScreen_width, DZSUIScreen_height) style:UITableViewStyleGrouped];
+    //self.forumTableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, DZSUIScreen_width, DZSUIScreen_height) style:UITableViewStyleGrouped];
+    CGFloat subheight = 0;
+    if (IS_IPHONE_6)
+    {
+        subheight = 40;
+    }
+    else
+    {
+        subheight = 50;
+    }
+    
+    self.forumTableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, DZSUIScreen_width, DZSUIScreen_height - subheight) style:UITableViewStyleGrouped];
+
     [self.view addSubview:self.forumTableView];
     self.forumTableView.sectionHeaderHeight = 40;
     [self.forumTableView setDelegate:self];

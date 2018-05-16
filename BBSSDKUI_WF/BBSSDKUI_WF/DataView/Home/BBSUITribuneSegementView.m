@@ -76,26 +76,31 @@
     bottomLine.backgroundColor = DZSUIColorFromHex(0x6D96FF);
     self.bottomLine = bottomLine;
     
+    //筛选按钮
+    UIButton *filterBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+    [self addSubview:filterBtn];
+    
+        [filterBtn mas_makeConstraints:^(MASConstraintMaker *make) {
+            //make.left.mas_equalTo(lineView.mas_right).mas_equalTo(11);
+            make.right.mas_equalTo(-11);
+            make.centerY.mas_equalTo(lastView);
+            make.size.mas_equalTo(CGSizeMake(25, 25));
+        }];
+    
+    [filterBtn setBackgroundImage:[UIImage BBSImageNamed:@"User/icon_Sort.png"] forState:UIControlStateNormal];
+    [filterBtn addTarget:self action:@selector(filterBtnClick:) forControlEvents:UIControlEventTouchUpInside];
+    
     //竖线
     UIView *lineView = [UIView new];
     [self addSubview:lineView];
     [lineView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.left.mas_equalTo(lastView.mas_right).mas_equalTo(width);
+        make.right.mas_equalTo(filterBtn.mas_left).mas_equalTo(-5);
         make.centerY.mas_equalTo(lastView);
         make.size.mas_equalTo(CGSizeMake(1, 15));
     }];
     lineView.backgroundColor = DZSUIColorFromHex(0xDDE1EB);
     
-    //筛选按钮
-    UIButton *filterBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-    [self addSubview:filterBtn];
-    [filterBtn mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.left.mas_equalTo(lineView.mas_right).mas_equalTo(11);
-        make.centerY.mas_equalTo(lineView);
-        make.size.mas_equalTo(CGSizeMake(25, 25));
-    }];
-    [filterBtn setBackgroundImage:[UIImage BBSImageNamed:@"User/icon_Sort.png"] forState:UIControlStateNormal];
-    [filterBtn addTarget:self action:@selector(filterBtnClick:) forControlEvents:UIControlEventTouchUpInside];
+    
     [self typeClick:btn];
 }
 

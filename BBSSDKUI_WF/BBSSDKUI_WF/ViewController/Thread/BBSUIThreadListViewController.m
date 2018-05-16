@@ -48,7 +48,6 @@
         self.currentForum = forum;
         self.currentOrderType = BBSUIThreadOrderCommentTime;
     }
-    
     return self;
 }
 
@@ -202,7 +201,7 @@
         self.isPresent = YES;
         BBSUIFastPostViewController *editVC = [BBSUIFastPostViewController shareInstance];
         [editVC setForum:_currentForum];
-        
+        editVC.isEnterVc = YES;
         [editVC addPostThreadObserver:self];
         BBSUIMainStyleNavigationController *mainStyleNav = [[BBSUIMainStyleNavigationController alloc] initWithRootViewController:editVC];
         [self presentViewController:mainStyleNav animated:YES completion:nil];

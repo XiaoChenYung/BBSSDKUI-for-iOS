@@ -52,19 +52,16 @@
     [self.forumImageView.layer setMasksToBounds:YES];
     
     //MARK:名字29292F
-    
     self.forumNameLabel = [UILabel new];
     [self.contentView addSubview:self.forumNameLabel];
     [self.forumNameLabel setBackgroundColor:[UIColor clearColor]];
     [self.forumNameLabel mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.equalTo(self.forumImageView.mas_right).with.offset(10);
-        
         make.top.equalTo(self).with.offset(12);
         //make.size.mas_equalTo(CGSizeMake(70, 15));
     }];
     [self.forumNameLabel setFont:[UIFont boldSystemFontOfSize:16.0f]];
     self.forumNameLabel.textColor = DZSUIColorFromHex(0x29292F);
-    //self.forumNameLabel.adjustsFontSizeToFitWidth = YES;
     
     //版块统计数字
     self.forumCountLab = [UILabel new];
@@ -72,7 +69,6 @@
     [self.forumCountLab mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.equalTo(self.forumNameLabel.mas_right).with.offset(7);
         make.centerY.mas_equalTo(self.forumNameLabel);
-        
     }];
     [self.forumCountLab setFont:[UIFont boldSystemFontOfSize:10.0f]];
     [self.forumCountLab setTextColor:DZSUIColorFromHex(0xffffff)];
@@ -113,17 +109,16 @@
     [self.stickButton addTarget:self action:@selector(stickButtonHandler:) forControlEvents:UIControlEventTouchUpInside];
     
     //描述
-    self.forumDesLabel = [UILabel new];
+    self.forumDesLabel = [[UILabel alloc] init];
     [self.contentView addSubview:self.forumDesLabel];
     [self.forumDesLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-        //make.bottom.mas_equalTo(self.forumImageView.mas_bottom);
-        //make.left.equalTo(self.forumNameLabel.mas_right).with.offset(5);
         make.top.equalTo(self.forumNameLabel.mas_bottom).with.offset(3);
-        make.left.mas_equalTo(self.forumNameLabel.mas_left);
+        make.left.equalTo(self.forumNameLabel.mas_left);
+        
+        make.size.mas_equalTo(CGSizeMake(DZSUIScreen_width - 65 - 85 - 40 , 16));
     }];
     [self.forumDesLabel setFont:[UIFont systemFontOfSize:12.0f]];
     [self.forumDesLabel setTextColor:DZSUIColorFromHex(0x9A9CAA)];
-    //    [self.forumDesLabel setHidden:YES];
     
     self.seperateView = [UIView new];
     [self.contentView addSubview:self.seperateView];
@@ -137,19 +132,15 @@
     self.seperateView.hidden = YES;
 }
 
-
 - (void)setForumModel:(BBSForum *)forumModel
 {
     _forumModel = forumModel;
-    
     [self setNeedsLayout];
 }
-
 
 - (void)layoutSubviews
 {
     [super layoutSubviews];
-    
     [self layoutData:_forumModel];
 }
 
@@ -159,7 +150,6 @@
         self.forumImageView.image = [UIImage BBSImageNamed:@"/Forum/forumList3.png"];
         
         __weak typeof (self) weakSelf = self;
-        
         if (forum.forumPic && forum.forumPic.length)
         {
             [[MOBFImageGetter sharedInstance] getImageWithURL:[NSURL URLWithString:forum.forumPic] result:^(UIImage *image, NSError *error) {
@@ -171,7 +161,6 @@
                 {
                     weakSelf.forumImageView.image = [UIImage BBSImageNamed:@"/Forum/forumList3.png"];
                 }
-                
             }];
         }
         
@@ -181,7 +170,6 @@
         }else{
             [self.forumImageView setImage:[UIImage BBSImageNamed:@"/Forum/forumList3.png"]];
         }
-        
     }
     CGSize size = [self getAttributeSizeWithText:forum.name fontSize:16];
     [self.forumNameLabel mas_remakeConstraints:^(MASConstraintMaker *make) {
@@ -209,14 +197,17 @@
     [self.todayUpdateLabel setText:@" 今日:0 "];
     self.forumCountLab.text = [NSString stringWithFormat:@" 今日:%ld", forum.todayposts];
     
-    if (self.isShowcount) {
-        self.forumCountLab.hidden = YES;
-    }else {
+    if (forum.todayposts > 0) {
         self.forumCountLab.hidden = NO;
+    }else {
+        self.forumCountLab.hidden = YES;
     }
     
+//    if (self.forumDesLabel.text.length > 18) {
+//        self.forumDesLabel.text = [NSString stringWithFormat:@"%@...",[self.forumDesLabel.text substringToIndex:18]];
+//    }
+    self.forumDesLabel.lineBreakMode =  NSLineBreakByTruncatingTail;
     [self changeButtonStatus];
-    
 }
 
 - (CGSize)getAttributeSizeWithText:(NSString *)text fontSize:(int)fontSize
@@ -278,17 +269,22 @@
     }
 }
 
+#pragma mark - --------描述lab-------
 - (void)updateUIConstraints
 {
-    if (self.forumModel.isSticked) {
-        [self.forumDesLabel mas_updateConstraints:^(MASConstraintMaker *make) {
-            make.right.mas_equalTo(self.contentView).with.offset(-95);
-        }];
-    }else{
-        [self.forumDesLabel mas_updateConstraints:^(MASConstraintMaker *make) {
-            make.right.mas_equalTo(self.contentView).with.offset(-70);
-        }];
-    }
+//    if (self.forumModel.isSticked)
+//    {
+//        [self.forumDesLabel mas_updateConstraints:^(MASConstraintMaker *make) {
+//            make.right.mas_equalTo(self.contentView).with.offset(-95);
+//        }];
+//    }
+//    else
+//    {
+//        [self.forumDesLabel mas_updateConstraints:^(MASConstraintMaker *make) {
+//            make.right.mas_equalTo(self.contentView).with.offset(-150);
+//        }];
+//    }
+  
 }
 
 - (void)setStickButtonHidden:(BOOL)hidden
@@ -296,9 +292,9 @@
     [self.stickButton setHidden:hidden];
     
     if (hidden) {
-        [self.forumDesLabel mas_updateConstraints:^(MASConstraintMaker *make) {
-            make.right.mas_equalTo(self.contentView).with.offset(-10);
-        }];
+//        [self.forumDesLabel mas_updateConstraints:^(MASConstraintMaker *make) {
+//            make.right.mas_equalTo(self.contentView).with.offset(-10);
+//        }];
     }else{
         [self updateUIConstraints];
     }

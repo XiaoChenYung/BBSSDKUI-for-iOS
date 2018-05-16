@@ -466,6 +466,10 @@
         _authorLabel.font = [UIFont systemFontOfSize:10];
         _authorLabel.textColor = DZSUIColorFromHex(0xACADB8);
         _line.backgroundColor = DZSUIColorFromHex(0xACADB8);
+        
+        if ([_threadModel.summary containsString:@"&quot;"]) {
+            _threadModel.summary = [_threadModel.summary stringByReplacingOccurrencesOfString:@"&quot;" withString:@""];
+        }
         _summaryLabel.text = _threadModel.summary;
         
         [self _setCellFrame];

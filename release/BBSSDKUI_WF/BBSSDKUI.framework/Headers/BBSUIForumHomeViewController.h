@@ -7,9 +7,9 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "BBSUIBaseNavigationController.h"
+//#import "BBSUIBaseNavigationController.h"
 
-@interface BBSUIForumHomeViewController : BBSUIBaseNavigationController
+@interface BBSUIForumHomeViewController : UINavigationController
 
 +(BBSUIForumHomeViewController *)forumHomeViewControllerWithTitle:(NSString *)title;
 

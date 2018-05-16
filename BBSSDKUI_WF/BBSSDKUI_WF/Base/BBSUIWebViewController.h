@@ -32,4 +32,6 @@
 
 - (void)setupJSNativeWithNativeExtPath:(NSString *)extPath;
 
+- (void)addWebview;
+
 @end

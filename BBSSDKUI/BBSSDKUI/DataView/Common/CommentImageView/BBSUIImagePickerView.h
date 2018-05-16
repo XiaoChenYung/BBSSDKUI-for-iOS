@@ -22,10 +22,17 @@
 @interface BBSUIImagePickerView : BBSUIBaseView
 
 @property (nonatomic, weak) id<iBBSUIImagePickerViewDelegate> delegate ;
+
+@property(nonatomic, strong) UIButton *addBtn;
+@property (nonatomic, assign) BOOL isXun;
+
 - (NSMutableArray <UIImage*>*)selectedImages ;
 
 - (void) pickImages ;
 
 - (void)cleanData;
+
+- (void)hideAddButton;
+
 
 @end

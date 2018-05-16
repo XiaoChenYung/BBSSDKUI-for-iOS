@@ -17,5 +17,6 @@ typedef void(^LBSLocationSelectBlock) (id locationInfo);
 @property (nonatomic, copy) LBSLocationSelectBlock locationSelectBlock;
 
 @property (nonatomic, assign) BOOL isPresent;
+@property (nonatomic, strong) NSDictionary *preLocationDic;
 
 @end

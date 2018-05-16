@@ -76,6 +76,8 @@ static void * BBSUIStickPorpertyKey = (void *)@"BBSUIStickPorpertyKey";
     [aCoder encodeInteger:self.allowReply   forKey:@"allowReply"];
     [aCoder encodeInteger:self.status       forKey:@"status"];
     [aCoder encodeBool:self.isSticked       forKey:@"isSticked"];
+    [aCoder encodeInteger:self.todayposts       forKey:@"todayposts"];
+
 }
 
 - (id)initWithCoder:(NSCoder *)aDecoder
@@ -109,6 +111,8 @@ static void * BBSUIStickPorpertyKey = (void *)@"BBSUIStickPorpertyKey";
         self.status         = [aDecoder decodeIntegerForKey:@"status"];
         self.isSticked      = [aDecoder decodeBoolForKey:@"isSticked"];
         self.fid            = [aDecoder decodeIntegerForKey:@"fid"];
+        self.todayposts            = [aDecoder decodeIntegerForKey:@"todayposts"];
+
     }
     
     return self;

@@ -20,7 +20,8 @@
 #import "BBSUIExpressionViewConfiguration.h"
 #import "BBSUILBSLocationViewController.h"
 #import "BBSUIForumViewController.h"
-
+#import "BBSUILBSShowLocationViewController.h"
+#import "BBSUILBSLocationProxy.h"
 
 
 @interface BBSUIFastPostViewController ()<UINavigationControllerDelegate,UIImagePickerControllerDelegate,UITextFieldDelegate>
@@ -52,6 +53,9 @@
 
 @property (nonatomic, strong) NSDictionary *locationInfo;
 
+@property (nonatomic, strong) BBSUILBSLocationViewController *locationVC;
+@property (nonatomic, strong) UINavigationController *locationNav;
+
 @end
 
 @implementation BBSUIFastPostViewController
@@ -77,12 +81,12 @@
     return self;
 }
 
+#pragma mark -  生命周期 Life Circle
 - (void)viewDidLoad
 {
     [super viewDidLoad];
     
     //self.title = @"快速发帖";
-    
     self.edgesForExtendedLayout = UIRectEdgeNone ;
     _images = [NSMutableArray array];
 
@@ -149,8 +153,8 @@
     
     //楼主
     UIButton *checkMasterButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    checkMasterButton.frame = CGRectMake(0, 0, 120, 44);
-    [checkMasterButton setTitle:@" 回复仅楼主可见" forState:UIControlStateNormal];
+    checkMasterButton.frame = CGRectMake(0, 0, 130, 44);
+    [checkMasterButton setTitle:@" 回贴仅楼主可见" forState:UIControlStateNormal];
     [checkMasterButton setImage:[UIImage BBSImageNamed:@"/Thread/hideName@3x.png"] forState: UIControlStateNormal];
     [checkMasterButton setImage:[UIImage BBSImageNamed:@"/Thread/hideNameSelect@3x.png"] forState: UIControlStateSelected];
     [checkMasterButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
@@ -176,67 +180,21 @@
     }
 }
 
+#pragma mark - 取消
 - (void)cancelButtonHandler:(UIButton *)button
 {
+    self.checkMasterButton.selected = NO;
     [self dismissViewControllerAnimated:YES completion:nil];
 }
 
 - (void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
-//    NSString *url = [BBSUIContext shareInstance].currentUser.avatar ;
-//    url = [url stringByAppendingFormat:@"&timestamp=%f", [NSDate date].timeIntervalSince1970];
-//    if ([url isKindOfClass:NSString.class] && ![_avatarUrl isEqualToString:url])
-//    {
-//        [[MOBFImageGetter sharedInstance] getImageWithURL:[NSURL URLWithString:url] result:^(UIImage *image, NSError *error) {
-//            if (error)
-//            {
-//                BBSUILog(@"%@",error);
-//            }
-//            else
-//            {
-//                _headImageView.image = image;
-//            }
-//        }];
-//        
-//        _userNameLabel.text = [BBSUIContext shareInstance].currentUser.userName;
-//    }
 }
 
 - (void)configUI
 {
     [self setNavigationItems];
-    
-    
-    
-//    self.headImageView =
-//    ({
-//        UIImageView *headImageView = [[UIImageView alloc] initWithImage:[UIImage BBSImageNamed:@"/User/AvatarDefault.png"]];
-//        headImageView.layer.cornerRadius = 15.5;
-//        headImageView.clipsToBounds = YES;
-//        headImageView.contentMode = UIViewContentModeScaleAspectFill;
-//        [self.view addSubview:headImageView];
-//        [headImageView mas_makeConstraints:^(MASConstraintMaker *make) {
-//            make.left.equalTo(self.view).offset(15);
-//            make.top.equalTo(self.view).offset(11);
-//            make.width.height.equalTo(@31);
-//        }];
-//        headImageView ;
-//    });
-//
-//    self.userNameLabel =
-//    ({
-//        UILabel *userNameLabel = [[UILabel alloc] init];
-//        userNameLabel.textColor = [UIColor blackColor];
-//        userNameLabel.font = [UIFont systemFontOfSize:14];
-//        [self.view addSubview:userNameLabel];
-//        [userNameLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-//            make.left.equalTo(_headImageView.mas_right).offset(10);
-//            make.centerY.equalTo(_headImageView);
-//        }];
-//        userNameLabel ;
-//    });
-    
     self.forumSelectBtn =
     ({
         UIButton *forumSelectBtn = [UIButton buttonWithType:UIButtonTypeSystem];
@@ -312,6 +270,14 @@
             make.left.right.bottom.equalTo(self.view);
             make.top.equalTo(line.mas_bottom).offset(5);
         }];
+        
+        if ([[BBSUILBSLocationProxy sharedInstance] isLBSUsable]) {
+            editor.isHiddenLBSMenu = NO;
+        }else
+        {
+            editor.isHiddenLBSMenu = YES;
+        }
+        
         editor ;
     });
 }
@@ -419,11 +385,13 @@
     [_mdicExpression setObject:[nowHtml substringFromIndex:originHtml.length] forKey:expKey];
 }
 
-- (void)openLBS{
-    //self.editor.addressTag = @"区游族大厦";
+- (void)openLBS
+{
     __weak typeof(self)weakSelf = self;
-    BBSUILBSLocationViewController *locationVC = [[BBSUILBSLocationViewController alloc] init];
-    locationVC.locationSelectBlock = ^(id locationInfo) {
+    if (_locationVC == nil) {
+        _locationVC = [[BBSUILBSLocationViewController alloc] init];
+    }
+    _locationVC.locationSelectBlock = ^(id locationInfo) {
         NSDictionary *info = (NSDictionary *)locationInfo;
         weakSelf.locationInfo = info;
         if (info == nil) {
@@ -432,13 +400,30 @@
             weakSelf.editor.addressTag = [info valueForKey:@"name"];
         }
     };
-    //if (self.navigationController == nil) {
-        UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:locationVC];
-        locationVC.isPresent = YES;
-        [self presentViewController:nav animated:YES completion:nil];
-    //}else{
-    //    [self.navigationController pushViewController:locationVC animated:YES];
-    //}
+    _locationVC.preLocationDic = self.locationInfo;
+    if (_locationNav == nil) {
+         _locationNav = [[UINavigationController alloc] initWithRootViewController:_locationVC];
+    }
+    _locationVC.isPresent = YES;
+    [self presentViewController:_locationNav animated:YES completion:nil];
+
+}
+
+- (void)showLBS
+{
+    NSString *poiTitle = self.locationInfo[@"name"];
+    CGFloat lat = 0;
+    CGFloat lon = 0;
+    NSArray *arr = [self.locationInfo[@"location"] componentsSeparatedByString:@","];
+    if ([arr count] == 2) {
+        lat = [[self.locationInfo[@"location"] componentsSeparatedByString:@","].firstObject floatValue];
+        lon = [[self.locationInfo[@"location"] componentsSeparatedByString:@","].lastObject floatValue];
+    }
+    
+    CLLocationCoordinate2D coordinate = {lat,lon};
+    BBSUILBSShowLocationViewController *showLocationVC = [[BBSUILBSShowLocationViewController alloc] initWithCoordinate:coordinate title:poiTitle];
+    UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:showLocationVC];
+    [self presentViewController:nav animated:YES completion:nil];
 }
 
 #pragma mark - 选择版块
@@ -467,7 +452,7 @@
     [self.navigationController pushViewController:vc animated:YES];
 }
 
-
+#pragma mark - 发布
 - (void)publishButtonHandler:(UIButton *)button
 {
     [self.editor hideKeyboard];
@@ -521,15 +506,17 @@
         }
     }
     
+    
     [self dismissViewControllerAnimated:YES completion:nil];
     
     [self postThread];
-    
+    self.checkMasterButton.selected = NO;
  }
 
 - (void)hideNamebtnHandler:(UIButton *)button
 {
     button.selected = !button.selected;
+    
 }
 
 - (void)checkMasterbtnHandler:(UIButton *)button
@@ -721,6 +708,11 @@
     [self.editor setHTML:@""];
     self.titleTextField.text = @"";
     self.forum = nil;
+    
+    self.editor.addressTag = nil;
+    self.locationInfo = nil;
+    self.locationNav = nil;
+    self.locationVC = nil;
 }
 
 - (void)postError:(NSError *)error title:(NSString *)title html:(NSString *)html

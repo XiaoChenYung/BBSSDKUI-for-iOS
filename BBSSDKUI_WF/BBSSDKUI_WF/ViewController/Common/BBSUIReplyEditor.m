@@ -39,6 +39,8 @@
 @property (nonatomic, assign) BOOL secondShow;
 
 @property (nonatomic, strong) NSDictionary *locationInfo;
+@property (nonatomic, strong) BBSUILBSLocationViewController *locationVC;
+@property (nonatomic, strong) UINavigationController *locationNav;
 
 @end
 
@@ -252,6 +254,14 @@
         addressButton.titleLabel.font = [UIFont systemFontOfSize:12];
         [addressButton addTarget:self action:@selector(addressButtonOnClick:) forControlEvents:UIControlEventTouchUpInside];
         
+        if (_isHiddenLBSMenu == YES) {
+            addressButton.hidden = YES;
+        }
+        else
+        {
+            addressButton.hidden = NO;
+        }
+        
         addressButton;
     });
     
@@ -328,6 +338,18 @@
 - (void)viewDidAppear:(BOOL)animated
 {
     [self.textEditor becomeFirstResponder];
+}
+
+- (void)setIsHiddenLBSMenu:(BOOL)isHiddenLBSMenu
+{
+    _isHiddenLBSMenu = isHiddenLBSMenu;
+    if (isHiddenLBSMenu == YES) {
+        self.addressButton.hidden = YES;
+    }
+    else
+    {
+        self.addressButton.hidden = NO;
+    }
 }
 
 #pragma mark -  UIKeyboardNotification
@@ -419,10 +441,13 @@
     [self.view addSubview:_expView];
 }
 
-- (void)addressButtonOnClick:(id)sender{
+- (void)addressButtonOnClick:(id)sender
+{
     __weak typeof(self)weakSelf = self;
-    BBSUILBSLocationViewController *locationVC = [[BBSUILBSLocationViewController alloc] init];
-    locationVC.locationSelectBlock = ^(id locationInfo) {
+    if (_locationVC == nil) {
+        _locationVC = [[BBSUILBSLocationViewController alloc] init];
+    }
+    _locationVC.locationSelectBlock = ^(id locationInfo) {
         NSDictionary *info = (NSDictionary *)locationInfo;
         weakSelf.locationInfo = info;
         if (info == nil) {
@@ -431,9 +456,13 @@
             [weakSelf.addressButton setTitle:[info valueForKey:@"name"] forState:UIControlStateNormal];
         }
     };
-    UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:locationVC];
-    locationVC.isPresent = YES;
-    [self presentViewController:nav animated:YES completion:nil];
+    _locationVC.preLocationDic = self.locationInfo;
+    if (_locationNav == nil) {
+         _locationNav = [[UINavigationController alloc] initWithRootViewController:_locationVC];
+    }
+    
+    _locationVC.isPresent = YES;
+    [self presentViewController:_locationNav animated:YES completion:nil];
 }
 
 #pragma mark - iBBSUIImagePickerViewDelegate 

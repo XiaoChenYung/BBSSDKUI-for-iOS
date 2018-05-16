@@ -574,12 +574,6 @@ const CGFloat HeaderHeight = 360;
 }
 
 #pragma mark - 消息 设置 签到
-- (void)_settingAction
-{
-    BBSUISettingViewController *vc = [[BBSUISettingViewController alloc] init];
-    [[MOBFViewController currentViewController].navigationController pushViewController:vc animated:YES];
-}
-
 - (void)sginBtnClick:(UIButton *)sender
 {
     BBSUISignInViewController *vc = [[BBSUISignInViewController alloc] init];
@@ -589,6 +583,12 @@ const CGFloat HeaderHeight = 360;
 - (void)_notificationAction
 {
     BBSUIInformationViewController *vc = [[BBSUIInformationViewController alloc] init];
+    [[MOBFViewController currentViewController].navigationController pushViewController:vc animated:YES];
+}
+
+- (void)_settingAction
+{
+    BBSUISettingViewController *vc = [[BBSUISettingViewController alloc] init];
     [[MOBFViewController currentViewController].navigationController pushViewController:vc animated:YES];
 }
 

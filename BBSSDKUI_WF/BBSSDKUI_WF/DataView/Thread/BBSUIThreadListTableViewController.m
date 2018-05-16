@@ -275,7 +275,7 @@ static NSString *cellIdentifier = @"ThreadSummaryCell";
 {
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
     BBSThread *thread = _threadListArray[indexPath.row];
-    
+
     thread.select = YES;
     
     BBSUIThreadSummaryCell *cell = [tableView cellForRowAtIndexPath:indexPath];
@@ -284,9 +284,7 @@ static NSString *cellIdentifier = @"ThreadSummaryCell";
     {
         _selectedArray = [NSMutableArray array];
     }
-    
-//    [_selectedArray addObject:@(thread.tid)];
-    
+    //[_selectedArray addObject:@(thread.tid)];
     cell.read = YES;
     
     id detailVC = nil;

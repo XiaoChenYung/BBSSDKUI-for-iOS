@@ -71,18 +71,22 @@ static void * BBSUIStickPorpertyKey = (void *)@"BBSUIStickPorpertyKey";
         [aCoder encodeInteger:self.fid forKey:@"fid"];
     }
     
+    if (self.todayposts) {
+        [aCoder encodeInteger:self.todayposts forKey:@"todayposts"];
+    }
+    
     [aCoder encodeInteger:self.displayOrder forKey:@"displayOrder"];
     [aCoder encodeInteger:self.allowPost    forKey:@"allowPost"];
     [aCoder encodeInteger:self.allowReply   forKey:@"allowReply"];
     [aCoder encodeInteger:self.status       forKey:@"status"];
     [aCoder encodeBool:self.isSticked       forKey:@"isSticked"];
+    [aCoder encodeInteger:self.todayposts forKey:@"todayposts"];
 }
 
 - (id)initWithCoder:(NSCoder *)aDecoder
 {
     if (self = [super init])
     {
-        
         NSString *name = [aDecoder decodeObjectForKey:@"name"];
         if ([name isKindOfClass:[NSString class]]) {
             self.name = name;
@@ -109,6 +113,7 @@ static void * BBSUIStickPorpertyKey = (void *)@"BBSUIStickPorpertyKey";
         self.status         = [aDecoder decodeIntegerForKey:@"status"];
         self.isSticked      = [aDecoder decodeBoolForKey:@"isSticked"];
         self.fid            = [aDecoder decodeIntegerForKey:@"fid"];
+        self.todayposts     = [aDecoder decodeIntegerForKey:@"todayposts"];
     }
     
     return self;

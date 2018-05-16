@@ -145,7 +145,17 @@ button:active,input[type=button]:active {
 	-ms-flex-align: center;
 	align-items: center
 }
-
+.location{
+	display:inline-block;
+	font-family: PingFangSC-Regular;
+	font-size: 10px;
+	color: #ACADB8;
+	letter-spacing: 0;
+	line-height: 10px;
+	padding:5px 10px 5px 20px;
+	background: #F2F3F7 url('../images/location.png') no-repeat 5px;
+	margin-top:10px;
+}
 .author-right {
 	-ms-flex-negative: 0;
 	flex-shrink: 0;

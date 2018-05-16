@@ -67,9 +67,28 @@ static NSInteger    BBSUIPageSize = 10;
 
 @property (nonatomic, assign) NSInteger allowcomment;
 
+@property (nonatomic, strong) UILabel *bannerLab;
+
 @end
 
 @implementation BBSUIThreadListViewController
+
+#pragma mark - 懒加载 Lazy Load
+- (UILabel *)bannerLab
+{
+    if (!_bannerLab) {
+        _bannerLab = [[UILabel alloc] init];
+        [self.maskImage addSubview:_bannerLab];
+        [_bannerLab mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.bottom.mas_equalTo(-70);
+            make.left.mas_equalTo(20);
+        }];
+        _bannerLab.textColor = DZSUIColorFromHex(0xffffff);
+        _bannerLab.text = @"请前往开发者后台设置Banner";
+        _bannerLab.font = BBSFont(20);
+    }
+    return  _bannerLab;
+}
 
 #pragma mark -  生命周期 Life Circle
 - (void)viewDidLoad
@@ -404,7 +423,7 @@ static NSInteger    BBSUIPageSize = 10;
     }];
 }
 
-
+#pragma mark - 加载Banner
 - (void)_requestBannerList
 {
     __weak typeof(self) theHomeVC = self;
@@ -423,7 +442,7 @@ static NSInteger    BBSUIPageSize = 10;
         if (bannnerList.count > 0) {
             
             theHomeVC.maskImage.hidden = YES;
-            
+            theHomeVC.bannerLab.hidden = YES;
             theHomeVC.bannerArray = bannnerList;
             
             NSMutableArray *titleArray = [NSMutableArray array];
@@ -432,7 +451,6 @@ static NSInteger    BBSUIPageSize = 10;
                 
                 [pictureArray addObject:banner.picture ? banner.picture : @""];
                 [titleArray addObject:banner.title ? banner.title : @""];
-                
             }];
             
             theHomeVC.bannerView.picDataArray = [pictureArray copy];
@@ -452,10 +470,13 @@ static NSInteger    BBSUIPageSize = 10;
             theHomeVC.bannerView.delegate = theHomeVC;
             theHomeVC.bannerView.titleLabelTextColor = [UIColor whiteColor];
             
-        }else{
+        }
+        else
+        {
             
             theHomeVC.maskImage.hidden = NO;
             [theHomeVC.maskImage setImage:[UIImage BBSImageNamed:@"/Home/bannerDefault@2x.png"]];
+            theHomeVC.bannerLab.hidden = NO;
         }
         
     }];

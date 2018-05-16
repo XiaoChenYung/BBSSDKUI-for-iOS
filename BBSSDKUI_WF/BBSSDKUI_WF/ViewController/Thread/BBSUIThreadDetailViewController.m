@@ -35,6 +35,7 @@
 #import "BBSUIShareView.h"
 #import <BBSSDK/BBSMOBFScene.h>
 #import "BBSUILBSShowLocationViewController.h"
+#import "BBSUILBSLocationProxy.h"
 
 @interface BBSUIThreadDetailViewController ()
 
@@ -48,7 +49,7 @@
 @property (nonatomic, strong) UIButton *favButton;
 @property (nonatomic, strong) UIButton *commentButton;
 @property (nonatomic, assign) BOOL isFavirated;
-
+@property (nonatomic, strong) NSMutableArray *htmlArr;
 @end
 
 @implementation BBSUIThreadDetailViewController
@@ -91,6 +92,7 @@
     return self;
 }
 
+#pragma mark -  生命周期 Life Circle
 - (void)viewDidLoad
 {
     [super viewDidLoad];
@@ -132,6 +134,14 @@
     self.webView.delegate = self ;
     [self setBarButtonItem];
     self.replyEditor = [[BBSUIReplyEditor alloc] init];
+    if ([[BBSUILBSLocationProxy sharedInstance] isLBSUsable])
+    {
+        self.replyEditor.isHiddenLBSMenu = NO;
+    }
+    else
+    {
+        self.replyEditor.isHiddenLBSMenu = YES;
+    }
     [self configBottomBar];
     [self loadWeb];
     
@@ -274,16 +284,15 @@
 }
 
 #pragma mark - 注册js方法
-
 // TODO: 获取帖子详情
 - (void)registerGetForumThreadDetails
 {
     __weak typeof(self) theWebController = self;
-    
     [self.jsContext registerJSMethod:@"getForumThreadDetails" block:^(NSArray *arguments) {
         NSString *callback = nil;
         if (arguments.count > 0 && [arguments[0] isKindOfClass:[NSString class]]) {
             callback = arguments[0];
+            
         }
         
         [BBSSDK getThreadDetailWithFid:self.fid tid:self.tid result:^(BBSThread *thread, NSError *error) {
@@ -303,7 +312,7 @@
             {
                 if (self.isViewLoaded && self.view.window)
                 {
-                    BBSUIAlert(@"获取详情失败:%@,code:%zd",error.userInfo[@"description"],error.code);
+                    BBSUIAlert(@"获取详情失败:%@",error.userInfo[@"description"]);
                 }
             }
         }];
@@ -378,7 +387,7 @@
             
             if (error && self.isViewLoaded && self.view.window)
             {
-                BBSUIAlert(@"获取详情失败:%@,code:%zd",error.userInfo[@"description"],error.code);
+               BBSUIAlert(@"获取详情失败:%@",error.userInfo[@"description"]);
             }
 
         }];
@@ -394,8 +403,6 @@
     [self.jsContext registerJSMethod:@"downloadImages" block:^(NSArray *arguments) {
         
         NSLog(@"____________ %@",arguments);
-        
-        
         NSArray *imageUrlsArray = nil;
         
         if (arguments.count > 0 && [arguments[0] isKindOfClass:[NSArray class]])
@@ -982,6 +989,7 @@
     }
 }
 
+#pragma mark - ======发评论成功回调========
 - (void)postCommentWithHTML:(NSString *)html pid:(NSInteger)pid locationInfo:(NSDictionary *)locationInfo
 {
     NSString *address = @"";
@@ -999,15 +1007,45 @@
         }
         location = [[BBSLocation alloc] initWithPOITitle:poiTitle address:address latitude:lat longitude:lng];
     }
-    
+    //发评论
+    __weak typeof(self) theWebController = self;
     [BBSSDK postCommentWithFid:_threadModel.fid tid:_threadModel.tid reppid:pid message:html location:location result:^(BBSPost *post,NSError *error) {
         if (!error)
         {
-            [self postCommentSuccess:post prePid:pid comment:html];
+            [theWebController postCommentSuccess:post prePid:pid comment:html];
+            
+            if (pid == 0 && _threadModel.replyShow == 1)
+            {
+                [self _reLoadWebView];
+            }
         }
         else
         {
             [self postCommentError:error];
+        }
+        
+    }];
+}
+
+- (void)_reLoadWebView
+{
+    __weak typeof(self) theWebController = self;
+    [BBSSDK getThreadDetailWithFid:theWebController.fid tid:theWebController.tid result:^(BBSThread *thread, NSError *error) {
+        if (!error && thread)
+        {
+            _threadModel = thread;
+            [[BBSUICoreDataManage shareManager] addHistoryWithThread:thread];
+            [theWebController updateUI];
+            NSDictionary * res = [theWebController dictionaryWithThread:thread];
+            [theWebController.webView stringByEvaluatingJavaScriptFromString:[NSString stringWithFormat:@"%@(%@)", @"details.getArticle", [MOBFJson jsonStringFromObject:res]]];
+            
+        }
+        else
+        {
+            if (theWebController.isViewLoaded && theWebController.view.window)
+            {
+                BBSUIAlert(@"获取详情失败:%@",error.userInfo[@"description"]);
+            }
         }
     }];
 }
@@ -1029,6 +1067,7 @@
     }
 }
 
+#pragma mark - 回复成功
 - (void)postCommentSuccess:(BBSPost *)post prePid:(NSInteger)pid comment:(NSString *)comment
 {
     MBProgressHUD *HUD = [[MBProgressHUD alloc] initWithView:self.view];
@@ -1160,6 +1199,15 @@
     if (!_replyEditor)
     {
         _replyEditor = [[BBSUIReplyEditor alloc] init];
+        
+        if ([[BBSUILBSLocationProxy sharedInstance] isLBSUsable])
+        {
+            _replyEditor.isHiddenLBSMenu = NO;
+        }
+        else
+        {
+            _replyEditor.isHiddenLBSMenu = YES;
+        }
     }
     
     return _replyEditor;

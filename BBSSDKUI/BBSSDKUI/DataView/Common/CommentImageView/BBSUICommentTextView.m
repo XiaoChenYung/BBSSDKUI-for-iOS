@@ -8,7 +8,6 @@
 
 #import "BBSUICommentTextView.h"
 #import "UIView+Extension.h"
-#import "BBSUIImagePickerView.h"
 #import "Masonry.h"
 #import "UIImage+BBSFunction.h"
 #import "BBSUIExpressionViewConfiguration.h"
@@ -28,7 +27,7 @@
 @interface BBSUICommentTextView() <iBBSUIImagePickerViewDelegate,BBSUIExpressionViewDelegate>
 {
     UIButton                *_issueBtn;
-    UIView                  *_bgView;
+//    UIView                  *self.bgView;
     UITapGestureRecognizer  *_tap;
     UIButton                *_imagePickButton;
     UIButton                *_keyboardButton;
@@ -37,9 +36,7 @@
     UIButton                *_addressButton;
 }
 
-@property (nonatomic ,strong) BBSUIImagePickerView *imagePickerView ;
 
-@property (nonatomic, strong) BBSUIExpressionView *expView;
 
 @property (nonatomic, copy)   void (^handler)(NSArray <UIImage *>*images,NSString *content);
 
@@ -51,11 +48,13 @@
 
 @implementation BBSUICommentTextView
 
+//论坛初始化
 + (instancetype)topTextView
 {
     return [[self alloc] init];
 }
 
+//资讯初始化
 + (instancetype)portalTextView
 {
     BBSUICommentTextView *textView = [[self alloc] init];
@@ -70,7 +69,7 @@
     return textView;
 }
 
--(instancetype)initWithFrame:(CGRect)frame
+- (instancetype)initWithFrame:(CGRect)frame
 {
     if (self = [super initWithFrame:frame]) {
         //        self.frame = CGRectMake(0, SCREEN_HEIGHT, SCREEN_WIDTH, ConvertTo6_H(316)*CT_SCALE_Y);
@@ -83,6 +82,7 @@
         // 添加键盘监听
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillAppear:) name:UIKeyboardWillShowNotification object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillDisappear:) name:UIKeyboardWillHideNotification object:nil];
+        
     }
     return self;
 }
@@ -121,7 +121,15 @@
         [weakSelf.countNumTextView becomeFirstResponder];
     });
     
-    
+}
+
+- (void)setIsHiddenLBSMenu:(BOOL)isHiddenLBSMenu{
+    _isHiddenLBSMenu = isHiddenLBSMenu;
+    if (isHiddenLBSMenu == YES) {
+        _addressButton.hidden = YES;
+    }else{
+        _addressButton.hidden = NO;
+    }
 }
 
 #pragma mark - 监听键盘
@@ -131,7 +139,7 @@
     if ([self.countNumTextView isFirstResponder]) {
         NSDictionary *info = [notif userInfo];
         NSValue *value = [info objectForKey:UIKeyboardFrameEndUserInfoKey];
-        //        CGFloat duration = [[info objectForKey:UIKeyboardAnimationDurationUserInfoKey] floatValue];
+        //CGFloat duration = [[info objectForKey:UIKeyboardAnimationDurationUserInfoKey] floatValue];
         CGSize keyboardSize = [value CGRectValue].size;
         _keyboardHeight = keyboardSize.height;
         
@@ -146,7 +154,6 @@
             
             [_imagePickerView setFrame:CGRectMake(0, SCREEN_HEIGHT - keyboardSize.height, self.superview.width, _keyboardHeight)];
             
-  
 //            //表情
 //            if (!_expView)
 //            {
@@ -156,9 +163,10 @@
             
 //            self.y = SCREEN_HEIGHT - keyboardSize.height - ConvertTo6_H(316)*CT_SCALE_Y ;
         }];
-        [self.superview addSubview:_bgView];
+        [self.superview addSubview:self.bgView];
         [self.superview addSubview:self];
         [self.superview addSubview:_imagePickerView];
+        
     }
 }
 - (void)keyboardWillDisappear:(NSNotification *)notif
@@ -166,7 +174,9 @@
 //    [UIView animateWithDuration:0.5 animations:^{
 //        self.y = SCREEN_HEIGHT;
 //    }];
-//    [_bgView removeFromSuperview];
+//    [self.bgView removeFromSuperview];
+    [_expView removeFromSuperview];
+    _expView = nil;
 }
 
 - (void)dismissCommentView
@@ -175,7 +185,7 @@
     [UIView animateWithDuration:0.5 animations:^{
         self.y = SCREEN_HEIGHT;
     }];
-    [_bgView removeFromSuperview];
+    [self.bgView removeFromSuperview];
     [_imagePickerView removeFromSuperview];
     [_expView removeFromSuperview];
     _expView = nil;
@@ -218,6 +228,7 @@
         [addressTagView setTitleColor:DZSUIColorFromHex(0x9A9CAA) forState:UIControlStateNormal];
         [addressTagView setImage:[UIImage BBSImageNamed:@"/LBS/LBS_min_icon.png"] forState:UIControlStateNormal];
         addressTagView.titleLabel.font = [UIFont systemFontOfSize:11];
+        [addressTagView addTarget:self action:@selector(showAddressButtonHandler:) forControlEvents:UIControlEventTouchUpInside];
         [addressTagView.layer setCornerRadius:2];
         [addressTagView.layer setMasksToBounds:YES];
         addressTagView.hidden = YES;
@@ -299,19 +310,19 @@
     [_imagePickButton addSubview:_badge];
     
     // 半透明灰色背景
-    _bgView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT)];
-    _bgView.backgroundColor = UIColorFromRGB(0x000000);
-    _bgView.alpha = 0.5;
+    self.bgView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT)];
+    self.bgView.backgroundColor = UIColorFromRGB(0x000000);
+    self.bgView.alpha = 0.5;
     
     _tap = [[UITapGestureRecognizer alloc] init];
     [_tap addTarget:self action:@selector(dismissCommentView)];
-    [_bgView addGestureRecognizer:_tap];
+    [self.bgView addGestureRecognizer:_tap];
     
     //图片选择器
     _imagePickerView = [[BBSUIImagePickerView alloc] init];
     _imagePickerView.delegate = self ;
     [_imagePickerView setFrame:CGRectMake(0, SCREEN_HEIGHT, self.superview.width, 0)];
-    
+    //_imagePickerView.hidden = YES;
     
     //地址按钮
     CGFloat addressButtonWidth = 40;
@@ -338,6 +349,7 @@
     }
 }
 
+#pragma mark -点击照片
 - (void)_pickButtonHandler:(UIButton *)button
 {
     [_countNumTextView resignFirstResponder];
@@ -384,12 +396,28 @@
     if (_openLBS) {
         _openLBS();
     }
+    [self keyboardWillDisappear];
+    [_expView removeFromSuperview];
+    _expView = nil;
+}
+
+- (void)showAddressButtonHandler:(UIButton *)button{
+//    if (_showLBS) {
+//        _showLBS();
+//    }
+    //===
+    if (_openLBS) {
+        _openLBS();
+    }
+    [self keyboardWillDisappear];
+    [_expView removeFromSuperview];
+    _expView = nil;
 }
 
 -(void)dealloc
 {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
-    [_bgView removeGestureRecognizer:_tap];
+    [self.bgView removeGestureRecognizer:_tap];
 }
 
 #pragma mark - iBBSUIImagePickerViewDelegate

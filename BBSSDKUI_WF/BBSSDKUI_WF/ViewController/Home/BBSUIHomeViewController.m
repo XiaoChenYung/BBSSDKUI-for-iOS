@@ -220,6 +220,7 @@
     else
     {
         BBSUIFastPostViewController *editVC = [BBSUIFastPostViewController shareInstance];
+        editVC.isEnterVc = YES;
         [editVC addPostThreadObserver:self];
         BBSUIMainStyleNavigationController *mainStyleNav = [[BBSUIMainStyleNavigationController alloc] initWithRootViewController:editVC];
         

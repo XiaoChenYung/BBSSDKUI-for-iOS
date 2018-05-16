@@ -55,6 +55,7 @@
 
 @implementation BBSUIForumMoreView
 
+
 - (instancetype)initWithFrame:(CGRect)frame forumType:(BBSUIForumViewControllerType)forumType selectHandler:(void (^)(BBSForum *))selectHandler
 {
     self = [super initWithFrame:frame];
@@ -89,7 +90,17 @@
 {
     self.isAll = NO;
     //设置tableview
-    self.forumTableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, DZSUIScreen_width, DZSUIScreen_height) style:UITableViewStyleGrouped];
+    CGFloat subheight = 0;
+    if (IS_IPHONE_6)
+    {
+        subheight = 40;
+    }
+    else
+    {
+        subheight = 75;
+    }
+
+    self.forumTableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, DZSUIScreen_width, DZSUIScreen_height - subheight) style:UITableViewStyleGrouped];
     [self addSubview:self.forumTableView];
     self.forumTableView.sectionHeaderHeight = 40;
     [self.forumTableView setDelegate:self];
@@ -127,18 +138,17 @@
     __weak typeof(self) weakSelf = self;
     [BBSSDK getForumListWithFup:0 result:^(NSArray *forumsList, NSError *error) {
         if (!error) {
-            [forumsList enumerateObjectsUsingBlock:^(BBSForum *  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-                obj.isSticked = NO;
-                obj.isExpect = YES;
-            }];
             
-            weakSelf.allForumArray = [NSMutableArray arrayWithArray:forumsList];
+            NSMutableArray *forumArray = [NSMutableArray arrayWithArray:forumsList];
+            [self _deleteAllforumNameModel:forumArray];
+            
+            weakSelf.allForumArray = [NSMutableArray arrayWithArray:forumArray];
             //去除全部
             if (weakSelf.forumType == BBSUIForumViewControllerTypeSelectForum) {
                 weakSelf.allForumArray = [self _arrayDeleteForumAll:weakSelf.allForumArray];
             }
             //allForumArray 所有数据
-            weakSelf.allForumArray = [NSMutableArray arrayWithArray:forumsList];
+            weakSelf.allForumArray = [NSMutableArray arrayWithArray:forumArray];
             [weakSelf _handelAllData:weakSelf.allForumArray];
             
             [self.allDataArr enumerateObjectsUsingBlock:^(NSArray *objArray, NSUInteger idx, BOOL * _Nonnull stop) {
@@ -168,6 +178,21 @@
     }];
 }
 #pragma mark -********对数据进行分组处理************
+- (void)_deleteAllforumNameModel:(NSMutableArray *)forumArray
+{
+    [forumArray enumerateObjectsUsingBlock:^(BBSForum *  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        if ([obj.name isEqualToString:@"全部"]) {
+            [forumArray removeObject:obj];
+        }
+    }];
+    
+    [forumArray enumerateObjectsUsingBlock:^(BBSForum *  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        obj.isSticked = NO;
+        obj.isExpect = YES;
+        
+    }];
+}
+
 - (void)_handelAllData:(NSArray *)allData
 {
     NSMutableDictionary *res = @{}.mutableCopy;
@@ -184,29 +209,30 @@
         }
     }
     NSLog(@"-----%@",res.allValues);
-    
-    NSMutableArray *dataArray = [NSMutableArray arrayWithArray:res.allValues];
-    NSMutableArray *zeroArr = [NSMutableArray array];
-    //typeof(self) weakSelf = self;
-    for (NSMutableArray *arr in dataArray) {
-        for (BBSForum *forum in arr) {
-            if ([forum.name isEqualToString:@"全部"]) {
-                [zeroArr addObject:forum];
-                [arr removeObject:forum];
-                break;
-            }
-        }
-    }
-    
-    [dataArray enumerateObjectsUsingBlock:^(NSArray *obj, NSUInteger idx, BOOL * _Nonnull stop) {
-        if (obj.count <= 0) {
-            [dataArray removeObjectAtIndex:idx];
-        }
-    }];
+        self.allDataArr = [NSMutableArray arrayWithArray:res.allValues];
 
-    [dataArray insertObject:zeroArr atIndex:0];
-    
-    self.allDataArr = [NSMutableArray arrayWithArray:dataArray];
+//    NSMutableArray *dataArray = [NSMutableArray arrayWithArray:res.allValues];
+//    NSMutableArray *zeroArr = [NSMutableArray array];
+//    //typeof(self) weakSelf = self;
+//    for (NSMutableArray *arr in dataArray) {
+//        for (BBSForum *forum in arr) {
+//            if ([forum.name isEqualToString:@"全部"]) {
+//                [zeroArr addObject:forum];
+//                [arr removeObject:forum];
+//                break;
+//            }
+//        }
+//    }
+//
+//    [dataArray enumerateObjectsUsingBlock:^(NSArray *obj, NSUInteger idx, BOOL * _Nonnull stop) {
+//        if (obj.count <= 0) {
+//            [dataArray removeObjectAtIndex:idx];
+//        }
+//    }];
+//
+//    [dataArray insertObject:zeroArr atIndex:0];
+//
+//    self.allDataArr = [NSMutableArray arrayWithArray:dataArray];
 }
 
 - (void)devideForums
@@ -488,10 +514,16 @@
 }
 
 #pragma mark - BBSUIForumSummaryCellDelegate
+//MARK:-------存入到沙盒------
 - (void)stickChanged:(BBSUIForumSummaryCellTableViewCell *)cell
 {
     //[self configureStickForumsView];
     [[BBSUICacheManager sharedInstance] setStickForums:self.stickArray uid:[BBSUIContext shareInstance].currentUser.uid];
+    
+    [self.stickArray enumerateObjectsUsingBlock:^(BBSForum *obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        NSLog(@"=====%@----%d", obj.name, obj.todayposts);
+    }];
+    
     [self devideForums];
     [self.forumTableView reloadData];
 }

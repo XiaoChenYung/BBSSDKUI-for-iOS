@@ -886,13 +886,6 @@
         content = @" ";
     }
     
-//    _authorLabel.attributedText  = [NSString stringWithString:_threadModel.author
-//                                                     fontSize:13
-//                                            defaultColorValue:@"8A8D94"
-//                                                    lineSpace:0
-//                                                    wordSpace:0];
-    
-    
     if (_threadModel.aid) {
         // author和username长度截取
         if (_threadModel.author.length > 10) _threadModel.author = [_threadModel.author substringToIndex:10];
@@ -933,8 +926,8 @@
                                                             lineSpace:3
                                                             wordSpace:0];
         }
-        
-        else{
+        else
+        {
             if (_cellType == BBSUIThreadSummaryCellTypePortal)
             {
                 _subjectLabel.attributedText = [self stringWithString:[self removeLastThreeChar:_threadModel.title] lineSpace:6];
@@ -964,31 +957,27 @@
                                                             lineSpace:3
                                                             wordSpace:0];
         }
-        else{
+        else
+        {
             if (_cellType == BBSUIThreadSummaryCellTypePortal)
             {
+                //html语言转成字符串
                 _subjectLabel.attributedText = [self stringWithString:[self removeLastThreeChar:_threadModel.title] lineSpace:6];
-            }else{
+            }
+            else
+            {
                 _subjectLabel.attributedText = [self stringWithString:title lineSpace:6];
+            }
+            
+            if ([content containsString:@"&quot;"]) {
+                content = [content stringByReplacingOccurrencesOfString:@"&quot;" withString:@""];
             }
             _summaryLabel.attributedText = [self stringWithString:content lineSpace:3];
             _subjectLabel.textColor = DZSUIColorFromHex(0x3A4045);
             _summaryLabel.textColor = DZSUIColorFromHex(0x9A9EA5);
         }
-        
     }
-    
     _summaryLabel.lineBreakMode = NSLineBreakByTruncatingTail;
-//    if (_cellType == BBSUIThreadSummaryCellTypePortal)
-//    {
-//        if (_threadModel.title.length == 0) _subjectLabel.text = @" ";
-//        if (_threadModel.summary.length == 0) _summaryLabel.text = @" ";
-//    }
-//    else
-//    {
-//        if (_threadModel.subject.length == 0) _subjectLabel.text = @" ";
-//        if (content.length == 0) _summaryLabel.text = @" ";
-//    }
 }
 
 - (NSString*) removeLastThreeChar:(NSString*)origin

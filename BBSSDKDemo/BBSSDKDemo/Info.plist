@@ -2,6 +2,8 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>AMapApiKey</key>
+	<string>9eb676507eabd99b3d945fae2adc2e98</string>
 	<key>CFBundleAllowMixedLocalizations</key>
 	<true/>
 	<key>CFBundleDevelopmentRegion</key>
@@ -19,7 +21,7 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>1.0.0</string>
+	<string>2.4.0</string>
 	<key>CFBundleURLTypes</key>
 	<array>
 		<dict>
@@ -144,16 +146,16 @@
 	</dict>
 	<key>NSCameraUsageDescription</key>
 	<string>访问相机</string>
-	<key>NSPhotoLibraryAddUsageDescription</key>
-	<string>访问相册</string>
-	<key>NSPhotoLibraryUsageDescription</key>
-	<string>访问相册</string>
 	<key>NSLocationAlwaysUsageDescription</key>
 	<string>开启此功能带来更好体验</string>
 	<key>NSLocationUsageDescription</key>
 	<string>开启此功能带来更好体验</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>开启此功能带来更好体验</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>访问相册</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>访问相册</string>
 	<key>UIRequiredDeviceCapabilities</key>
 	<array>
 		<string>armv7</string>
@@ -171,7 +173,5 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<true/>
-	<key>AMapApiKey</key>
-	<string>9eb676507eabd99b3d945fae2adc2e98</string>
 </dict>
 </plist>

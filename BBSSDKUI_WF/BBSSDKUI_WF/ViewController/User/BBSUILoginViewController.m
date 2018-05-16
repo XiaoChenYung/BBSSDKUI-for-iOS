@@ -48,6 +48,7 @@
 
 @implementation BBSUILoginViewController
 
+#pragma mark -  生命周期 Life Circle
 - (void)viewDidLoad
 {
     [super viewDidLoad];
@@ -671,6 +672,7 @@
     }];
 }
 
+#pragma mark - 登录
 - (void)login:(id)sender
 {
     [self.view endEditing:YES];
@@ -718,8 +720,7 @@
             }];
             return ;
         }
-        
-        if (error.code == 9001205)
+        else if (error.code == 9001205)
         {
             [self showTopAlertWithText:@"请选择安全问题，并正确填写"];
             if ([res isKindOfClass:NSArray.class])
@@ -727,7 +728,7 @@
                 self.questions = res;
                 
                 [self.questionPickerView reloadAllComponents];
-    
+                
                 [_loginBackGround mas_updateConstraints:^(MASConstraintMaker *make) {
                     make.height.equalTo(@205);
                 }];
@@ -738,8 +739,7 @@
             }
             return;
         }
-        
-        if (error.code == 9001206)
+        else if (error.code == 9001206)
         {
             BBSUIEmailSendViewController *vc = [[BBSUIEmailSendViewController alloc] initWithEmail:email userName:userName sendType:BBSUIEmailSendTypeNeedIdentity];
             
@@ -747,13 +747,59 @@
             
             return;
         }
-        
-        if (error.code == -1009) {
+        else if (error.code == -1009)
+        {
             [self showTopAlertWithText:@"暂无网络，请检查你的网络连接"];
             return;
         }
+        else if (error.code == 9001201)
+        {
+            //Error Domain=BBSErrorDomain Code=9001201 "(null)" UserInfo={description=用户名或密码不正确或用户状态异常, code=9001201}
+            [self showTopAlertWithText:@"用户名或密码不正确或用户状态异常"];
+            return;
+        }
+        else
+        {
+            [SVProgressHUD showErrorWithStatus:@"登录失败"];
+            return;
+        }
         
-        [self showTopAlertWithText:error.userInfo[@"description"]];
+        //======
+//        if (error.code == 9001205)
+//        {
+//            [self showTopAlertWithText:@"请选择安全问题，并正确填写"];
+//            if ([res isKindOfClass:NSArray.class])
+//            {
+//                self.questions = res;
+//
+//                [self.questionPickerView reloadAllComponents];
+//
+//                [_loginBackGround mas_updateConstraints:^(MASConstraintMaker *make) {
+//                    make.height.equalTo(@205);
+//                }];
+//
+//                [UIView animateWithDuration:0.25 animations:^{
+//                    [self.view layoutIfNeeded];
+//                }];
+//            }
+//            return;
+//        }
+//
+//        if (error.code == 9001206)
+//        {
+//            BBSUIEmailSendViewController *vc = [[BBSUIEmailSendViewController alloc] initWithEmail:email userName:userName sendType:BBSUIEmailSendTypeNeedIdentity];
+//
+//            [self.navigationController pushViewController:vc animated:YES];
+//
+//            return;
+//        }
+//
+//        if (error.code == -1009) {
+//            [self showTopAlertWithText:@"暂无网络，请检查你的网络连接"];
+//            return;
+//        }
+//
+//        [self showTopAlertWithText:error.userInfo[@"description"]];
         NSLog(@"LoginFailed:%@",error);
         
     }];

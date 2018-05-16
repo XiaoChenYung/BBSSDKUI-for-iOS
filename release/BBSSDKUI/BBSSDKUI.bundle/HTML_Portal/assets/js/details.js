@@ -105,9 +105,31 @@ var details=new Vue({
                            
 				BBSSDKNative.openImage(imgList,i);
 			})
+//                       $mob.native.log("11111-----------1")
+//                       var video = document.getElementsByTagName("iframe");
+//                        $mob.native.log("11111-----------2")
+//                       var w = $("#detail_a").css('width');
+//                       $mob.native.log("11111-----------3-"+ w)
+//                       for(v in video ){
+//                       video[v].width = w
+//                       video[v].height = w*0.75
+//                       $mob.native.log("11111------"+w+"-----")
+//                       }
+//                        $mob.native.log("11111-----------end")
 		})
 		
     },
+                    mounted:function(){
+//                    $(function(){
+//                    alert(1);
+//                      var video = document.getElementsByTagName("iframe");
+//                      var w = document.getElementById("detail_a").offsetWidth;
+//                      for(v in video ){
+//                      video[v].width = w
+//                      video[v].height = w*0.75
+//                      }
+//                      })
+                    },
     methods:{
     	/*获得文章详情*/
     	getArticle: function(detailData){
@@ -125,7 +147,26 @@ var details=new Vue({
 				    imgList.push($(this).attr("src_link"))
 				})
 			    BBSSDKNative.downloadImages(imgList)
+                            
+                            //$mob.native.log("===========================");
+                            var w = document.getElementById("detail_a").offsetWidth;
+                            //$mob.native.log("1===============" + w + "============");
+                            var video = document.getElementsByTagName("iframe");
+                            for(v in video ){
+                            //$mob.native.log("2===============" + v + "============" + w * 0.75);
+                            video[v].width = w
+                            video[v].height = w*0.75
+                            }
 			})
+                    
+//                    alert(1);
+//                    var video = document.getElementsByTagName("iframe");
+//                    var w = document.getElementById("detail_a").offsetWidth;
+//                    w = 200
+//                    for(v in video ){
+//                    video[v].width = w
+//                    video[v].height = w*0.75
+//                    }
     		
     		// console.log(JSON.stringify(this.article, null,2))
     	},
@@ -133,7 +174,7 @@ var details=new Vue({
     	getCommentList: function(aid, page, pageSize){
     		var _this=this
     		var imgList=[]
-    		
+            //$mob.native.log("------"+page+"-----")
     		BBSSDKNative.getComments(aid, page,pageSize, function(list) {
     			
     			if(list==null&&page<2){
@@ -174,6 +215,10 @@ var details=new Vue({
     	openAttachment: function(data){
     		BBSSDKNative.openAttachment(data)
     	},
+        /* 打开导航地图 */
+        openAddress: function(data){
+            BBSSDKNative.showAddress(data)
+        },
     	timeSet: function(time){
             var diffdate = new Date().getTime() - time*1000;
             var days = Math.floor(diffdate/(24*3600*1000));

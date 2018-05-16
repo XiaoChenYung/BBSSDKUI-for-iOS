@@ -14,7 +14,9 @@
 #import <WebKit/WebKit.h>
 #import <MOBFoundation/MOBFoundation.h>
 #import "BBSUIContext.h"
-
+#import "UIView+BBSUITipView.h"
+#import "BBSThread+BBSUI.h"
+#import "BBSUIBaseView.h"
 
 
 
@@ -32,6 +34,9 @@
 @property (nonatomic, strong) UILabel *alreadyLab ;
 
 @property (nonatomic, strong) WKWebView *webView;
+@property (nonatomic, strong) UIView *noDataView;
+@property (nonatomic, strong) UILabel *noDataLabel;
+@property (nonatomic, strong) UIImageView *noDataImageView;
 
 @end
 
@@ -39,12 +44,48 @@ static NSString *cellIdentifier = @"SignInCell";
 
 @implementation BBSUISignInViewController
 
+#pragma mark - 懒加载 Lazy Load
+- (UIView *)noDataView
+{
+    if (!_noDataView) {
+            _noDataView = [[BBSUIBaseView alloc] initWithFrame:CGRectMake(0, 0, DZSUIScreen_width, DZSUIScreen_height)];
+            _noDataImageView = [[UIImageView alloc] initWithFrame:CGRectMake((DZSUIScreen_width - 80) / 2, DZSUIScreen_height/4, 80, 80)];
+            [_noDataImageView setImage:[UIImage BBSImageNamed:@"/Common/wnr@2x.png"]];
+            [_noDataView addSubview:_noDataImageView];
+            
+            _noDataLabel = [UILabel new];
+            [_noDataLabel setFrame:CGRectMake(0, BBS_BOTTOM(_noDataImageView), DZSUIScreen_width, 40)];
+            [_noDataLabel setTextAlignment:NSTextAlignmentCenter];
+            [_noDataLabel setTextColor:[UIColor grayColor]];
+            [_noDataLabel setText:@"暂无内容"];
+            [_noDataView addSubview:_noDataLabel];
+        
+        UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapClick)];
+         tap.numberOfTapsRequired = 1;
+        [_noDataView addGestureRecognizer:tap];
+        
+    }
+    return _noDataView;
+}
+
+- (void)tapClick
+{
+    [self _updateWkWebView];
+}
+
 #pragma mark -  生命周期 Life Circle
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.title = @"签到";
     [self _createWKWebView];
     [self _updateWkWebView];
+    self.noDataView.hidden = YES;
+}
+
+- (void)viewWillDisappear:(BOOL)animated
+{
+    [super viewWillDisappear:animated];
+    [SVProgressHUD dismiss];
 }
 
 - (void)_createWKWebView
@@ -59,25 +100,33 @@ static NSString *cellIdentifier = @"SignInCell";
 {
     long time = [[NSDate date] timeIntervalSince1970];
     NSString *strTime = [NSString stringWithFormat:@"%lu",time];
-    NSString *randomStr = [self getRandomStringWithNum:10];
     
-    [SVProgressHUD showWithStatus:@"loading..."];
+    [SVProgressHUD setDefaultStyle:SVProgressHUDStyleLight];
+    [SVProgressHUD show];
+     __weak typeof(self) weakSelf = self;
     [BBSSDK getProfileInfoWithAuthorid:-1 time:strTime result:^(BBSUser *user, NSError *error) {
-        if (!error) {
-            [BBSSDK getSginUrlWithType:@"2" Result:^(NSString *objStr, NSError *error) {
-                //"signurl":"http://xxx/plugin.php?id=bbssdk:sign",
-                NSString *url = [NSString stringWithFormat:@"%@&uid=%@&sign=%@&time=%ld&type=2&nonce=%@",user.signurl, user.uid,objStr,time,randomStr];
-                //http://182.92.158.79/utf8_x33/plugin.php?id=bbssdk:sign&uid=2790&sign=B999070A60152A1E46C526748B64CCA7&time=1524126528&type=2&nonce=p4n8y2aytt
-                NSURL * ubanAgreementUrl = [NSURL URLWithString:url];
+        if (!error)
+        {
+            self.noDataView.hidden = YES;
+            [BBSSDK getSginUrlWithType:@"2" userUid:user.uid enterSignUrl:user.signurl time:time Result:^(NSString *sginUrl, NSError *error) {
+                NSURL * ubanAgreementUrl = [NSURL URLWithString:sginUrl];
                 NSURLRequest * ubanAgreementRequest = [NSURLRequest requestWithURL:ubanAgreementUrl];
-                [self.webView loadRequest:ubanAgreementRequest];
-                self.webView.scrollView.showsVerticalScrollIndicator = NO;
-                 [SVProgressHUD dismissWithDelay:0.5];
+                [weakSelf.webView loadRequest:ubanAgreementRequest];
+                weakSelf.webView.scrollView.showsVerticalScrollIndicator = NO;
+                [SVProgressHUD dismissWithDelay:0.5];
             }];
+        }
+        else
+        {
+            self.noDataView.hidden = NO;
+            [self.view addSubview:self.noDataView];
+            [self.noDataImageView setImage:[UIImage BBSImageNamed:@"/Common/wwl@2x.png"]];
+            [self.noDataLabel setText:@"网络不佳，请再次刷新"];
+            
+            [SVProgressHUD dismissWithDelay:0.5];
         }
     }];
 }
-
 #pragma mark - 获取随机数
 - (NSString *)getRandomStringWithNum:(NSInteger)num
 {

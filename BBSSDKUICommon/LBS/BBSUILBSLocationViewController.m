@@ -56,18 +56,21 @@
     return self;
 }
 
-- (void)viewDidLoad {
+#pragma mark -  生命周期 Life Circle
+- (void)viewDidLoad
+{
     [super viewDidLoad];
-    // Do any additional setup after loading the view.
     self.navigationController.navigationBar.translucent = NO;
     [self configAMapKey];
     [self setupView];
 }
 
-- (void)viewWillAppear:(BOOL)animated{
+- (void)viewWillAppear:(BOOL)animated
+{
     [super viewWillAppear:animated];
     self.mapView.delegate = self;
     self.search.delegate = self;
+    
 }
 
 - (void)viewWillDisappear:(BOOL)animated{
@@ -109,6 +112,8 @@
     // Dispose of any resources that can be recreated.
 }
 
+#pragma mark - 配置
+
 - (UIStatusBarStyle)preferredStatusBarStyle{
     return self.statusBarStyle;
 }
@@ -134,7 +139,8 @@
     [AMapServices sharedServices].enableHTTPS = YES;
 }
 
-- (void)setupView{
+- (void)setupView
+{
     self.navigationItem.title = @"我的位置";
     self.edgesForExtendedLayout = UIRectEdgeAll;
     //self.automaticallyAdjustsScrollViewInsets =NO;
@@ -147,9 +153,13 @@
     sendItem.tintColor = [UIColor blackColor];
     self.navigationItem.rightBarButtonItem = sendItem;
     
-    UIBarButtonItem *cancelItem = [[UIBarButtonItem alloc] initWithTitle:@"取消" style:UIBarButtonItemStyleDone target:self action:@selector(cancel)];
-    cancelItem.tintColor = [UIColor blackColor];
-    self.navigationItem.leftBarButtonItem = cancelItem;
+    UIButton *backButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    [backButton setFrame:CGRectMake(0, 0, 44, 44)];
+    [backButton setImage:[UIImage BBSImageNamed:@"/Common/return@2x.png"] forState:UIControlStateNormal];
+    [backButton addTarget:self action:@selector(backButtonHandler) forControlEvents:UIControlEventTouchUpInside];
+    [backButton setImageEdgeInsets:UIEdgeInsetsMake(0, -20, 0, 0)];
+    self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:backButton];
+    
     
     if ([[UIDevice currentDevice].systemVersion floatValue] >=11.0 ){
         
@@ -173,7 +183,9 @@
     [self.view addSubview:self.tableView];
 }
 
-- (void)initSearch{
+
+- (void)initSearch
+{
     _search = [[AMapSearchAPI alloc] init];
     //_search.delegate = self;
 }
@@ -198,8 +210,33 @@
     [_search AMapPOIAroundSearch:request];
 }
 
-#pragma mark - Getter Setter
+- (void)setPreLocationDic:(NSDictionary *)preLocationDic
+{
+    _preLocationDic = preLocationDic;
+    if (preLocationDic && _mapView) {//有值就显示之前的值
+        CGFloat lat = 0;
+        CGFloat lon = 0;
+        NSArray *arr = [preLocationDic[@"location"] componentsSeparatedByString:@","];
+        if ([arr count] == 2) {
+            lat = [[preLocationDic[@"location"] componentsSeparatedByString:@","].firstObject floatValue];
+            lon = [[preLocationDic[@"location"] componentsSeparatedByString:@","].lastObject floatValue];
+        }
+        
+        CLLocationCoordinate2D coordinate = {lat,lon};
+        self.page = 1;
+        self.geocode = YES;
+        _mapView.centerCoordinate = coordinate;
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            [self toAroundSearch:coordinate];
+        });
+    }else if (preLocationDic == nil && _mapView){//没有值就回到原点
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            [self manuallocation:self.locationBtn];
+        });
+    }
+}
 
+#pragma mark - 懒加载 Lazy Load
 - (MAMapView *)mapView{
     if (!_mapView) {
         CGFloat screenWidth = [UIScreen mainScreen].bounds.size.width;
@@ -217,8 +254,6 @@
         _mapView.showsScale = NO;
         //显示用户位置
         _mapView.showsUserLocation = YES;
-        
-        
         //设置跟踪模式
         _mapView.userTrackingMode = MAUserTrackingModeNone;
         
@@ -245,12 +280,12 @@
         [_locationBtn setImage:locationImgNor forState:UIControlStateNormal];
         [_locationBtn setImage:locationImgSelected forState:UIControlStateSelected];
         [_locationBtn addTarget:self action:@selector(manuallocation:) forControlEvents:UIControlEventTouchUpInside];
-        
     }
     return _locationBtn;
 }
 
-- (UITableView *)tableView{
+- (UITableView *)tableView
+{
     if (!_tableView) {
         _tableView = [[UITableView alloc] initWithFrame:CGRectZero style:UITableViewStylePlain];
         _tableView.delegate = self;
@@ -270,7 +305,9 @@
     return _tableView;
 }
 
-- (void)loadPastData{
+#pragma mark - -----------load data-------
+- (void)loadPastData
+{
     NSLog(@"loadPastData");
     if (_mapView) {
         CLLocationCoordinate2D centerlocation= self.mapView.centerCoordinate;
@@ -309,7 +346,9 @@
 }
 
 #pragma mark - selector
-- (void)saveLocationInfo{
+#pragma mark --------------保存地图信息-------------
+- (void)saveLocationInfo
+{
     //取选中的地址
     
     NSMutableDictionary *locationDic = nil;
@@ -326,21 +365,23 @@
             [locationDic setObject:[NSString stringWithFormat:@"%@%@%@%@",info.province,info.city,info.district,info.address] forKey:@"address"];
         }
         [locationDic setObject:[NSString stringWithFormat:@"%f,%f",info.location.latitude,info.location.longitude] forKey:@"location"];
-        
     }
     if (self.locationSelectBlock) {
         self.locationSelectBlock(locationDic);
     }
-    [self cancel];
+    [self backButtonHandler];
 }
-- (void)cancel{
+
+- (void)backButtonHandler
+{
     if (_isPresent) {
         [self.navigationController dismissViewControllerAnimated:YES completion:nil];
     }else{
         [self.navigationController popViewControllerAnimated:YES];
     }
+    
 }
-
+//MARK:==回到当前位置
 - (void)manuallocation:(UIButton *)sender{
     [self.mapView setCenterCoordinate:self.location.coordinate animated:YES];
     if (!sender.isSelected) {
@@ -360,6 +401,7 @@
         [self.tableView.mj_footer endRefreshing];
         return;
     }
+    //MARK:-----添加地址数据---------
     if (self.page == 1) {
         [_tableView setContentOffset:CGPointMake(0,0) animated:NO];
         [self.nearbylocations removeAllObjects];
@@ -446,8 +488,6 @@
         self.searchResultController.coordinate = _mapView.centerCoordinate;
     }
     self.searchResultController.keyword = searchString;
-    
-    
     
 }
 #pragma mark - UISearchControllerDelegate

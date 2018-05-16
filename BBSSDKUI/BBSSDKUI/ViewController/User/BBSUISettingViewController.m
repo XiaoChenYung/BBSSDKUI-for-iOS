@@ -21,15 +21,19 @@
 
 @implementation BBSUISettingViewController
 
-- (void)viewDidLoad {
+#pragma mark -  生命周期 Life Circle
+- (void)viewDidLoad
+{
     [super viewDidLoad];
     
-    self.title = @"设置";
-    
-    self.tableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, DZSUIScreen_width, DZSUIScreen_height - 60) style:UITableViewStylePlain];
+    self.tableView = [[UITableView alloc] initWithFrame:CGRectZero style:UITableViewStylePlain];
+    [self.view addSubview:self.tableView];
+    [self.tableView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.left.right.mas_equalTo(0);
+        make.bottom.mas_equalTo(-160);
+    }];
     self.tableView.dataSource = self;
     self.tableView.delegate = self;
-    [self.view addSubview:self.tableView];
     
     UIView *tableHeaderView = [[UIView alloc] initWithFrame:(CGRect){0, 0, DZSUIScreen_width, 5}];
     tableHeaderView.backgroundColor = DZSUI_BackgroundColor;
@@ -38,11 +42,27 @@
     self.tableView.tableFooterView = [UIView new];
     
     NSArray *colorArray = @[DZSUIColorFromHex(0xFF8D65), DZSUIColorFromHex(0xFFB85B)];
-    BBSUIButton *button = [[BBSUIButton alloc] initWithFrame:CGRectMake(10, DZSUIScreen_height - 50, DZSUIScreen_width - 20, 40) FromColorArray:colorArray ByGradientType:leftToRight];
-    [button setTitle:@"退出" forState:UIControlStateNormal];
+    BBSUIButton *button = [[BBSUIButton alloc] initWithFrame:CGRectZero FromColorArray:colorArray ByGradientType:leftToRight];
     [self.view addSubview:button];
-    
+    [button mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.left.mas_equalTo(10);
+        make.right.mas_equalTo(-10);
+        make.bottom.mas_equalTo(-10);
+        make.size.height.mas_equalTo(40);
+    }];
+    [button setTitle:@"退出" forState:UIControlStateNormal];
     [button addTarget:self action:@selector(logoutAction:) forControlEvents:UIControlEventTouchUpInside];
+    
+    CAGradientLayer *gradient = [CAGradientLayer layer];
+    gradient.frame = CGRectMake(0, 0, DZSUIScreen_width - 20 , 40);
+    gradient.startPoint = CGPointMake(0, 0);
+    gradient.endPoint = CGPointMake(1, 0);
+    gradient.type = kCAGradientLayerAxial;
+    gradient.colors = [NSArray arrayWithObjects:
+                       (id)DZSUIColorFromHex(0xFF8D65).CGColor,
+                       (id)DZSUIColorFromHex(0xFFB85B).CGColor, nil];
+    [button.layer addSublayer:gradient];
+
 }
 
 - (void)didReceiveMemoryWarning {

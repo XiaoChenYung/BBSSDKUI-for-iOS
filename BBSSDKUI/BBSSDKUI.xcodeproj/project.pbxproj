@@ -22,6 +22,8 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
+		2F1FE5F720A3E4C500AF900E /* BBSUILBSLocationProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 2F1FE5F520A3E4C500AF900E /* BBSUILBSLocationProxy.h */; };
+		2F1FE5F820A3E4C500AF900E /* BBSUILBSLocationProxy.m in Sources */ = {isa = PBXBuildFile; fileRef = 2F1FE5F620A3E4C500AF900E /* BBSUILBSLocationProxy.m */; };
 		2F3776D4208F202500FEBB74 /* BBSSDKUI.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 2F3776D0208F202500FEBB74 /* BBSSDKUI.xcdatamodeld */; };
 		2F7530EB2080C62D00A20894 /* NSBundle+BBSSDKUI.m in Sources */ = {isa = PBXBuildFile; fileRef = 2F7530E72080C62C00A20894 /* NSBundle+BBSSDKUI.m */; };
 		2F7530EC2080C62D00A20894 /* UIImage+BBSFunction.m in Sources */ = {isa = PBXBuildFile; fileRef = 2F7530E82080C62C00A20894 /* UIImage+BBSFunction.m */; };
@@ -359,6 +361,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		2F1FE5F520A3E4C500AF900E /* BBSUILBSLocationProxy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BBSUILBSLocationProxy.h; sourceTree = "<group>"; };
+		2F1FE5F620A3E4C500AF900E /* BBSUILBSLocationProxy.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BBSUILBSLocationProxy.m; sourceTree = "<group>"; };
 		2F3776D1208F202500FEBB74 /* BBSSDKUI 2.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "BBSSDKUI 2.xcdatamodel"; sourceTree = "<group>"; };
 		2F3776D2208F202500FEBB74 /* BBSSDKUI 3.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "BBSSDKUI 3.xcdatamodel"; sourceTree = "<group>"; };
 		2F3776D3208F202500FEBB74 /* BBSSDKUI.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = BBSSDKUI.xcdatamodel; sourceTree = "<group>"; };
@@ -896,6 +900,8 @@
 		2FA040C5207C8C0D004CE72B /* LBS */ = {
 			isa = PBXGroup;
 			children = (
+				2F1FE5F520A3E4C500AF900E /* BBSUILBSLocationProxy.h */,
+				2F1FE5F620A3E4C500AF900E /* BBSUILBSLocationProxy.m */,
 				2FF750602084A228003BAF25 /* BBSUILBSLocationManager.h */,
 				2FF7505F2084A228003BAF25 /* BBSUILBSLocationManager.m */,
 				2FA040C6207C8C0D004CE72B /* BBSUILBSLocationViewController.h */,
@@ -1962,6 +1968,7 @@
 				2F7531032080C64300A20894 /* BBSUIPopoverViewCell.h in Headers */,
 				2FF7AD61207F66410054BFE8 /* BBSUIExpressionTextAttachment.h in Headers */,
 				2FF750622084A228003BAF25 /* BBSUILBSLocationManager.h in Headers */,
+				2F1FE5F720A3E4C500AF900E /* BBSUILBSLocationProxy.h in Headers */,
 				3AB956BB1F603265008D8D58 /* BBSUIUserInfoView.h in Headers */,
 				3AB956E41F60341C008D8D58 /* BBSUIBannerPreviewViewController.h in Headers */,
 				2F7530EE2080C62D00A20894 /* NSBundle+BBSSDKUI.h in Headers */,
@@ -2174,6 +2181,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				2F7530FE2080C64300A20894 /* UIView+BBSUIBadge.m in Sources */,
+				2F1FE5F820A3E4C500AF900E /* BBSUILBSLocationProxy.m in Sources */,
 				3A583916204D37050059D023 /* BBSUIPortalDetailViewController.h in Sources */,
 				3AB9565B1F602EA9008D8D58 /* BBSUISearchViewController.m in Sources */,
 				2F7531022080C64300A20894 /* BBSUIPopoverView.m in Sources */,

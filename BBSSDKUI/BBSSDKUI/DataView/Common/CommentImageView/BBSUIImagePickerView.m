@@ -18,7 +18,6 @@
 
 @property(nonatomic, strong) UIScrollView *imagesView ;
 
-@property(nonatomic, strong) UIButton *addBtn;
 
 @end
 
@@ -51,18 +50,24 @@
     ({
         UIButton *addBtn = [UIButton buttonWithType:UIButtonTypeCustom];
         [addBtn setImage:[UIImage BBSImageNamed:@"/Thread/AddPicture.png"] forState:UIControlStateNormal];
+        
         [addBtn addTarget:self action:@selector(pickImages) forControlEvents:UIControlEventTouchUpInside];
         [_imagesView addSubview:addBtn];
         [self resetAutolayoutAnimation:NO];
         addBtn ;
     });
+    //self.addBtn.hidden = YES;
+}
+
+
+- (void)hideAddButton
+{
+     self.addBtn.hidden = YES;
 }
 
 #pragma mark - Click Events
-
 - (void)pickImages
 {
-    
     if (_delegate && [_delegate respondsToSelector:@selector(didBeginPickImages)])
     {
         [_delegate didBeginPickImages];

@@ -140,6 +140,10 @@
         $mob.native.openAuthor(authorId);
     }
  
+    function showAddress(address){
+        $mob.native.showAddress(address);
+    }
+ 
     /*定义BBSSDKNative全局属性*/
     window.BBSSDKNative = {
         openImage: openImage,
@@ -158,6 +162,7 @@
         addNewCommentHtml: addNewCommentHtml, //新增评论
         likeArticle:likeArticle,
         goComment:goComment,
-        openAuthor:openAuthor
+        openAuthor:openAuthor,
+        showAddress:showAddress
     }
 })();

@@ -73,6 +73,8 @@ static NSString *BBSUIForumThreadIdentifier = @"BBSUIForumThreadIdentifier";
 
 @property (nonatomic, strong) BBSUIBaseView         *navView;
 @property (nonatomic, strong) BBSUITribuneSegementView *segemntView ;
+@property (nonatomic, strong) BBSUITribuneSegementView *hoverView;//悬浮的segement
+
 
 @end
 
@@ -97,7 +99,7 @@ static NSString *BBSUIForumThreadIdentifier = @"BBSUIForumThreadIdentifier";
     [self _configureUI];
     [self _initData];
     [self _requestData];
-
+    [self _addSuspensionSegementView];
     [self _createNavView];//自定义navview
 }
 
@@ -119,13 +121,23 @@ static NSString *BBSUIForumThreadIdentifier = @"BBSUIForumThreadIdentifier";
 }
 
 #pragma mark - initUI
+#pragma mark - 悬停view
+- (void)_addSuspensionSegementView
+{
+    //添加最新 热门 精华
+    self.hoverView = [[BBSUITribuneSegementView alloc] initWithFrame:CGRectMake(0, NavigationBar_Height + 15, DZSUIScreen_width, 42)];
+    [self.view addSubview:self.hoverView];
+    [self.view insertSubview:self.hoverView aboveSubview:self.forumThreadListTableView];
+    self.hoverView.backgroundColor = DZSUIColorFromHex(0xffffff);
+    self.hoverView.delegate = self;
+    self.hoverView.hidden = YES;
+}
+
 - (void)_configureUI
 {
     if ([BBSUIContext shareInstance].isIphoneX)
     {
         _forumThreadListTableView = [[UITableView alloc] initWithFrame:CGRectMake(0, -15, DZSUIScreen_width, DZSUIScreen_height + 50) style:UITableViewStylePlain];
-
-//        _forumThreadListTableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, DZSUIScreen_width, DZSUIScreen_height) style:UITableViewStylePlain];
     }
     else
     {
@@ -254,10 +266,9 @@ static NSString *BBSUIForumThreadIdentifier = @"BBSUIForumThreadIdentifier";
     [BBSSDK getThreadListWithFid:self.currentForum.fid orderType:[NSString orderTypeStringFromOrderType:self.orderType] selectType:[NSString selectTypeStringFromSelectType:self.selectType] pageIndex:self.currentIndex pageSize:BBSUIPageSize result:^(NSArray *threadList, NSError *error) {
         
         if (!error) {
-            
             if (theController.currentIndex == 1) {
                 theController.threadListArray = [NSMutableArray arrayWithArray:threadList];
-            }else{
+            }else {
                 [theController.threadListArray addObjectsFromArray:threadList];
             }
             
@@ -646,7 +657,7 @@ static NSString *BBSUIForumThreadIdentifier = @"BBSUIForumThreadIdentifier";
     [self.navigationController pushViewController:detailVC animated:YES];
 }
 
-#pragma mark - UITableview delegate
+#pragma mark - UIScrollView delegate
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView
 {
     UIColor * color = [UIColor whiteColor];
@@ -701,6 +712,17 @@ static NSString *BBSUIForumThreadIdentifier = @"BBSUIForumThreadIdentifier";
         self.navTitleLabel.alpha = 0;
         self.arrowImageView.alpha = 0;
     }
+    if (scrollView.contentOffset.y > 95)
+    {
+        self.hoverView.hidden = NO;
+    }
+    else
+    {
+        self.hoverView.hidden = YES;
+    }
+    
+    NSLog(@"----yyy-----%f",scrollView.contentOffset.y );
+    
 }
 
 #pragma mark - BBSUITribuneSegementView Delegate
@@ -724,21 +746,52 @@ static NSString *BBSUIForumThreadIdentifier = @"BBSUIForumThreadIdentifier";
         self.selectType = BBSUIThreadSelectTypeDisplayOrder;
     }
     
-    self.currentIndex = 1;
+     self.currentIndex = 1;
      [self _requestData];
+     [self _setHoverSelectType:index];
+}
+
+#pragma mark -设置悬浮框
+- (void)_setHoverSelectType:(NSInteger)index
+{
+    [self.hoverView.buttonsArr enumerateObjectsUsingBlock:^(UIButton *obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        
+        if (index == obj.tag - 20) {
+            [self.hoverView hoverViewClick:obj];
+        }
+    }];
+    
+    [self.segemntView.buttonsArr enumerateObjectsUsingBlock:^(UIButton *obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        if (index == obj.tag - 20) {
+            [self.segemntView hoverViewClick:obj];
+        }
+    }];
 }
 
 //时间排序
 - (void)selectSortByType:(NSInteger)sortIndex
 {
+//    if (sortIndex == BBSUISegmentViewMenuSendSort)
+//    {//发帖时间排序
+//        self.orderType = BBSUIThreadOrderCommentTime;
+//    }
+//    else if (sortIndex == BBSUISegmentViewMenuReplySort)
+//    {//回复时间排序
+//        self.orderType = BBSUIThreadOrderPostTime;
+//    }
+    
     if (sortIndex == BBSUISegmentViewMenuSendSort)
     {//发帖时间排序
-        self.orderType = BBSUIThreadOrderCommentTime;
+        //self.orderType = BBSUIThreadOrderCommentTime;
+        self.orderType = BBSUIThreadOrderPostTime;
     }
     else if (sortIndex == BBSUISegmentViewMenuReplySort)
     {//回复时间排序
-        self.orderType = BBSUIThreadOrderPostTime;
+        //self.orderType = BBSUIThreadOrderPostTime;
+        
+         self.orderType = BBSUIThreadOrderCommentTime;
     }
+    
     self.currentIndex = 1;
      [self _requestData];
 }

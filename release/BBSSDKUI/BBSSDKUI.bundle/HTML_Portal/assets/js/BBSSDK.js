@@ -137,6 +137,11 @@
         $mob.native.openAuthor(authorId);
     }
  
+    /* 打开导航地图 */
+    function showAddress(address){
+        $mob.native.showAddress(address);
+    }
+ 
     /*定义BBSSDKNative全局属性*/
     window.BBSSDKNative = {
         openImage: openImage,
@@ -154,6 +159,7 @@
         openRelatedArticle:openRelatedArticle,
         addNewCommentHtml: addNewCommentHtml, //新增评论
         goComment:goComment,
-        openAuthor:openAuthor
+        openAuthor:openAuthor,
+        showAddress:showAddress
     }
 })();

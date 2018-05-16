@@ -53,7 +53,8 @@
         [_imagesView addSubview:addBtn];
         [self resetAutolayoutAnimation:NO];
         addBtn ;
-    }); 
+    });
+    self.addBtn.hidden = YES;
 }
 
 #pragma mark - Click Events

@@ -32,26 +32,39 @@
 @property (nonatomic, assign) BOOL needBrint;
 
 @property (nonatomic, assign) CGFloat iphoneXTopPadding;
+@property (nonatomic, strong) UILabel *bannerLab;
 
 @end
 
 @implementation BBSUIPortalViewController
 
+#pragma mark - 懒加载 Lazy Load
+- (UILabel *)bannerLab
+{
+    if (!_bannerLab) {
+        _bannerLab = [[UILabel alloc] init];
+        [self.maskImage addSubview:_bannerLab];
+        [_bannerLab mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.bottom.mas_equalTo(-70);
+            make.left.mas_equalTo(20);
+        }];
+        _bannerLab.textColor = DZSUIColorFromHex(0xffffff);
+        _bannerLab.text = @"请前往开发者后台设置Banner";
+        _bannerLab.font = BBSFont(20);
+    }
+    return  _bannerLab;
+}
 #pragma mark -  生命周期 Life Circle
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-//    self.edgesForExtendedLayout = UIRectEdgeNone;
     self.automaticallyAdjustsScrollViewInsets = false;
-//    self.edgesForExtendedLayout = UIRectEdgeNone;
-    
     if ([BBSUIContext shareInstance].isIphoneX)
     {
         self.iphoneXTopPadding = 30;
     }
     
     [self _configureUI];
-//    [self _requestBannerList];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -76,7 +89,6 @@
             self.categoriesList = categories.mutableCopy;
             //添加tableview
             for (BBSPortalCatefories *obj in self.categoriesList) {
-#pragma mark ------BBSUIThreadListViewController
                 BBSUIThreadListViewController *vc = [[BBSUIThreadListViewController alloc] initWithCatid:obj.catid allowcomment:obj.allowcomment];
                 vc.viewType = BBSUIThreadListViewTypePortal;
                 
@@ -84,7 +96,6 @@
                 [titles addObject:obj.catname];
                 
                 vc.offSetBlock = ^(CGFloat offSet){
-//                NSLog(@"==============  %f",offSet);
                     [self setContentOffSet:offSet];
                 };
                 vc.refreshBannerBlock = ^(NSArray *bannnerList, NSError *error) {
@@ -96,7 +107,6 @@
                 if (vcs.count)
                 {
                     //self.segmentControl = [[BBSUILBSegmentControl alloc] initScrollTitlesWithFrame:CGRectMake(0, 245+ _iphoneXTopPadding, DZSUIScreen_width, 40)];
-#pragma mark ----------segmentControl-----
                     self.segmentControl = [[BBSUILBSegmentControl alloc] initScrollTitlesWithFrame:CGRectMake(0, 245, DZSUIScreen_width, 40)];
                     //self.segmentControl.tableViewY = 245 - 64 + _iphoneXTopPadding;
                     self.segmentControl.tableViewY = 245 - 64 ;
@@ -112,7 +122,6 @@
                     
                     self.headerView = [self _obtainHeaderView];
                     _headerView.layer.zPosition = 1.0f;
-                    //[_headerView addSubview:self.segmentControl];
                     [self.view addSubview:_headerView];
                     
                     self.segmentControl.layer.zPosition = 2.0f;
@@ -123,7 +132,6 @@
         }
     }];
     
-//    self.segmentControl = [[LBSegmentControl alloc] initStaticTitlesWithFrame:CGRectMake((DZSUIScreen_width-160)/2, 15, 160, 42) titleFontSize:17 isIntegrated:YES];
 }
 
 #pragma mark -控制segment是否悬停
@@ -134,7 +142,6 @@
     frame.origin.y = -offSet ;
     self.headerView.frame = frame;
     
-    #pragma mark---------change
     _lastTableViewOffsetY = offSet;
 
     if (offSet <= 245 - 64)
@@ -149,13 +156,9 @@
     {
         CGRect segmentFrame = self.segmentControl.frame;
         segmentFrame.origin.y = 64 + _iphoneXTopPadding;
-        //segmentFrame.origin.y = 64;
         self.segmentControl.frame = segmentFrame;
-        //NSLog(@"-----rrrr--1111--%f",segmentFrame.origin.y);
     }
-    NSLog(@"=====eeeeeee======%f", offSet);//160---180 变大
     CGRect segmentFrame = self.segmentControl.frame;
-    NSLog(@"=====offfoo=====%f", segmentFrame.origin.y);//70----64
     
     if (segmentFrame.origin.y <= 92+40) {
         [self.view bringSubviewToFront:self.segmentControl];
@@ -171,7 +174,7 @@
 - (void)_refreshBannerWithBannnerList:(NSArray *)bannerList error:(NSError *)error
 {
     if (bannerList.count > 0) {
-        
+        self.bannerLab.hidden = YES;
         self.maskImage.hidden = YES;
         self.bannerArray = bannerList;
         
@@ -200,10 +203,11 @@
         self.bannerView.pageControlCurrentColor = [UIColor whiteColor];
         self.bannerView.delegate = self;
         self.bannerView.titleLabelTextColor = [UIColor whiteColor];
-        
-    }else{
-        
+    }
+    else
+    {
         self.maskImage.hidden = NO;
+        self.bannerLab.hidden = NO;
         [self.maskImage setImage:[UIImage BBSImageNamed:@"/Home/bannerDefault@2x.png"]];
     }
 }
@@ -254,7 +258,6 @@
     //    CGFloat forumViewHeight = DZSUIScreen_height / 7;
     CGFloat forumViewHeight = 45;
     
-    #pragma mark ----------_obtainHeaderView-----
     //UIView *headerView = [[UIView alloc] initWithFrame:CGRectMake(0, _iphoneXTopPadding, DZSUIScreen_width, 245 + forumViewHeight)];
     UIView *headerView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, DZSUIScreen_width, 245 + forumViewHeight)];
     [headerView setBackgroundColor:[UIColor whiteColor]];
@@ -269,13 +272,10 @@
     [self.maskImage setImage:[UIImage BBSImageNamed:@"/Home/BannerMask.png"]];
     [headerView addSubview:self.maskImage];
     
-     #pragma mark ----------lineView-----
     //UIView *lineView = [[UIView alloc] initWithFrame:CGRectMake(0, 240 + forumViewHeight + _iphoneXTopPadding, DZSUIScreen_width, 5)];
     UIView *lineView = [[UIView alloc] initWithFrame:CGRectMake(0, 240 + forumViewHeight , DZSUIScreen_width, 5)];
     lineView.backgroundColor = DZSUIColorFromHex(0xACADB8);
     
-    //headerView.backgroundColor = [UIColor redColor];
-    //lineView.backgroundColor = [UIColor greenColor];
     
     return headerView;
 }
@@ -286,6 +286,7 @@
     [BBSSDK getPortalBannerList:^(NSArray *bannnerList, NSError *error) {
         
         if (bannnerList.count > 0) {
+            theHomeVC.bannerLab.hidden = YES;
             theHomeVC.maskImage.hidden = YES;
             theHomeVC.bannerArray = bannnerList;
             
@@ -318,6 +319,7 @@
         }else{
             theHomeVC.maskImage.hidden = NO;
             [theHomeVC.maskImage setImage:[UIImage BBSImageNamed:@"/Home/bannerDefault@2x.png"]];
+            theHomeVC.bannerLab.hidden = NO;
         }
     }];
 }

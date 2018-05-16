@@ -124,6 +124,15 @@ var details=new Vue({
 				    imgList.push($(this).attr("src_link"))
 				})
 			    BBSSDKNative.downloadImages(imgList)
+                            //$mob.native.log("===========================");
+                            var w = document.getElementById("detail_a").offsetWidth;
+                            //$mob.native.log("1===============" + w + "============");
+                            var video = document.getElementsByTagName("iframe");
+                            for(v in video ){
+                            //$mob.native.log("2===============" + v + "============" + w * 0.75);
+                            video[v].width = w
+                            video[v].height = w*0.75
+                            }
 			})
     		
     		// console.log(JSON.stringify(this.article, null,2))
@@ -174,6 +183,9 @@ var details=new Vue({
             $mob.native.log('sssssssaaaaaa');
     		BBSSDKNative.openAttachment(data)
     	},
+        openAddress: function(data){
+            BBSSDKNative.showAddress(data)
+        },
     	timeSet: function(time){
             var diffdate = new Date().getTime() - time*1000;
             var days = Math.floor(diffdate/(24*3600*1000));

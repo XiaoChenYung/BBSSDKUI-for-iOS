@@ -112,6 +112,9 @@ static NSString * const BBSUIRichTextEditorToolbarFonts = @"com.zedsaid.toolbari
 
 @property (nonatomic,copy) NSString *addressTag;
 
+@property (nonatomic,assign) BOOL isHiddenLBSMenu;
+
+
 /**
  *  Sets the HTML for the entire editor
  *
@@ -237,5 +240,6 @@ static NSString * const BBSUIRichTextEditorToolbarFonts = @"com.zedsaid.toolbari
 - (void)setCSS:(NSString *)css;
 
 - (void)hideKeyboard;
+
 
 @end

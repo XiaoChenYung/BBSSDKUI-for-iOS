@@ -212,6 +212,10 @@ var details=new Vue({
                     reply: function(data){
                     BBSSDKNative.replyComment(data)
                     },
+                    /* 打开导航地图 */
+                    openAddress: function(data){
+                    BBSSDKNative.showAddress(data)
+                    },
                     timeSet: function(time){
                     var diffdate = new Date().getTime() - time*1000;
                     var days = Math.floor(diffdate/(24*3600*1000));

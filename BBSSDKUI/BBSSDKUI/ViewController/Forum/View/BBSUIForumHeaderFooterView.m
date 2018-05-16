@@ -111,6 +111,10 @@ static NSString *headIdentifier = @"header";
     }
 }
 
+- (void)hideEditButton
+{
+    self.editButton.hidden = YES;
+}
 - (void)setIsEdited:(BOOL)isEdited
 {
     _isEdited = isEdited;

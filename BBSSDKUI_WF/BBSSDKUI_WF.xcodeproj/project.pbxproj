@@ -39,6 +39,8 @@
 		2FA0432E207CD03E004CE72B /* BBSUILBSLocationCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 2FA04322207CD03E004CE72B /* BBSUILBSLocationCell.m */; };
 		2FA0432F207CD03E004CE72B /* BBSUILBSNotLocationCell.h in Headers */ = {isa = PBXBuildFile; fileRef = 2FA04323207CD03E004CE72B /* BBSUILBSNotLocationCell.h */; };
 		2FA04330207CD03E004CE72B /* BBSUILBSNotLocationCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 2FA04324207CD03E004CE72B /* BBSUILBSNotLocationCell.m */; };
+		2FEAF77A20A3EE8B00846547 /* BBSUILBSLocationProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 2FEAF77820A3EE8B00846547 /* BBSUILBSLocationProxy.h */; };
+		2FEAF77B20A3EE8B00846547 /* BBSUILBSLocationProxy.m in Sources */ = {isa = PBXBuildFile; fileRef = 2FEAF77920A3EE8B00846547 /* BBSUILBSLocationProxy.m */; };
 		2FF7ABA5207DC6C40054BFE8 /* BBSUIRTEBarButtonItem.h in Headers */ = {isa = PBXBuildFile; fileRef = 2FF7AB86207DC6C30054BFE8 /* BBSUIRTEBarButtonItem.h */; };
 		2FF7ABA6207DC6C40054BFE8 /* BBSUIRTEBarButtonItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 2FF7AB87207DC6C30054BFE8 /* BBSUIRTEBarButtonItem.m */; };
 		2FF7ABA7207DC6C40054BFE8 /* BBSUIRTEFontsViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2FF7AB88207DC6C30054BFE8 /* BBSUIRTEFontsViewController.h */; };
@@ -372,6 +374,8 @@
 		2FA04322207CD03E004CE72B /* BBSUILBSLocationCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BBSUILBSLocationCell.m; sourceTree = "<group>"; };
 		2FA04323207CD03E004CE72B /* BBSUILBSNotLocationCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BBSUILBSNotLocationCell.h; sourceTree = "<group>"; };
 		2FA04324207CD03E004CE72B /* BBSUILBSNotLocationCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BBSUILBSNotLocationCell.m; sourceTree = "<group>"; };
+		2FEAF77820A3EE8B00846547 /* BBSUILBSLocationProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BBSUILBSLocationProxy.h; sourceTree = "<group>"; };
+		2FEAF77920A3EE8B00846547 /* BBSUILBSLocationProxy.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BBSUILBSLocationProxy.m; sourceTree = "<group>"; };
 		2FF7AB86207DC6C30054BFE8 /* BBSUIRTEBarButtonItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BBSUIRTEBarButtonItem.h; sourceTree = "<group>"; };
 		2FF7AB87207DC6C30054BFE8 /* BBSUIRTEBarButtonItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BBSUIRTEBarButtonItem.m; sourceTree = "<group>"; };
 		2FF7AB88207DC6C30054BFE8 /* BBSUIRTEFontsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BBSUIRTEFontsViewController.h; sourceTree = "<group>"; };
@@ -861,6 +865,8 @@
 		2FA04319207CD03E004CE72B /* LBS */ = {
 			isa = PBXGroup;
 			children = (
+				2FEAF77820A3EE8B00846547 /* BBSUILBSLocationProxy.h */,
+				2FEAF77920A3EE8B00846547 /* BBSUILBSLocationProxy.m */,
 				2F60ACD9208444AF0079F441 /* BBSUILBSLocationManager.h */,
 				2F60ACDA208444AF0079F441 /* BBSUILBSLocationManager.m */,
 				2FA0431A207CD03E004CE72B /* BBSUILBSLocationViewController.h */,
@@ -1916,6 +1922,7 @@
 				4410D6641EA6284A001D331E /* BBSUIThreadForumListTableViewCell.h in Headers */,
 				3A769F471F5522660067C094 /* BBSUIShareView.h in Headers */,
 				3A720AD31F2737D1003ABEAE /* BBSUIUserOtherInfoView.h in Headers */,
+				2FEAF77A20A3EE8B00846547 /* BBSUILBSLocationProxy.h in Headers */,
 				446DC6F31EB0B01B00346D6A /* BBSUILoadUrlViewController.h in Headers */,
 				2FF7ACB1207F57D80054BFE8 /* NSString+BBSUITime.h in Headers */,
 				70B06F9420746F350028FF34 /* BBSUITribuneViewController.h in Headers */,
@@ -2137,6 +2144,7 @@
 				3A2FB73E1F29997D00B8A0E5 /* BBSUIUserMeInfoViewController.m in Sources */,
 				2FF7ABBB207DC6C40054BFE8 /* BBSUIHRColorCursor.m in Sources */,
 				6B0351441F34227D006B5913 /* BBSUIMainStyleNavigationController.m in Sources */,
+				2FEAF77B20A3EE8B00846547 /* BBSUILBSLocationProxy.m in Sources */,
 				446DC6B91EAF0A5900346D6A /* BBSUIForumSummaryCellTableViewCell.m in Sources */,
 				6B93DECC1F34554F00E7FED9 /* BBSUIStatusBarTip.m in Sources */,
 				2FA0432C207CD03E004CE72B /* BBSUILBSShowLocationViewController.m in Sources */,

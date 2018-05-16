@@ -32,5 +32,6 @@
 @property (nonatomic, assign) BOOL isEdited;
 
 - (void)tetttttt;
+- (void)hideEditButton;
 
 @end

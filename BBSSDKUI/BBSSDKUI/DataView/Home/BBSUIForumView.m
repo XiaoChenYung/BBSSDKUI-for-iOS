@@ -83,7 +83,7 @@
 - (void)configureUI
 {
     //设置tableview
-    self.forumTableView = [[UITableView alloc] initWithFrame:self.bounds style:UITableViewStyleGrouped];
+    self.forumTableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, DZSUIScreen_width, DZSUIScreen_height) style:UITableViewStyleGrouped];
     [self addSubview:self.forumTableView];
     self.forumTableView.sectionHeaderHeight = 40;
     [self.forumTableView setDelegate:self];
@@ -139,7 +139,6 @@
             
         }else
         {
-            //            [weakSelf.forumTableView setHidden:YES];
             [weakSelf bbs_configureTipViewWithTipMessage:@"网络不佳，请再次刷新" hasData:weakSelf.allForumArray.count != 0 hasError:YES reloadButtonBlock:^(id sender) {
                 [weakSelf requestData];
             }];
