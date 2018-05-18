@@ -14,7 +14,7 @@ typedef NS_ENUM(NSInteger, BBSUICollectionViewType)
     CollectionViewTypeThreadFavorites       = 2,    // 收藏帖子
     CollectionViewTypeOtherUserThreadList   = 3,    // 查看他人帖子
     CollectionViewTypeHistory               = 4,    // 历史记录
-    CollectionViewTypeAttion              = 4     // 关注帖子
+    CollectionViewTypeAttion              = 5     // 关注帖子
 
     
 };
