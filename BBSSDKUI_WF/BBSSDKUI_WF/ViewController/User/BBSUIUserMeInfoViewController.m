@@ -13,10 +13,6 @@
 #import "BBSUISignInViewController.h"
 #import <MOBFoundation/MOBFoundation.h>
 
-//#import "BBSContext.h"
-
-
-
 
 @interface BBSUIUserMeInfoViewController ()
 
@@ -60,7 +56,8 @@
     _needRequestData = YES;
 }
 
-- (void)setInformationImage{
+- (void)setInformationImage
+{
     if ([[BBSUIContext shareInstance].currentUser.notices integerValue] > 0) {
         [_rightButton setImage:[UIImage BBSImageNamed:@"User/information2@2x.png"] forState:UIControlStateNormal];
     }else{
@@ -80,7 +77,7 @@
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
+    
 }
 
 #pragma mark - init UI
@@ -97,13 +94,6 @@
     UIView *itemView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 72, 30)];
     UIBarButtonItem *editButtonItem = [[UIBarButtonItem alloc]initWithCustomView:itemView];
     self.navigationItem.rightBarButtonItem = editButtonItem;
-
-    //签到
-    _signButton = [[UIButton alloc]initWithFrame:CGRectMake(0,0,30,30)];
-    [itemView addSubview:_signButton];
-    [_signButton setImage:[UIImage BBSImageNamed:@"User/SignIn.png"]forState:UIControlStateNormal];
-    [_signButton addTarget:self action:@selector(informationAction:) forControlEvents:UIControlEventTouchUpInside];
-    _signButton.tag = 10;
     
     //消息
     _rightButton = [[UIButton alloc]initWithFrame:CGRectMake(42,0,30,30)];
@@ -111,6 +101,25 @@
     [_rightButton setImage:[UIImage BBSImageNamed:@"User/information@2x.png"]forState:UIControlStateNormal];
     [_rightButton addTarget:self action:@selector(informationAction:) forControlEvents:UIControlEventTouchUpInside];
     _rightButton.tag = 11;
+    
+    //[BBSContext defaultContext].usePlugApi
+    if ([BBSSDK isUsePlug])
+    {//使用插件 隐藏消息
+        _rightButton.hidden = YES;
+        _signButton = [[UIButton alloc]initWithFrame:CGRectMake(42,0,30,30)];
+    }
+    else
+    {//不使用插件 不隐藏消息
+        _rightButton.hidden = NO;
+        _signButton = [[UIButton alloc]initWithFrame:CGRectMake(0,0,30,30)];
+    }
+    
+    //签到
+    [itemView addSubview:_signButton];
+    [_signButton setImage:[UIImage BBSImageNamed:@"User/SignIn.png"]forState:UIControlStateNormal];
+    [_signButton addTarget:self action:@selector(informationAction:) forControlEvents:UIControlEventTouchUpInside];
+    _signButton.tag = 10;
+    
 }
 
 - (void)informationAction:(UIButton *)sender

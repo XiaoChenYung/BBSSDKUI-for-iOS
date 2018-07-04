@@ -2,28 +2,14 @@
 //  BBSUIForumViewController.h
 //  BBSSDKUI
 //
-//  Created by liyc on 2017/4/18.
+//  Created by liyc on 2017/2/16.
 //  Copyright © 2017年 MOB. All rights reserved.
 //
 
-#import "BBSUIBackNavViewController.h"
+#import "BBSUIBaseViewController.h"
 
-@class BBSForum;
+@interface BBSUIForumViewController : BBSUIBaseViewController
 
-typedef NS_ENUM(NSInteger, BBSUIForumViewControllerType)
-{
-    BBSUIForumViewControllerTypeDefault = 0,    // 默认版块展示
-    BBSUIForumViewControllerTypeSelectForum = 1 // 选择版块
-};
-
-/**
- 板块 VC
- */
-@interface BBSUIForumViewController : BBSUIBackNavViewController
-
-- (instancetype)initWithSelectType:(BBSUIForumViewControllerType)forumType resultHandler:(void (^)(BBSForum *forum))resultHandler;
-
-@property (nonatomic, assign) BBSUIForumViewControllerType forumType;
-
+- (instancetype)initWithTitle:(NSString *)title;
 
 @end

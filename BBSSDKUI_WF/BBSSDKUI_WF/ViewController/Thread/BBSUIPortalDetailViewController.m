@@ -88,6 +88,7 @@
     return self;
 }
 
+#pragma mark -  生命周期 Life Circle
 - (void)viewDidLoad
 {
     [super viewDidLoad];
@@ -185,16 +186,6 @@
     [shareButton addTarget:self action:@selector(shareButtonHandler:) forControlEvents:UIControlEventTouchUpInside];
     [shareButton setImage:[UIImage BBSImageNamed:@"/Thread/share@2x.png"] forState:UIControlStateNormal];
     
-//    _favButton = [UIButton buttonWithType:UIButtonTypeCustom];
-//    [self.bottomBar addSubview:_favButton];
-//    [_favButton mas_makeConstraints:^(MASConstraintMaker *make) {
-//        make.right.mas_equalTo(shareButton.mas_left).with.offset(-15);
-//        make.centerY.equalTo(shareButton.mas_centerY);
-//        make.size.mas_equalTo(CGSizeMake(30, 30));
-//    }];
-//    [_favButton addTarget:self action:@selector(favButtonHandler:) forControlEvents:UIControlEventTouchUpInside];
-//    [_favButton setImage:[UIImage BBSImageNamed:@"/Thread/favDeselected@2x.png"] forState:UIControlStateNormal];
-    
     _commentButton = [UIButton buttonWithType:UIButtonTypeCustom];
     [self.bottomBar addSubview:_commentButton];
     [_commentButton mas_makeConstraints:^(MASConstraintMaker *make) {
@@ -238,18 +229,7 @@
     if (_threadModel.commentnum > 0) {
         [_commentButton bbs_MakeBadgeText:[NSString stringWithFormat:@"%zd", _threadModel.commentnum] textColor:[UIColor whiteColor] backColor:[UIColor redColor] Font:[UIFont systemFontOfSize:12]];
     }
-    // ??? 
-//    if (_threadModel.favid != 0) {
-//        [_favButton setImage:[UIImage BBSImageNamed:@"/Thread/favSelected@2x.png"] forState:UIControlStateNormal];
-//        self.isFavirated = YES;
-//    }else{
-//        [_favButton setImage:[UIImage BBSImageNamed:@"/Thread/favDeselected@2x.png"] forState:UIControlStateNormal];
-//        self.isFavirated = NO;
-//    }
-    
-    //    if (_threadModel.authorId == [[BBSUIContext shareInstance].currentUser.uid integerValue]) {
-    //        [self.favButton setEnabled:NO];
-    //    }
+
 }
 
 - (void)loadWeb
@@ -317,8 +297,16 @@
                     _threadModel = thread;
                     [[BBSUICoreDataManage shareManager] addHistoryWithThread:thread];
                     [theWebController updateUI];
-                    NSDictionary * res = [theWebController dictionaryWithThread:thread];
-                    
+                    NSDictionary * res1 = [theWebController dictionaryWithThread:thread];
+                    NSMutableDictionary *res = [[NSMutableDictionary alloc] initWithDictionary:res1];
+                    if ([BBSSDK isUsePlug])
+                    {
+                        res[@"isPlug"] = @1;
+                    }
+                    else
+                    {
+                        res[@"isPlug"] = @0;
+                    }
                     if (callback)
                     {
                         [theWebController.webView stringByEvaluatingJavaScriptFromString:[NSString stringWithFormat:@"%@(%@)", callback, [MOBFJson jsonStringFromObject:res]]];
@@ -796,15 +784,20 @@
                 MBProgressHUD *HUD = [[MBProgressHUD alloc] initWithView:self.view];
                 [self.view addSubview:HUD];
                 HUD.contentColor = [UIColor whiteColor];
-                HUD.label.text = error.userInfo[@"description"];
+                if (error.code ==  900811)
+                {
+                    HUD.label.text = @" 已经表过态";
+                }
+                else
+                {
+                    HUD.label.text = error.userInfo[@"description"];
+                }
                 HUD.mode = MBProgressHUDModeText;
                 HUD.bezelView.backgroundColor = [UIColor blackColor];
                 [HUD showAnimated:YES];
                 [HUD hideAnimated:YES afterDelay:2];
-                
             }
         }];
-    
         
     }];
 }
@@ -1098,7 +1091,13 @@
         theController.replyView.state = BBSUIReplyStateNormal;
     });
     
-    _threadModel.commentnum ++ ;
+    //_threadModel.commentnum ++ ;
+#pragma mark --- 评论数目
+    NSLog(@"----pppp----000-%ld", (long)_threadModel.commentnum);
+    _threadModel.commentnum = _threadModel.commentnum + 1;
+    [[BBSUICoreDataManage shareManager] addHistoryWithThread:_threadModel];
+    
+    NSLog(@"----pppp---1111--%ld", (long)_threadModel.commentnum);
     [self updateUI];
 }
 

@@ -538,35 +538,19 @@
     return urlHtml;
 }
 
+#pragma mark - 发帖请求
 - (void)postThread
 {
     __block NSMutableString *urlHtml = [self.editor getHTML].mutableCopy;
     
     [_mdicExpression enumerateKeysAndObjectsUsingBlock:^(NSString * _Nonnull key, NSString * _Nonnull obj, BOOL * _Nonnull stop) {
         
-        //        [urlHtml stringByReplacingOccurrencesOfString:obj withString:key];
-        
         urlHtml.string = [self _replaceExpressionWithUrl:urlHtml.mutableCopy key:key obj:obj];
-        
-        //        NSRange range = [urlHtml rangeOfString:obj];
-        //        if (range.location != NSNotFound) {
-        //            [urlHtml replaceOccurrencesOfString:obj withString:key options:NSLiteralSearch  range:range];
-        //
-        //            [_mdicExpression removeObjectForKey:key];
-        //        }
-        
         NSString *obj2 = [obj substringFromIndex:1];
         urlHtml.string = [self _replaceExpressionWithUrl:urlHtml.mutableCopy key:key obj:obj2];
-        
-        //        NSRange range2 = [urlHtml rangeOfString:[obj substringFromIndex:2]];
-        //        if (range2.location != NSNotFound) {
-        //            [urlHtml replaceOccurrencesOfString:obj withString:key options:NSLiteralSearch  range:range2];
-        //            [_mdicExpression removeObjectForKey:key];
-        //        }
     }];
     
     NSString *title = self.titleTextField.text;
-    
     static dispatch_semaphore_t seamphore;
     static dispatch_once_t onceToken;
     static dispatch_queue_t queue;

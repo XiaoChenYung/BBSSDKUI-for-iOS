@@ -162,7 +162,10 @@
     }
     NSLog(@"-----%@",res.allValues);
     self.allDataArr = [NSMutableArray arrayWithArray:res.allValues];
-    [self.allDataArr removeLastObject];
+    if (self.allDataArr.count > 1) {
+        [self.allDataArr removeLastObject];
+    }
+    
 }
 
 - (void)devideForums

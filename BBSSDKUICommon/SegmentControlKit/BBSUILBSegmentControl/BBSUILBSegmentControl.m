@@ -321,7 +321,6 @@ typedef NS_ENUM(NSInteger, BBSUILBScrollCtrlViewScrollStatus) {
 }
 
 #pragma mark - IBActions(事件)
-
 /**
  *  标题项点击事件
  */
@@ -335,9 +334,7 @@ typedef NS_ENUM(NSInteger, BBSUILBScrollCtrlViewScrollStatus) {
     
     // 赋值
     self.currentItem = segment;
-    
     [self setSegementAnimate];
-    
     [self _settingNextContentOffSet];
 }
 
@@ -473,7 +470,6 @@ typedef NS_ENUM(NSInteger, BBSUILBScrollCtrlViewScrollStatus) {
             UIImageView * imageView = [self.bottomView.subviews firstObject];
             imageView.bbs_left = (self.bottomView.bbs_width - imageView.bbs_width) / 2;
         }
-
     }];
     
     if (self.delegate && [self.delegate respondsToSelector:@selector(selectIndex:)]) {

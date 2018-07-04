@@ -15,6 +15,8 @@
 #import "BBSUIUserOtherInfoViewController.h"
 #import "UIView+BBSUITipView.h"
 #import "BBSUIContext.h"
+#import "MBProgressHUD.h"
+
 
 #define BBSUIFansCellHeight 65
 #define BBSUIPageSize       10
@@ -230,27 +232,36 @@
             }];
         }else{
             [BBSSDK followWithFollowuid:fans.uid result:^(NSError *error) {
-                if (! error) {
+                if (! error)
+                {
                     NSLog(@"关注成功");
                     [fans setValue:@(1) forKey:@"isFollow"];
                     [weakSelf.tableView reloadData];
+                }
+                else
+                {
+                    MBProgressHUD *HUD = [[MBProgressHUD alloc] initWithView:self];
+                    [self addSubview:HUD];
+                    if (error.code == 90090608) {
+                        HUD.label.text = @"Discuz论坛错误：不能关注自己";
+                    }else{
+                        HUD.label.text = error.userInfo[@"description"];
+                    }
+                    
+                    HUD.contentColor = [UIColor whiteColor];
+                    HUD.mode = MBProgressHUDModeText;
+                    HUD.bezelView.backgroundColor = [UIColor blackColor];
+                    [HUD showAnimated:YES];
+                    [HUD hideAnimated:YES afterDelay:2];
                 }
             }];
         }
     }
     
-    
-    
-    
-    //...
 }
 
 
 @end
-
-
-
-
 
 
 

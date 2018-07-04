@@ -253,10 +253,38 @@ static NSString *cellIdentifier = @"ThreadSummaryCell";
     postThread.frame = CGRectMake(DZSUIScreen_width - postThreadButtonWidth - 10, 25 + _iphoneXTopPadding, 30, 30);
     [postThread setImage:[UIImage BBSImageNamed:@"Home/postThreadBlack.png"] forState:UIControlStateNormal];
     [postThread addTarget:self action:@selector(editThread:) forControlEvents:UIControlEventTouchUpInside];
-    
     [self.view addSubview:postThread];
-
+    
+    //===== 搜索
+    UIButton *searchBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+    [self.view addSubview:searchBtn];
+    
+    [searchBtn mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.mas_equalTo(postThread.mas_top);
+        make.right.mas_equalTo(postThread.mas_left).mas_equalTo(-10);
+        make.size.mas_equalTo(CGSizeMake(30, 30));
+    }];
+    //searchBtn.frame = CGRectMake(0, 0, 30, 30);search.png  search_jianyue.png
+    UIImage *searchScaleImage = [UIImage BBSImageNamed:@"/Common/search.png"];
+    [searchBtn setImage:searchScaleImage forState:UIControlStateNormal];
+    [searchBtn addTarget:self action:@selector(searchAction:) forControlEvents:UIControlEventTouchUpInside];
 }
+
+#pragma mark - 搜索
+- (void)searchAction:(UIButton *)sender
+{
+    BBSUISearchViewController *vc = [BBSUISearchViewController new];
+    
+    id controller = [MOBFViewController currentViewController];
+    if ([controller isKindOfClass:[UITabBarController class]] && ((UITabBarController *)controller).selectedViewController)
+    {
+        controller = ((UITabBarController *)controller).selectedViewController;
+    }
+    
+    [((UIViewController *)controller).navigationController pushViewController:vc animated:YES];
+}
+
+
 
 
 #pragma mark - UITableView dataSource

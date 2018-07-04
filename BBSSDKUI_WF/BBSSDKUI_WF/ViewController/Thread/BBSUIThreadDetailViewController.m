@@ -299,13 +299,23 @@
             if (!error && thread)
             {
                 _threadModel = thread;
-                [[BBSUICoreDataManage shareManager] addHistoryWithThread:thread];
+                 [[BBSUICoreDataManage shareManager] addHistoryWithThread:thread];
                 [theWebController updateUI];
                 NSDictionary * res = [theWebController dictionaryWithThread:thread];
+                NSMutableDictionary *mutDic = [[NSMutableDictionary alloc] initWithDictionary:res];
+                
+                if ([BBSSDK isUsePlug])
+                {
+                    mutDic[@"isPlug"] = @1;
+                }
+                else
+                {
+                    mutDic[@"isPlug"] = @0;
+                }
                 
                 if (callback)
                 {
-                    [theWebController.webView stringByEvaluatingJavaScriptFromString:[NSString stringWithFormat:@"%@(%@)", callback, [MOBFJson jsonStringFromObject:res]]];
+                    [theWebController.webView stringByEvaluatingJavaScriptFromString:[NSString stringWithFormat:@"%@(%@)", callback, [MOBFJson jsonStringFromObject:mutDic]]];
                 }
             }
             else
@@ -372,8 +382,23 @@
             {
                 if ([obj isKindOfClass:[BBSPost class]])
                 {
+                    
+                    //NSDictionary *postDic = [BBSUIModelToObject objectFromPostModel:obj];
+                    //[postArray addObject:postDic];
+                    
+                    //=====去除插件的来自====
                     NSDictionary *postDic = [BBSUIModelToObject objectFromPostModel:obj];
-                    [postArray addObject:postDic];
+                    NSMutableDictionary *res = [NSMutableDictionary dictionaryWithDictionary:postDic];
+                    
+                    if ([BBSSDK isUsePlug])
+                    {
+                        res[@"isPlug"] = @1;
+                    }
+                    else
+                    {
+                        res[@"isPlug"] = @0;
+                    }
+                    [postArray addObject:res];
                 }
             }
             
@@ -579,7 +604,7 @@
             [theWebController presentLogin];
             return;
         }
-        
+    
         NSInteger authorId = -1;
         NSInteger isFollow = -1;
         NSString *callback = nil;
@@ -613,7 +638,7 @@
                         
                         MBProgressHUD *HUD = [[MBProgressHUD alloc] initWithView:self.view];
                         [self.view addSubview:HUD];
-                        if (error.code == 900404) {
+                        if (error.code == 90090608) {
                             HUD.label.text = @"Discuz论坛错误：无法关注自己";
                         }else{
                             HUD.label.text = error.userInfo[@"description"];
@@ -729,7 +754,19 @@
                 MBProgressHUD *HUD = [[MBProgressHUD alloc] initWithView:self.view];
                 [self.view addSubview:HUD];
                 HUD.contentColor = [UIColor whiteColor];
-                HUD.label.text = error.userInfo[@"description"];
+                if (error.code ==  90090614)
+                {
+                    HUD.label.text = @"已评价过本主题";
+                }
+                else if([error.userInfo[@"code"] isEqualToString:@"900700613"])
+                {
+                    HUD.label.text = @"不能评价自己的帖子";
+                }
+                else
+                {
+                    HUD.label.text = error.userInfo[@"description"];
+                }
+                
                 HUD.mode = MBProgressHUDModeText;
                 HUD.bezelView.backgroundColor = [UIColor blackColor];
                 [HUD showAnimated:YES];
@@ -819,7 +856,7 @@
                     return ;
                 }
                 
-                BBSUIAlert(@"取消收藏失败:%@",error);
+                BBSUIAlert(@"取消收藏失败");
             }
             button.enabled = YES;
         }];
@@ -838,7 +875,7 @@
                 if (error.code == 9001200) {
                     [theController presentLogin];
                 }else{
-                    BBSUIAlert(@"收藏失败:%@",error);
+                    BBSUIAlert(@"收藏失败");
                 }
                 
             }
@@ -893,6 +930,7 @@
     return @[createdOnOrderAction];
 }
 
+#pragma mark - 弹出键盘写回复
 - (void)reply:(id)sender
 {
     if (![BBSUIContext shareInstance].currentUser)
@@ -1024,6 +1062,12 @@
             [self postCommentError:error];
         }
         
+#pragma mark --- 评论数目
+        NSLog(@"----pppp----000-%ld", (long)_threadModel.commentnum);
+        _threadModel.commentnum = _threadModel.commentnum + 1;
+        [[BBSUICoreDataManage shareManager] addHistoryWithThread:_threadModel];
+        
+        NSLog(@"----pppp---1111--%ld", (long)_threadModel.commentnum);
     }];
 }
 

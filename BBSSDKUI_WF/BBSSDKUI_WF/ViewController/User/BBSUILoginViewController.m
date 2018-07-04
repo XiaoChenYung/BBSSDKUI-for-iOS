@@ -805,6 +805,7 @@
     }];
 }
 
+//MARK:QQ登录
 - (void)_qqLoginAction
 {
     // type qq传1 微信传2
@@ -864,6 +865,7 @@
             
             BBSLocationCoordinate *coordinate = [[BBSLocationCoordinate alloc] initWithLatitude:[BBSUILBSLocationManager shareManager].latitude longitude:[BBSUILBSLocationManager shareManager].lontitue];
             NSLog(@"rawData = %@  %@",rawData, openID);
+            //createNew 这个如果没有值 并且第三方账号没有绑定账号，就报613错误码 这个是告诉客户端去绑定账号的码
             [BBSSDK authLoginWithOpenid:openID
                                 unionid:rawData[@"unionid"]
                                authType:authTypeName

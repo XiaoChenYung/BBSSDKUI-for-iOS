@@ -66,6 +66,7 @@
     [self.view addSubview:_threadListView];
     //设置标题
     [self setNavigationBarTitle];
+    
 }
 
 -(void)viewWillAppear:(BOOL)animated

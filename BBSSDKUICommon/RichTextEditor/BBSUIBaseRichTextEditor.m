@@ -8,6 +8,7 @@
 #import "UIImage+BBSFunction.h"
 #import "NSBundle+BBSSDKUI.h"
 #import "BBSUIExpressionViewConfiguration.h"
+#import <BBSSDK/BBSSDK.h>
 
 @import JavaScriptCore;
 
@@ -403,12 +404,16 @@ static CGFloat kDefaultScale = 0.5;
             
             self.keyboardItem = [[UIBarButtonItem alloc] initWithCustomView:keyboardItem];
             
-//            keyboardToolbar.items = @[self.expressionItem, self.imagePickItem,self.keyboardItem];
-            [keyboardTollbarView addSubview:self.lbsItem.customView];
+            //keyboardToolbar.items = @[self.expressionItem, self.imagePickItem,self.keyboardItem];
+            
+            if (![BBSSDK isUsePlug]) {
+                [keyboardTollbarView addSubview:self.lbsItem.customView];
+            }
+            
             [keyboardTollbarView addSubview:self.expressionItem.customView];
             [keyboardTollbarView addSubview:self.imagePickItem.customView];
             [keyboardTollbarView addSubview:self.keyboardItem.customView];
-//            [keyboardTollbarView addSubview:self.arrowItem.customView];
+            //[keyboardTollbarView addSubview:self.arrowItem.customView];
             
             [self.toolbarHolder addSubview:toolbarCropper];
             

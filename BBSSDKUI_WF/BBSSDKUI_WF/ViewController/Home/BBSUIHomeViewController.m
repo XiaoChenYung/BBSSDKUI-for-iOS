@@ -25,6 +25,7 @@
 #import "BBSUILaunchConfig.h"
 #import "BBSUIAlertView.h"
 
+
 @interface BBSUIHomeViewController ()<iBBSUIFastPostViewControllerDelegate,BBSUILBSegmentControlDelegate>
 
 @property (nonatomic, strong) BBSUILBSegmentControl * segmentControl;
@@ -47,21 +48,21 @@
     {
         self.semaphore = dispatch_semaphore_create(0);
         self.queue = dispatch_queue_create("HomeViewControllerQueue", DISPATCH_QUEUE_SERIAL);
-        
+       
         dispatch_async(_queue, ^{
             //阻塞线程，直到获取配置信息完成之后
             dispatch_semaphore_wait(self.semaphore, DISPATCH_TIME_FOREVER);
             
         });
-        
+
         [BBSSDK getGlobalSettings:^(NSDictionary *settings, NSError *error) {
             if (settings)
             {
                 NSString *currentAppkey = settings[@"target"][@"appkey"];
                 NSDictionary *lastSettings = [BBSUIContext shareInstance].settings;
-                
+
                 [BBSUIContext shareInstance].settings = settings;
-                
+
                 if ((!lastSettings || !lastSettings[@"target"]) && currentAppkey)
                 {
                     /**
@@ -69,12 +70,12 @@
                      */
                     [self _updateKey];
                 }
-                
+
                 else if (lastSettings && lastSettings[@"target"])
                 {
                     NSDictionary *lastTarget = lastSettings[@"target"];
                     NSString *lastAppkey = lastTarget[@"appkey"];
-                    
+
                     if (![lastAppkey isEqualToString:currentAppkey])
                     {
                         /**
@@ -94,18 +95,21 @@
                 if ([bbssdkArr count] > 2) {
                     bbssdk_version = [NSString stringWithFormat:@"%@.%@",bbssdkArr[0],bbssdkArr[1]];
                 }
-                
+
                 dispatch_semaphore_signal(self.semaphore);
-                
                 if ([bbssdk_version compare:plugins_version options:NSNumericSearch] == NSOrderedDescending) {
-                    BBSUIAlertView *alertView = [[BBSUIAlertView alloc] initWithMessage:@"请更新插件版本" cancelButtonTitle:@"知道了" cancelBlock: nil];
-                    [alertView show];
+                    //BBSUIAlertView *alertView = [[BBSUIAlertView alloc] initWithMessage:@"请更新插件版本" cancelButtonTitle:@"知道了" cancelBlock: nil];
+                    //[alertView show];
                 }
+            }
+            else
+            {
+                [self _setupVC:NO];
             }
         }];
         
-        //        //阻塞线程，直到获取配置信息完成之后
-        //        dispatch_semaphore_wait(self.semaphore, DISPATCH_TIME_FOREVER);
+        //阻塞线程，直到获取配置信息完成之后
+        //dispatch_semaphore_wait(self.semaphore, DISPATCH_TIME_FOREVER);
     }
     
     return self;
@@ -139,18 +143,19 @@
     __weak typeof (self) weakSelf = self;
     dispatch_async(self.queue, ^{
         dispatch_async(dispatch_get_main_queue(), ^{
-            [weakSelf setupVC];
+            [weakSelf _setupVC:YES];
             dispatch_semaphore_signal(self.semaphore);
         });
     });
 }
 
-- (void)setupVC
+- (void)_setupVC:(BOOL)isSettingsLoadSuccess
 {
     NSLog(@"oooooooooooo  --2%@",[NSThread currentThread]);
     NSDictionary *settings = [BBSUIContext shareInstance].settings;
     BOOL hidden = NO;
     
+    /*
     if (settings[@"portal"] && [settings[@"portal"] integerValue] == 1)
     {
         [self setupSegmentControlWithPortal];
@@ -161,7 +166,58 @@
         [self setupSegmentControlWithNoPortal];
         hidden = NO;
     }
+     ======================================================
+     {
+     address = "http://182.92.158.79/utf8_x33/plugin.php";
+     "bbssdk_version" = "2.0.0";
+     floodctrl = 0;
+     portal = 0;
+     }
+     
+     */
+    /* 不管是否用插件接口，要调用一下settings
+     * 使用插件，就不再使用settings中的portol字段，默认显示论坛
+     * 不是用插件，使用settings中portol字段，来判断是都显示资讯和论坛
+     */
     
+    NSString *address =  settings[@"address"];
+    if (address.length > 0)
+    {//是插件
+        [self setupSegmentControlWithPortal];
+        hidden = YES;
+    }
+    else
+    {//不使用插件
+        if (settings[@"portal"] && [settings[@"portal"] integerValue] == 1 && isSettingsLoadSuccess)
+        {
+            [self setupSegmentControlWithPortal];
+            hidden = YES;
+        }
+        else
+        {
+            [self setupSegmentControlWithNoPortal];
+            hidden = NO;
+        }
+    }
+    
+//    if (usePlugApi)
+//    {//使用的是插件
+//        [self setupSegmentControlWithPortal];
+//        hidden = YES;
+//    }
+//    else
+//    {//不使用插件
+//        if (settings[@"portal"] && [settings[@"portal"] integerValue] == 1 && isSettingsLoadSuccess)
+//        {
+//            [self setupSegmentControlWithPortal];
+//            hidden = YES;
+//        }
+//        else
+//        {
+//            [self setupSegmentControlWithNoPortal];
+//            hidden = NO;
+//        }
+//    }
 }
 
 - (void)setupSegmentControlWithNoPortal
@@ -194,7 +250,6 @@
 //    vc2.pageType = PageTypeHomePage;
     
     BBSUITribuneViewController *vc2 = [[BBSUITribuneViewController alloc] initWithForum:nil selectType:0];
-    
     self.segmentControl = [[BBSUILBSegmentControl alloc] initStaticTitlesWithFrame:CGRectMake(0, 0, 160, 42) titleFontSize:17 isIntegrated:YES];
     self.segmentControl.titles = @[@"资讯", @"论坛"];
     self.segmentControl.notScroll = YES;
@@ -209,6 +264,7 @@
     self.navigationItem.titleView= self.segmentControl;
 }
 
+#pragma mark - 首页发帖
 - (void)editThread:(id)sender
 {
     if (![BBSUIContext shareInstance].currentUser)

@@ -19,6 +19,8 @@
 #import "BBSUILoginViewController.h"
 #import "NSString+BBSUIParagraph.h"
 #import "BBSUIAttentionDynamicViewController.h"
+#import "SVProgressHUD.h"
+
 
 
 #define BBSUIInformationCellHeight 65
@@ -39,6 +41,7 @@
  *  图片观察者
  */
 @property (nonatomic, strong) MOBFImageObserver *verifyImgObserver;
+
 @end
 
 @implementation BBSUIUserOtherInfoView
@@ -62,7 +65,8 @@
 }
 
 #pragma mark - initUI
-- (void)configUI{
+- (void)configUI
+{
     self.backgroundColor = DZSUIColorFromHex(0xeaedf2);
     _currentUser = [BBSUIContext shareInstance].currentUser;
     
@@ -111,19 +115,20 @@
             make.edges.equalTo(self).with.insets(UIEdgeInsetsMake(0, 0, NavigationBar_Height-20, 0));
         }];
     }
-    
-    [self setTableHeaderView];
 }
 
-- (void)requestData:(void(^)(NSInteger))informationCount {
+#pragma mark - 数据加载
 
-    _currentUser = [BBSUIContext shareInstance].currentUser;
+- (void)requestData:(void(^)(NSInteger))informationCount
+{
+    //_currentUser = [BBSUIContext shareInstance].currentUser;
     __weak typeof (self) weakSelf = self;
     long time = [[NSDate date] timeIntervalSince1970];
     NSString *strTime = [NSString stringWithFormat:@"%lu",time];
     
     if (_userType == UserTypeOther) {    // 查看他人
         [BBSSDK getProfileInfoWithAuthorid:self.authorid time:strTime result:^(BBSUser *user, NSError *error) {
+            
             if (!error) {
                 NSString *token = _currentUser.token;
                 _currentUser = user;
@@ -170,22 +175,25 @@
 //                    [BBSUIProcessHUD showFailInfo:@"登录信息过期，请重新登录后设置" delay:3];
                 }
                 
-                return ;
             }
+             return ;
         }];
     }
 }
 
 #pragma mark - createTab 表格头
-- (void)setTableHeaderView {
+- (void)setTableHeaderView
+{
     [self setCountButtonTitle];
-    [_tableHeaderView.addressButton setTitle:[NSString stringWithFormat:@"%@ %@ %@",_currentUser.resideprovince,_currentUser.residecity,_currentUser.residedist] forState:UIControlStateNormal];
-    _tableHeaderView.nameLabel.text = _currentUser.userName;
+    
+    [self.tableHeaderView.addressButton setTitle:[NSString stringWithFormat:@"%@ %@ %@",_currentUser.resideprovince,_currentUser.residecity,_currentUser.residedist] forState:UIControlStateNormal];
+    self.tableHeaderView.nameLabel.text = _currentUser.userName;
     
     if (self.userType == UserTypeMe)
     {
         _tableHeaderView.originLabel.attributedText = [NSString bbs_stringWithString:_currentUser.sightml fontSize:12 defaultColorValue:@"6A7081" lineSpace:0 wordSpace:0];
-    }else
+    }
+    else
     {
         _tableHeaderView.originLabel.attributedText = [NSString bbs_stringWithString:_currentUser.sightml fontSize:12 defaultColorValue:@"FFFFFF" lineSpace:0 wordSpace:0];
         _tableHeaderView.originLabel.textAlignment = NSTextAlignmentCenter;
@@ -207,7 +215,6 @@
             }else{
                 _tableHeaderView.avatarImageView.image = image;
             }
-            
         }];
     }
     
@@ -218,23 +225,24 @@
     }
 }
 
-- (BBSUIUserOtherInfoTableHeaderView *)tableHeaderView{
+
+- (BBSUIUserOtherInfoTableHeaderView *)tableHeaderView
+{
     if (_tableHeaderView == nil) {
         
         CGFloat height;
-        //========
+        
         //MARK:=====修改头部高度=====
         if (_userType == UserTypeMe) {
-            height = 150+30;
+            height = 180;
         }else{
             height = 339;
         }
         _tableHeaderView = [[BBSUIUserOtherInfoTableHeaderView alloc] initWithFrame:CGRectMake(0, 0, self.bounds.size.width, height) :_userType];
-//        _tableHeaderView = [[BBSUIUserOtherInfoTableHeaderView alloc] initWithFrame:CGRectMake(0, 0, self.bounds.size.width, 200)];
-        
+        //_tableHeaderView = [[BBSUIUserOtherInfoTableHeaderView alloc] initWithFrame:CGRectMake(0, 0, self.bounds.size.width, 200)];
         
         _tableHeaderView.avatarImageView.image = [UIImage BBSImageNamed:@"/User/AvatarDefault.png"];
-        if (_currentUser.avatar) {
+        if (_currentUser.avatar &&_userType == UserTypeMe) {
             MOBFImageGetter *getter = [MOBFImageGetter sharedInstance];
             [getter removeImageObserver:self.verifyImgObserver];
             NSString *urlString = [NSString stringWithFormat:@"%@&timestamp=%f", _currentUser.avatar,[[NSDate date] timeIntervalSince1970]];
@@ -250,11 +258,8 @@
                 }else{
                     _tableHeaderView.avatarImageView.image = image;
                 }
-                
             }];
-
         }
-
         
         _tableHeaderView.nameLabel.text = _currentUser.userName;
         if (self.userType == UserTypeMe)
@@ -366,7 +371,8 @@
     }
 }
 
-- (void)refreshData:(void(^)(NSInteger))informationCount {
+- (void)refreshData:(void(^)(NSInteger))informationCount
+{
     [self requestData:informationCount];
 }
 
@@ -748,6 +754,7 @@
         make.centerY.equalTo(self.nameLabel);
     }];
     
+
     [self.originLabel mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(@34);
         make.left.mas_equalTo(viewLine.mas_right).offset(9).priorityHigh();
@@ -835,13 +842,15 @@
     }];
     
     UIView *viewLine2 = [[UIView alloc] init];
-    viewLine2.backgroundColor = DZSUIColorFromHex(0xEAEDF2);
     [self addSubview:viewLine2];
     [viewLine2 mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.right.equalTo(@0);
         make.bottom.mas_equalTo(@-1);
         make.height.equalTo(@5);
     }];
+    
+    viewLine2.backgroundColor = DZSUIColorFromHex(0xffffff);
+    
     //viewLine2.hidden = YES;
     [self bringSubviewToFront:self.avatarImageView];
 }

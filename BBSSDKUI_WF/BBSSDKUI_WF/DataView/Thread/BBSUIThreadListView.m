@@ -26,6 +26,7 @@
 #import "BBSUIForumViewController.h"
 
 
+
 @interface BBSUIThreadListView()<BBSUILBSegmentControlDelegate>
 
 @property (nonatomic, strong) BBSUILBSegmentControl *segmentControl;
@@ -45,6 +46,15 @@
 @property (nonatomic, strong) BBSUIForumHeader  *forumHeader;
 
 @property (nonatomic, strong) NSMutableArray *categoriesList;
+
+@property (nonatomic, strong) NSMutableArray *vcs ;
+
+@property (nonatomic, strong) NSMutableArray *titles;
+
+@property (nonatomic, strong) UIView *noDataView;
+@property (nonatomic, strong) UIImageView *noDataImageView;
+@property (nonatomic, strong) UILabel *noDataLabel;
+
 
 @end
 
@@ -86,36 +96,44 @@
     [self addSortSegmentControl];
     self.currentSelectType = 0;
     [self _makeRefreshWindow];
+    
 }
+
+- (UIView *)noDataView
+{
+    if (!_noDataView) {
+        
+        _noDataView = [[BBSUIBaseView alloc] initWithFrame:CGRectMake(0, 0, DZSUIScreen_width, DZSUIScreen_height )];
+        _noDataImageView = [[UIImageView alloc] initWithFrame:CGRectMake((DZSUIScreen_width - 80) / 2, 150 , 80, 80)];
+        [_noDataView addSubview:_noDataImageView];
+        
+        [_noDataImageView setImage:[UIImage BBSImageNamed:@"/Common/wnr@2x.png"]];
+
+        _noDataLabel = [UILabel new];
+        [_noDataLabel setFrame:CGRectMake(0, BBS_BOTTOM(_noDataImageView), DZSUIScreen_width, 40)];
+        [_noDataLabel setTextAlignment:NSTextAlignmentCenter];
+        [_noDataLabel setTextColor:[UIColor grayColor]];
+        [_noDataLabel setText:@"暂无内容"];
+        [_noDataView addSubview:_noDataLabel];
+    }
+    
+    return _noDataView;
+}
+
 
 #pragma mark - 添加tableView
 - (void)addSortSegmentControl
 {
     PageType pageType = self.pageType;
     
-    __block NSMutableArray *vcs = [NSMutableArray new];
-    __block NSMutableArray *titles = [NSMutableArray new];
+    self.vcs = [NSMutableArray array];
+    self.titles = [NSMutableArray array];
+    
+    __weak typeof(self) weakSelf = self;
     // 资讯
     if (pageType == PageTypePortal)
     {
-        [BBSSDK getPortalCategories:^(NSArray *categories, NSError *error) {
-            
-            if (!error && categories.count)
-            {
-                self.categoriesList = categories.mutableCopy;
-                [self.categoriesList enumerateObjectsUsingBlock:^(BBSPortalCatefories * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-                    
-                    BBSUIThreadListTableViewController *vc = [[BBSUIThreadListTableViewController alloc] initWithCatid:obj.catid];
-                    vc.catname = obj.catname;
-                    vc.allowcomment = @(obj.allowcomment);
-                    
-                    [vcs addObject:vc];
-                    [titles addObject:obj.catname];
-                }];
-                
-                [self _addSortSegmentControlWithVCs:vcs titles:titles];
-            }
-        }];
+        [self _requestData];
     }
     else
     {//论坛
@@ -127,14 +145,48 @@
                                                                                                  selectType:BBSUIThreadSelectTypeDigest];
         BBSUIThreadListTableViewController *vc3 = [[BBSUIThreadListTableViewController alloc] initWithForum:self.currentForum
                                                                                                  selectType:BBSUIThreadSelectTypeDisplayOrder];
+        weakSelf.vcs = @[vc, vc1, vc2, vc3].mutableCopy;
+        weakSelf.titles = @[@"最新", @"热门", @"精华", @"置顶"].mutableCopy;
         
-        vcs = @[vc, vc1, vc2, vc3].mutableCopy;
-        titles = @[@"最新", @"热门", @"精华", @"置顶"].mutableCopy;
-        
-        [self _addSortSegmentControlWithVCs:vcs titles:titles];
+        [self _addSortSegmentControlWithVCs:weakSelf.vcs titles:weakSelf.titles];
     }
 }
 
+- (void)_requestData
+{
+    __weak typeof(self) weakSelf = self;
+    [BBSSDK getPortalCategories:^(NSArray *categories, NSError *error) {
+        
+        if (!error && categories.count)
+        {
+            self.categoriesList = categories.mutableCopy;
+            [self.categoriesList enumerateObjectsUsingBlock:^(BBSPortalCatefories * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+                
+                BBSUIThreadListTableViewController *vc = [[BBSUIThreadListTableViewController alloc] initWithCatid:obj.catid];
+                vc.catname = obj.catname;
+                vc.allowcomment = @(obj.allowcomment);
+                
+                [weakSelf.vcs addObject:vc];
+                [weakSelf.titles addObject:obj.catname];
+            }];
+            
+            [weakSelf _addSortSegmentControlWithVCs:weakSelf.vcs titles:weakSelf.titles];
+        }
+        else
+        {
+            [weakSelf addSubview:weakSelf.noDataView];
+            [weakSelf.noDataImageView setImage:[UIImage BBSImageNamed:@"/Common/wwl@2x.png"]];
+            [weakSelf.noDataLabel setText:@"网络不佳，请再次刷新"];
+            UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(_tapclick)];
+            [weakSelf.noDataView addGestureRecognizer:tap];
+        }
+    }];
+}
+
+- (void)_tapclick
+{
+    [self _requestData];
+}
 #pragma mark - 添加最新 热门 精华
 - (void)_addSortSegmentControlWithVCs:(NSMutableArray *)vcs titles:(NSMutableArray *)titles
 {
@@ -227,7 +279,6 @@
         [_refreshButton setImage:[UIImage BBSImageNamed:@"/Thread/refreshDetail.png"] forState:UIControlStateNormal];
         [_refreshButton setFrame:CGRectMake(0, 0, BBSRefreshButtonWidth, BBSRefreshButtonWidth)];
         [_refreshButton addTarget:self action:@selector(_refreshButtonHandler:) forControlEvents:UIControlEventTouchUpInside];
-        
     }
 }
 
@@ -261,6 +312,7 @@
 - (void)selectIndex:(NSInteger)index
 {
     self.currentSelectType = index;
+    
 }
 
 - (NSMutableArray *)categoriesList

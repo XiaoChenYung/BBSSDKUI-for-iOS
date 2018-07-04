@@ -241,13 +241,16 @@
     });
 }
 
-- (void)setCollection:(BBSThread *)collection{
+- (void)setCollection:(BBSThread *)collection
+{
     //collection.address = @"游族网络";
     _collection = collection;
+    
+    NSLog(@"-----summary------%@", collection.summary);
     _summaryLabel.attributedText = [self stringWithString:collection.subject lineSpace:6];
     _contentLabel.attributedText = [self stringWithString:collection.summary lineSpace:3];
-    
     _signLabel.text = [NSString stringWithFormat:@" %@  ",collection.forumName];
+    
     
     [_repliesLabel setupWithCount:collection.replies style:BBSUIViewRepliesStyleImage];
     [_viewsLabel setupWithCount:collection.views style:BBSUIViewRepliesStyleImage];

@@ -13,6 +13,8 @@
 #import "BBSUIExpressionViewConfiguration.h"
 #import "BBSUIExpressionTextField.h"
 #import "BBSUILBSLocationViewController.h"
+#import "BBSUIContext.h"
+
 
 @interface BBSUIReplyEditor ()<iBBSUIImagePickerViewDelegate, BBSUIExpressionViewDelegate, UITextViewDelegate>
 {
@@ -254,7 +256,8 @@
         addressButton.titleLabel.font = [UIFont systemFontOfSize:12];
         [addressButton addTarget:self action:@selector(addressButtonOnClick:) forControlEvents:UIControlEventTouchUpInside];
         
-        if (_isHiddenLBSMenu == YES) {
+        if (_isHiddenLBSMenu == YES || [BBSSDK isUsePlug])
+        {// 如果是插件请求也隐藏地理位置
             addressButton.hidden = YES;
         }
         else

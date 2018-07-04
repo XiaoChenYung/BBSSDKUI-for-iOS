@@ -60,7 +60,8 @@
     _currentIndex = 1;
 }
 
-- (void)configureUI {
+- (void)configureUI
+{
     self.collectionTableView = [[UITableView alloc] initWithFrame:CGRectZero style:UITableViewStylePlain];
     [self addSubview:self.collectionTableView];
     
@@ -94,12 +95,14 @@
         [self requestData];
 }
 
-- (void)refreshData {
+- (void)refreshData
+{
     self.currentIndex = 1;
     [self requestData];
 }
 
-- (void)requestData {
+- (void)requestData
+{
     __weak typeof (self) weakSelf = self;
     if (_type == CollectionViewTypeThreadList) {
         [BBSSDK getUserThreadListWithAuthorid:nil pageIndex:self.currentIndex pageSize:BBSUIPageSize result:^(NSArray<BBSThread *> *array, NSError *error) {
@@ -199,6 +202,8 @@
     cell.selectionStyle = UITableViewCellSelectionStyleNone;
     cell.collectionViewType = _type;
     cell.collection = _marrData[indexPath.row];
+    
+
     
     __weak typeof(self)weakSelf = self;
     cell.addressOnClickBlock = ^(BBSThread *threadModel) {

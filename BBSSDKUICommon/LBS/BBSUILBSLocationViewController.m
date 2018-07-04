@@ -43,7 +43,6 @@
 
 @implementation BBSUILBSLocationViewController
 
-#pragma mark - LifeCycle
 
 - (instancetype)init{
     self = [super init];

@@ -18,7 +18,7 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    // Do any additional setup after loading the view.
+    
     if (_fansViewType == BBSUIFansTypeFirendsMe) {
         self.title = @"我的关注";
     }else if (_fansViewType == BBSUIFansTypeFollowersMe){
@@ -29,7 +29,6 @@
         self.title = @"他的粉丝";
     }
     
-    
     _fansView = [[BBSUIFansView alloc] initWithFrame: self.view.bounds tpye:_fansViewType currentUser:_currentUser];
     [self.view addSubview:_fansView];
 }
@@ -37,8 +36,8 @@
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
+    
     // 设置数据
-
     [_fansView refreshData];
 }
 

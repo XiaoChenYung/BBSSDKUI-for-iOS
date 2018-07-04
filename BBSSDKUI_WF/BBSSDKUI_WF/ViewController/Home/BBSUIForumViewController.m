@@ -13,6 +13,8 @@
 
 @property (nonatomic, strong) BBSUIForumView *forumView;
 
+@property (nonatomic, strong) UIImageView *img;
+
 @end
 
 @implementation BBSUIForumViewController
@@ -26,8 +28,10 @@
                                                                   CGRectGetHeight(self.view.frame) - NavigationBar_Height)];
     [self.view addSubview:self.forumView];
     self.title = @"所有版块";
-    self.automaticallyAdjustsScrollViewInsets=NO; 
+    self.automaticallyAdjustsScrollViewInsets=NO;
 }
+
+
 
 - (void)viewWillAppear:(BOOL)animated
 {

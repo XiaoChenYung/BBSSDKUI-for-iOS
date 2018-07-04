@@ -380,6 +380,8 @@
 //    self.summaryLabel.preferredMaxLayoutWidth = [UIScreen mainScreen].bounds.size.width - 20;
 }
 
+#pragma mark - cell赋值
+
 - (void) setThreadModel:(BBSThread *)threadModel
 {
     //threadModel.address = @"游族网络";
@@ -864,6 +866,9 @@
         title = _threadModel.title;
         content = _threadModel.summary;
         [_forumTagView setTitle:[NSString stringWithFormat:@" %@ ",_threadModel.catname] forState:UIControlStateNormal];
+        
+        NSLog(@"--%@----vvv---setRead-%ld", _threadModel, (long)_threadModel.viewnum);
+
         [_viewsView setupWithCount:_threadModel.viewnum style:BBSUIViewRepliesStyleImage];
         [_repliesView setupWithCount:_threadModel.commentnum style:BBSUIViewRepliesStyleImage];
     }
@@ -1045,6 +1050,10 @@
         _subjectLabel.font = [UIFont boldSystemFontOfSize:16];
         
         [_repliesView setupWithCount:_threadModel.replies style:BBSUIViewRepliesStyleImage];
+        
+        NSLog(@"--%@----vvv----%ld", _threadModel, (long)_threadModel.views);
+        
+        
         [_viewsView setupWithCount:_threadModel.views style:BBSUIViewRepliesStyleImage];
         
         [_repliesView mas_remakeConstraints:^(MASConstraintMaker *make) {
@@ -1052,7 +1061,7 @@
             make.centerY.equalTo(_forumTagView);
         }];
     }
-    //MARK:--关注cell
+    //MARK:--关注  浏览记录 cell
     if (cellType == BBSUIThreadSummaryCellTypeHistory || cellType == BBSUIThreadSummaryCellTypeAttion)
     {
         _timeLabel.hidden = NO;

@@ -108,7 +108,7 @@ static NSString *cellIdentifier = @"ThreadSummaryCell";
     self.tableView.backgroundColor = DZSUI_BackgroundColor;
     [self.tableView registerClass:[BBSUIThreadSummaryCell class] forCellReuseIdentifier:cellIdentifier];
     
-    #pragma mark - ==========PageTypeHistory
+    #pragma mark - ---- 浏览记录 PageTypeHistory ------
     if (_pageType == PageTypeHistory || self.currentForum || _pageType == PageTypeAttion)
     {
         UIView *tableHeaderView = [[UIView alloc] initWithFrame:(CGRect){0, 0, DZSUIScreen_width, 5}];
@@ -121,6 +121,11 @@ static NSString *cellIdentifier = @"ThreadSummaryCell";
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
+    if (_pageType == PageTypeHistory)
+    {
+        [self.tableView reloadData];
+        [self.tableView layoutIfNeeded];
+    }
 }
 
 - (void)viewWillDisappear:(BOOL)animated
@@ -303,7 +308,7 @@ static NSString *cellIdentifier = @"ThreadSummaryCell";
         detailVC = [[BBSUIPortalDetailViewController alloc] initWithThreadModel:thread];
         ((BBSUIPortalDetailViewController *)detailVC).catname = self.catname;
         ((BBSUIPortalDetailViewController *)detailVC).allowcomment = self.allowcomment;
-        ((BBSUIPortalDetailViewController *)detailVC).hasContent = YES;
+        ((BBSUIPortalDetailViewController *)detailVC).hasContent = NO;
         [_selectedArray addObject:@(thread.aid)];
     }
     else if (_pageType == PageTypeAttion
@@ -384,7 +389,6 @@ static NSString *cellIdentifier = @"ThreadSummaryCell";
     return _noDataView;
 }
 
-
 #pragma mark - 添加banner
 - (void)_requestPortalBanner
 {
@@ -436,7 +440,7 @@ static NSString *cellIdentifier = @"ThreadSummaryCell";
 
 - (void)_requestBanner
 {
-    #pragma mark - ==========PageTypeHistory
+    #pragma mark - ====PageTypeHistory======
     // 搜索和历史记录界面不显示banner
     if (_pageType == PageTypeHistory || _pageType == PageTypeSearch || _pageType == PageTypeAttion) {
         return;
@@ -760,12 +764,14 @@ static NSString *cellIdentifier = @"ThreadSummaryCell";
         else
         {
             NSLog(@"%@",error);
-            
-            if (self.currentForum.fid == 0) {
+            if (self.currentForum.fid == 0)
+            {
                 [self.view addSubview:self.noDataView];
                 [self.noDataImageView setImage:[UIImage BBSImageNamed:@"/Common/wwl@2x.png"]];
                 [self.noDataLabel setText:@"网络不佳，请再次刷新"];
-            }else{
+            }
+            else
+            {
                 [weakSelf.view bbs_configureTipViewWithTipMessage:@"网络不佳，请再次刷新" hasData:weakSelf.threadListArray.count != 0 hasError:YES reloadButtonBlock:^(id sender) {
                     [weakSelf.tableView.mj_header beginRefreshing];
                     [weakSelf requestData];

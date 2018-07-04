@@ -105,6 +105,7 @@
     threadHistory.poiTitle      = thread.poiTitle;
     threadHistory.latitude      = @(thread.latitude);
     threadHistory.longitude     = @(thread.longitude);
+
     
     threadHistory.aid           = PORTAL(thread.aid);
     threadHistory.title         = thread.title;
