@@ -9,6 +9,11 @@
 #import "MyBBSViewController.h"
 #import <BBSSDK/BBSSDK.h>
 #import <BBSSDKUI/BBSUIForumHomeViewController.h>
+#import "WXApi.h"
+#import <objc/runtime.h>
+#import <Messages/Messages.h>
+
+
 
 #define BBSUIAlert(_S_, ...)     [[[UIAlertView alloc] initWithTitle:@"提示" message:[NSString stringWithFormat:(_S_), ##__VA_ARGS__] delegate:nil cancelButtonTitle:@"知道了" otherButtonTitles:nil] show]
 
@@ -28,6 +33,26 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    
+    
+    
+    //[WeChatApiUtil ];
+    
+    
+//    Class ff =  NSClassFromString(@"WeChatApiUtil");
+    
+    
+    
+//    id  ver = objc_msgSend(ff, @selector(getSDKVersion));
+//
+//    id sup = objc_msgSend(ff, @selector(isWXAppSupportApi));
+    
+//    NSLog(@"-----WBNetDetectViewController-----version---%@", ver);
+//
+//    NSLog(@"-----WBNetDetectViewController-----support---%@", sup);
+    
+
+    
     
     _enterMyBBSButton.layer.borderWidth = 1;
     _enterMyBBSButton.layer.borderColor = [UIColor colorWithRed:200.0/255 green:215.0/255 blue:235.0/255 alpha:1].CGColor;

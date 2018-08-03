@@ -138,15 +138,14 @@ static NSString *cellIdentifier = @"ThreadSummaryCell";
     lineView.backgroundColor = DZSUIColorFromHex(0xEAEDF2);
 }
 
-
 - (void) _loadData
 {
-    
     __weak typeof(self) weakSelf = self;
     if (_pageType == PageTypeHomePage || _pageType == PageTypePortal) {
         self.tableView.mj_header = [MJRefreshNormalHeader headerWithRefreshingBlock:^{
             weakSelf.currentIndex = 1;
             [weakSelf requestData];
+            
         }];
     }else{
         weakSelf.currentIndex = 1;
@@ -158,6 +157,7 @@ static NSString *cellIdentifier = @"ThreadSummaryCell";
         weakSelf.currentIndex++;
         [weakSelf requestData];
     }];
+    
     [self.tableView.mj_header beginRefreshing];
 }
 
@@ -181,13 +181,7 @@ static NSString *cellIdentifier = @"ThreadSummaryCell";
     
     [self.tableView registerClass:[BBSUIThreadSummaryCell class] forCellReuseIdentifier:cellIdentifier];
     
-//    if (_pageType == PageTypeHistory || self.currentForum)
-//    {
-//        UIView *tableHeaderView = [[UIView alloc] initWithFrame:(CGRect){0, 0, DZSUIScreen_width, 5}];
-//        tableHeaderView.backgroundColor = DZSUI_BackgroundColor;
-//        [self.tableView setTableHeaderView:tableHeaderView];
-//    }
-     [self _loadData];
+    [self _loadData];
 }
 
 #pragma mark - 导航头
@@ -283,9 +277,6 @@ static NSString *cellIdentifier = @"ThreadSummaryCell";
     
     [((UIViewController *)controller).navigationController pushViewController:vc animated:YES];
 }
-
-
-
 
 #pragma mark - UITableView dataSource
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
@@ -466,8 +457,8 @@ static NSString *cellIdentifier = @"ThreadSummaryCell";
             [self.threadListArray removeAllObjects];
             [self.tableView reloadData];
             [weakSelf.tableView.mj_header endRefreshing];
-            
         }
+        
         [weakSelf.tableView.mj_header endRefreshing];
         [weakSelf.tableView.mj_footer endRefreshing];
     }];
@@ -532,6 +523,8 @@ static NSString *cellIdentifier = @"ThreadSummaryCell";
     }
     
     self.currentIndex = 1;
+    [self.tableView.mj_header endRefreshing];
+    self.tableView.mj_offsetY = 0;
     [self _loadData];
 }
 
@@ -563,9 +556,7 @@ static NSString *cellIdentifier = @"ThreadSummaryCell";
     }
     else
     {
-        //        BBSUIFastPostViewController *editVC = [BBSUIFastPostViewController shareInstance];
-        //        [editVC addPostThreadObserver:self];
-        //        [self.navigationController pushViewController:editVC animated:YES];
+
         self.isPresent = YES;
         BBSUIFastPostViewController *editVC = [BBSUIFastPostViewController shareInstance];
         editVC.isEnterVc = YES;

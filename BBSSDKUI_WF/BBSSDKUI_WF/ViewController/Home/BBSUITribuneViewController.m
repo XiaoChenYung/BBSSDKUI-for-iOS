@@ -691,7 +691,7 @@ static NSString *cellIdentifier = @"ThreadSummaryCell";
     {
         self.hoverView.hidden = YES;
     }
-    NSLog(@"==dddd====%lu", (unsigned long)_forumHeader.forumList.count);
+    
     if (_forumHeader.forumList.count <= 0) {
         [self _addForumView];
     }

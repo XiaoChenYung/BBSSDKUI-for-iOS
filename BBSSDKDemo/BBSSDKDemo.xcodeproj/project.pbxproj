@@ -105,9 +105,28 @@
 		2FA0409E207C6EF2004CE72B /* ShareSDKExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2FA03FE7207C6EF1004CE72B /* ShareSDKExtension.framework */; };
 		2FA0409F207C6EF2004CE72B /* ShareSDKUI.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 2FA03FE8207C6EF1004CE72B /* ShareSDKUI.bundle */; };
 		2FA040A0207C6EF2004CE72B /* ShareSDKUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2FA03FE9207C6EF1004CE72B /* ShareSDKUI.framework */; };
+		2FA040A1207C6EF2004CE72B /* AliPayConnector.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2FA03FEB207C6EF1004CE72B /* AliPayConnector.framework */; };
+		2FA040A2207C6EF2004CE72B /* CopyConnector.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2FA03FEC207C6EF1004CE72B /* CopyConnector.framework */; };
+		2FA040A3207C6EF2004CE72B /* DingTalkConnector.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2FA03FED207C6EF1004CE72B /* DingTalkConnector.framework */; };
+		2FA040A4207C6EF2004CE72B /* DropboxConnector.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2FA03FEE207C6EF1004CE72B /* DropboxConnector.framework */; };
+		2FA040A5207C6EF2004CE72B /* EvernoteConnector.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2FA03FEF207C6EF1004CE72B /* EvernoteConnector.framework */; };
+		2FA040A6207C6EF2004CE72B /* FacebookConnector.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2FA03FF0207C6EF1004CE72B /* FacebookConnector.framework */; };
+		2FA040A7207C6EF2004CE72B /* GooglePlusConnector.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2FA03FF1207C6EF1004CE72B /* GooglePlusConnector.framework */; };
+		2FA040A8207C6EF2004CE72B /* InstagramConnector.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2FA03FF2207C6EF1004CE72B /* InstagramConnector.framework */; };
+		2FA040A9207C6EF2004CE72B /* InstapaperConnector.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2FA03FF3207C6EF1004CE72B /* InstapaperConnector.framework */; };
+		2FA040AA207C6EF2004CE72B /* KakaoConnector.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2FA03FF4207C6EF1004CE72B /* KakaoConnector.framework */; };
+		2FA040AB207C6EF2004CE72B /* LineConnector.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2FA03FF5207C6EF1004CE72B /* LineConnector.framework */; };
+		2FA040AC207C6EF2004CE72B /* MailConnector.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2FA03FF6207C6EF1004CE72B /* MailConnector.framework */; };
+		2FA040AD207C6EF2004CE72B /* PrintConnector.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2FA03FF7207C6EF1004CE72B /* PrintConnector.framework */; };
 		2FA040AE207C6EF2004CE72B /* QQConnector.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2FA03FF8207C6EF1004CE72B /* QQConnector.framework */; };
+		2FA040AF207C6EF2004CE72B /* RenrenConnector.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2FA03FF9207C6EF1004CE72B /* RenrenConnector.framework */; };
 		2FA040B0207C6EF2004CE72B /* SinaWeiboConnector.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2FA03FFA207C6EF1004CE72B /* SinaWeiboConnector.framework */; };
+		2FA040B1207C6EF2004CE72B /* SMSConnector.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2FA03FFB207C6EF1004CE72B /* SMSConnector.framework */; };
+		2FA040B2207C6EF2004CE72B /* TwitterConnector.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2FA03FFC207C6EF1004CE72B /* TwitterConnector.framework */; };
 		2FA040B3207C6EF2004CE72B /* WechatConnector.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2FA03FFD207C6EF1004CE72B /* WechatConnector.framework */; };
+		2FA040B4207C6EF2004CE72B /* WhatsAppConnector.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2FA03FFE207C6EF1004CE72B /* WhatsAppConnector.framework */; };
+		2FA040B5207C6EF2004CE72B /* YiXinConnector.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2FA03FFF207C6EF1004CE72B /* YiXinConnector.framework */; };
+		2FA040B6207C6EF2004CE72B /* YouTubeConnector.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2FA04000207C6EF1004CE72B /* YouTubeConnector.framework */; };
 		2FA040B7207C6EF2004CE72B /* TencentOpenAPI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2FA04003207C6EF1004CE72B /* TencentOpenAPI.framework */; };
 		2FA040B8207C6EF2004CE72B /* TencentOpenApi_IOS_Bundle.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 2FA04004207C6EF1004CE72B /* TencentOpenApi_IOS_Bundle.bundle */; };
 		2FA040B9207C6EF2004CE72B /* libWeiboSDK.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2FA04006207C6EF1004CE72B /* libWeiboSDK.a */; };
@@ -128,7 +147,21 @@
 		6BAFB7C91E6FFFCD00692299 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6BAFB7C81E6FFFCD00692299 /* ViewController.m */; };
 		6BAFB7CE1E6FFFCD00692299 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6BAFB7CD1E6FFFCD00692299 /* Assets.xcassets */; };
 		6BAFB7E91E700B9D00692299 /* libicucore.A.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 6BAFB7E81E700B9D00692299 /* libicucore.A.tbd */; };
+		70EAB38E20F3584B00F821E4 /* BBSSDKTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 70EAB38D20F3584B00F821E4 /* BBSSDKTests.m */; };
+		70EAB39520F4B88700F821E4 /* BBSSDKUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2FA03EB5207C6EF1004CE72B /* BBSSDKUI.framework */; };
+		70EAB39620F4B88D00F821E4 /* BBSSDKUI.bundle in Frameworks */ = {isa = PBXBuildFile; fileRef = 2FA03EB4207C6EF1004CE72B /* BBSSDKUI.bundle */; };
+		70EAB3B920F5B27B00F821E4 /* BBSSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2FA03EB2207C6EF1004CE72B /* BBSSDK.framework */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		70EAB39020F3584B00F821E4 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6BAFB7B61E6FFFCD00692299 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 6BAFB7BD1E6FFFCD00692299;
+			remoteInfo = BBSSDKDemo;
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		2F7531072080CA7D00A20894 /* SVProgressHUD.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = SVProgressHUD.bundle; sourceTree = "<group>"; };
@@ -544,6 +577,9 @@
 		6BAFB7E61E700B9700692299 /* libz.1.2.8.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.1.2.8.tbd; path = usr/lib/libz.1.2.8.tbd; sourceTree = SDKROOT; };
 		6BAFB7E81E700B9D00692299 /* libicucore.A.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libicucore.A.tbd; path = usr/lib/libicucore.A.tbd; sourceTree = SDKROOT; };
 		6BAFB7EA1E700BA300692299 /* libstdc++.6.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = "libstdc++.6.tbd"; path = "usr/lib/libstdc++.6.tbd"; sourceTree = SDKROOT; };
+		70EAB38B20F3584B00F821E4 /* BBSSDKTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BBSSDKTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		70EAB38D20F3584B00F821E4 /* BBSSDKTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BBSSDKTests.m; sourceTree = "<group>"; };
+		70EAB38F20F3584B00F821E4 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -553,9 +589,13 @@
 			files = (
 				2FA03EAF207C6C30004CE72B /* GLKit.framework in Frameworks */,
 				2FA040B3207C6EF2004CE72B /* WechatConnector.framework in Frameworks */,
+				2FA040B6207C6EF2004CE72B /* YouTubeConnector.framework in Frameworks */,
 				2FA03EAD207C6C2A004CE72B /* OpenGLES.framework in Frameworks */,
 				2FA03EAB207C6C23004CE72B /* UIKit.framework in Frameworks */,
+				2FA040A7207C6EF2004CE72B /* GooglePlusConnector.framework in Frameworks */,
+				2FA040A4207C6EF2004CE72B /* DropboxConnector.framework in Frameworks */,
 				2FA0401B207C6EF2004CE72B /* AMapSearchKit.framework in Frameworks */,
+				2FA040A5207C6EF2004CE72B /* EvernoteConnector.framework in Frameworks */,
 				2FA040B7207C6EF2004CE72B /* TencentOpenAPI.framework in Frameworks */,
 				2FA03EA9207C6C1C004CE72B /* Foundation.framework in Frameworks */,
 				2FA03EA7207C6C14004CE72B /* CoreGraphics.framework in Frameworks */,
@@ -563,11 +603,15 @@
 				2FA040AE207C6EF2004CE72B /* QQConnector.framework in Frameworks */,
 				2FA03EA5207C6C09004CE72B /* QuartzCore.framework in Frameworks */,
 				2FA03EA3207C6C03004CE72B /* CoreLocation.framework in Frameworks */,
+				2FA040B1207C6EF2004CE72B /* SMSConnector.framework in Frameworks */,
+				2FA040B5207C6EF2004CE72B /* YiXinConnector.framework in Frameworks */,
 				2FA04099207C6EF2004CE72B /* MobLink.framework in Frameworks */,
 				2FA03EA1207C6BF8004CE72B /* CoreTelephony.framework in Frameworks */,
 				2FA0409D207C6EF2004CE72B /* ShareSDKConfigFile.framework in Frameworks */,
+				2FA040A3207C6EF2004CE72B /* DingTalkConnector.framework in Frameworks */,
 				2FA04015207C6EF1004CE72B /* BBSSDK.framework in Frameworks */,
 				2FA040B0207C6EF2004CE72B /* SinaWeiboConnector.framework in Frameworks */,
+				2FA040A8207C6EF2004CE72B /* InstagramConnector.framework in Frameworks */,
 				2FA03E9F207C6BF0004CE72B /* SystemConfiguration.framework in Frameworks */,
 				2FA0401A207C6EF2004CE72B /* AMapFoundationKit.framework in Frameworks */,
 				2FA0409A207C6EF2004CE72B /* MOBFoundation.framework in Frameworks */,
@@ -577,16 +621,37 @@
 				2FA03E9B207C6BDC004CE72B /* AdSupport.framework in Frameworks */,
 				2FA03E99207C6BD3004CE72B /* JavaScriptCore.framework in Frameworks */,
 				2FA04017207C6EF1004CE72B /* BBSSDKUI.framework in Frameworks */,
+				2FA040A1207C6EF2004CE72B /* AliPayConnector.framework in Frameworks */,
+				2FA040AC207C6EF2004CE72B /* MailConnector.framework in Frameworks */,
 				2FA03E97207C6BCC004CE72B /* libz.tbd in Frameworks */,
+				2FA040AB207C6EF2004CE72B /* LineConnector.framework in Frameworks */,
 				2FA0401C207C6EF2004CE72B /* MAMapKit.framework in Frameworks */,
 				3ADCBD311F99F0480035EE46 /* libstdc++.6.0.9.tbd in Frameworks */,
+				2FA040AA207C6EF2004CE72B /* KakaoConnector.framework in Frameworks */,
+				2FA040B2207C6EF2004CE72B /* TwitterConnector.framework in Frameworks */,
+				2FA040A2207C6EF2004CE72B /* CopyConnector.framework in Frameworks */,
+				2FA040AD207C6EF2004CE72B /* PrintConnector.framework in Frameworks */,
 				2FA03E95207C6BBB004CE72B /* libc++.tbd in Frameworks */,
 				2FA040A0207C6EF2004CE72B /* ShareSDKUI.framework in Frameworks */,
 				2FA0409E207C6EF2004CE72B /* ShareSDKExtension.framework in Frameworks */,
+				2FA040A6207C6EF2004CE72B /* FacebookConnector.framework in Frameworks */,
+				2FA040B4207C6EF2004CE72B /* WhatsAppConnector.framework in Frameworks */,
 				2FA040BB207C6EF2004CE72B /* libWeChatSDK.a in Frameworks */,
+				2FA040AF207C6EF2004CE72B /* RenrenConnector.framework in Frameworks */,
 				44533BC61EC2E6520065E0BD /* libsqlite3.0.tbd in Frameworks */,
 				6B7FCB7E1E78013F009899F2 /* libz.1.1.3.tbd in Frameworks */,
 				6BAFB7E91E700B9D00692299 /* libicucore.A.tbd in Frameworks */,
+				2FA040A9207C6EF2004CE72B /* InstapaperConnector.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		70EAB38820F3584B00F821E4 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				70EAB39520F4B88700F821E4 /* BBSSDKUI.framework in Frameworks */,
+				70EAB39620F4B88D00F821E4 /* BBSSDKUI.bundle in Frameworks */,
+				70EAB3B920F5B27B00F821E4 /* BBSSDK.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1475,6 +1540,7 @@
 			children = (
 				2FA03EB0207C6EF1004CE72B /* SDK */,
 				6BAFB7C01E6FFFCD00692299 /* BBSSDKDemo */,
+				70EAB38C20F3584B00F821E4 /* BBSSDKTests */,
 				6BAFB7BF1E6FFFCD00692299 /* Products */,
 				6BAFB7E51E700B9700692299 /* Frameworks */,
 			);
@@ -1484,6 +1550,7 @@
 			isa = PBXGroup;
 			children = (
 				6BAFB7BE1E6FFFCD00692299 /* BBSSDKDemo.app */,
+				70EAB38B20F3584B00F821E4 /* BBSSDKTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1558,6 +1625,15 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		70EAB38C20F3584B00F821E4 /* BBSSDKTests */ = {
+			isa = PBXGroup;
+			children = (
+				70EAB38D20F3584B00F821E4 /* BBSSDKTests.m */,
+				70EAB38F20F3584B00F821E4 /* Info.plist */,
+			);
+			path = BBSSDKTests;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -1578,6 +1654,24 @@
 			productReference = 6BAFB7BE1E6FFFCD00692299 /* BBSSDKDemo.app */;
 			productType = "com.apple.product-type.application";
 		};
+		70EAB38A20F3584B00F821E4 /* BBSSDKTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 70EAB39420F3584B00F821E4 /* Build configuration list for PBXNativeTarget "BBSSDKTests" */;
+			buildPhases = (
+				70EAB38720F3584B00F821E4 /* Sources */,
+				70EAB38820F3584B00F821E4 /* Frameworks */,
+				70EAB38920F3584B00F821E4 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				70EAB39120F3584B00F821E4 /* PBXTargetDependency */,
+			);
+			name = BBSSDKTests;
+			productName = BBSSDKTests;
+			productReference = 70EAB38B20F3584B00F821E4 /* BBSSDKTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -1593,9 +1687,14 @@
 						ProvisioningStyle = Manual;
 						SystemCapabilities = {
 							com.apple.SafariKeychain = {
-								enabled = 1;
+								enabled = 0;
 							};
 						};
+					};
+					70EAB38A20F3584B00F821E4 = {
+						CreatedOnToolsVersion = 9.3.1;
+						ProvisioningStyle = Automatic;
+						TestTargetID = 6BAFB7BD1E6FFFCD00692299;
 					};
 				};
 			};
@@ -1614,6 +1713,7 @@
 			projectRoot = "";
 			targets = (
 				6BAFB7BD1E6FFFCD00692299 /* BBSSDKDemo */,
+				70EAB38A20F3584B00F821E4 /* BBSSDKTests */,
 			);
 		};
 /* End PBXProject section */
@@ -1641,6 +1741,13 @@
 				2FA0409F207C6EF2004CE72B /* ShareSDKUI.bundle in Resources */,
 				2FA040BC207C6EF2004CE72B /* README.txt in Resources */,
 				2FA04043207C6EF2004CE72B /* MJRefresh.bundle in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		70EAB38920F3584B00F821E4 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1721,7 +1828,23 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		70EAB38720F3584B00F821E4 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				70EAB38E20F3584B00F821E4 /* BBSSDKTests.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		70EAB39120F3584B00F821E4 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 6BAFB7BD1E6FFFCD00692299 /* BBSSDKDemo */;
+			targetProxy = 70EAB39020F3584B00F821E4 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		6BAFB7D31E6FFFCD00692299 /* Debug */ = {
@@ -1819,8 +1942,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
-				CODE_SIGN_ENTITLEMENTS = BBSSDKDemo/BBSSDKDemo.entitlements;
-				CODE_SIGN_IDENTITY = "iPhone Distribution: Guangzhou ZhangTao Network Technology Co., Ltd.";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
 				DEVELOPMENT_TEAM = LW5266U92D;
@@ -1836,7 +1958,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
 				HEADER_SEARCH_PATHS = "\"$(SRCROOT)/../SDK/ShareSDK\"/**";
 				INFOPLIST_FILE = BBSSDKDemo/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = "\"$(SRCROOT)/../SDK/ShareSDK\"/**";
 				OTHER_LDFLAGS = "-ObjC";
@@ -1852,8 +1974,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
-				CODE_SIGN_ENTITLEMENTS = BBSSDKDemo/BBSSDKDemo.entitlements;
-				CODE_SIGN_IDENTITY = "iPhone Distribution: Guangzhou ZhangTao Network Technology Co., Ltd.";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
 				DEVELOPMENT_TEAM = LW5266U92D;
@@ -1869,7 +1990,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
 				HEADER_SEARCH_PATHS = "\"$(SRCROOT)/../SDK/ShareSDK\"/**";
 				INFOPLIST_FILE = BBSSDKDemo/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = "\"$(SRCROOT)/../SDK/ShareSDK\"/**";
 				OTHER_LDFLAGS = "-ObjC";
@@ -1877,6 +1998,84 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "fe45b599-0f28-4150-8b13-e21fbd469184";
 				PROVISIONING_PROFILE_SPECIFIER = BBSSDKSampleDevelopment;
+			};
+			name = Release;
+		};
+		70EAB39220F3584B00F821E4 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				FRAMEWORK_SEARCH_PATHS = (
+					"\"$(SRCROOT)/../SDK/BBSSDK\"",
+					"\"$(SRCROOT)/../SDK/BBSSDK/BBSSDKUI\"",
+					"\"$(SRCROOT)/../SDK/Required\"",
+					"\"$(SRCROOT)/../SDK/MobLink\"",
+					"\"$(SRCROOT)/../SDK/ShareSDK\"/**",
+					"\"$(SRCROOT)/../SDK/BBSSDK/Common/3rdPart/AMap\"",
+				);
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				HEADER_SEARCH_PATHS = "\"$(SRCROOT)/../SDK/ShareSDK\"";
+				INFOPLIST_FILE = BBSSDKTests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.3;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				LIBRARY_SEARCH_PATHS = "\"$(SRCROOT)/../SDK/ShareSDK\"";
+				PRODUCT_BUNDLE_IDENTIFIER = cuilinhao.com.cn.BBSSDKTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/BBSSDKDemo.app/BBSSDKDemo";
+			};
+			name = Debug;
+		};
+		70EAB39320F3584B00F821E4 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				FRAMEWORK_SEARCH_PATHS = (
+					"\"$(SRCROOT)/../SDK/BBSSDK\"",
+					"\"$(SRCROOT)/../SDK/BBSSDK/BBSSDKUI\"",
+					"\"$(SRCROOT)/../SDK/Required\"",
+					"\"$(SRCROOT)/../SDK/MobLink\"",
+					"\"$(SRCROOT)/../SDK/ShareSDK\"/**",
+					"\"$(SRCROOT)/../SDK/BBSSDK/Common/3rdPart/AMap\"",
+				);
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				HEADER_SEARCH_PATHS = "\"$(SRCROOT)/../SDK/ShareSDK\"";
+				INFOPLIST_FILE = BBSSDKTests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.3;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				LIBRARY_SEARCH_PATHS = "\"$(SRCROOT)/../SDK/ShareSDK\"";
+				PRODUCT_BUNDLE_IDENTIFIER = cuilinhao.com.cn.BBSSDKTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/BBSSDKDemo.app/BBSSDKDemo";
 			};
 			name = Release;
 		};
@@ -1897,6 +2096,15 @@
 			buildConfigurations = (
 				6BAFB7D61E6FFFCD00692299 /* Debug */,
 				6BAFB7D71E6FFFCD00692299 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		70EAB39420F3584B00F821E4 /* Build configuration list for PBXNativeTarget "BBSSDKTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				70EAB39220F3584B00F821E4 /* Debug */,
+				70EAB39320F3584B00F821E4 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

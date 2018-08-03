@@ -90,9 +90,28 @@
 		2FA042D8207CCDF5004CE72B /* ShareSDKExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2FA04220207CCDF4004CE72B /* ShareSDKExtension.framework */; };
 		2FA042D9207CCDF5004CE72B /* ShareSDKUI.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 2FA04221207CCDF4004CE72B /* ShareSDKUI.bundle */; };
 		2FA042DA207CCDF5004CE72B /* ShareSDKUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2FA04222207CCDF4004CE72B /* ShareSDKUI.framework */; };
+		2FA042DB207CCDF5004CE72B /* AliPayConnector.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2FA04224207CCDF4004CE72B /* AliPayConnector.framework */; };
+		2FA042DC207CCDF5004CE72B /* CopyConnector.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2FA04225207CCDF4004CE72B /* CopyConnector.framework */; };
+		2FA042DD207CCDF5004CE72B /* DingTalkConnector.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2FA04226207CCDF4004CE72B /* DingTalkConnector.framework */; };
+		2FA042DE207CCDF5004CE72B /* DropboxConnector.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2FA04227207CCDF4004CE72B /* DropboxConnector.framework */; };
+		2FA042DF207CCDF5004CE72B /* EvernoteConnector.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2FA04228207CCDF4004CE72B /* EvernoteConnector.framework */; };
+		2FA042E0207CCDF5004CE72B /* FacebookConnector.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2FA04229207CCDF4004CE72B /* FacebookConnector.framework */; };
+		2FA042E1207CCDF5004CE72B /* GooglePlusConnector.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2FA0422A207CCDF4004CE72B /* GooglePlusConnector.framework */; };
+		2FA042E2207CCDF5004CE72B /* InstagramConnector.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2FA0422B207CCDF4004CE72B /* InstagramConnector.framework */; };
+		2FA042E3207CCDF5004CE72B /* InstapaperConnector.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2FA0422C207CCDF4004CE72B /* InstapaperConnector.framework */; };
+		2FA042E4207CCDF5004CE72B /* KakaoConnector.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2FA0422D207CCDF4004CE72B /* KakaoConnector.framework */; };
+		2FA042E5207CCDF5004CE72B /* LineConnector.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2FA0422E207CCDF4004CE72B /* LineConnector.framework */; };
+		2FA042E6207CCDF5004CE72B /* MailConnector.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2FA0422F207CCDF4004CE72B /* MailConnector.framework */; };
+		2FA042E7207CCDF5004CE72B /* PrintConnector.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2FA04230207CCDF4004CE72B /* PrintConnector.framework */; };
 		2FA042E8207CCDF5004CE72B /* QQConnector.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2FA04231207CCDF4004CE72B /* QQConnector.framework */; };
+		2FA042E9207CCDF5004CE72B /* RenrenConnector.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2FA04232207CCDF4004CE72B /* RenrenConnector.framework */; };
 		2FA042EA207CCDF5004CE72B /* SinaWeiboConnector.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2FA04233207CCDF4004CE72B /* SinaWeiboConnector.framework */; };
+		2FA042EB207CCDF5004CE72B /* SMSConnector.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2FA04234207CCDF4004CE72B /* SMSConnector.framework */; };
+		2FA042EC207CCDF5004CE72B /* TwitterConnector.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2FA04235207CCDF4004CE72B /* TwitterConnector.framework */; };
 		2FA042ED207CCDF5004CE72B /* WechatConnector.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2FA04236207CCDF4004CE72B /* WechatConnector.framework */; };
+		2FA042EE207CCDF5004CE72B /* WhatsAppConnector.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2FA04237207CCDF4004CE72B /* WhatsAppConnector.framework */; };
+		2FA042EF207CCDF5004CE72B /* YiXinConnector.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2FA04238207CCDF4004CE72B /* YiXinConnector.framework */; };
+		2FA042F0207CCDF5004CE72B /* YouTubeConnector.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2FA04239207CCDF4004CE72B /* YouTubeConnector.framework */; };
 		2FA042F1207CCDF5004CE72B /* TencentOpenAPI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2FA0423C207CCDF4004CE72B /* TencentOpenAPI.framework */; };
 		2FA042F2207CCDF5004CE72B /* TencentOpenApi_IOS_Bundle.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 2FA0423D207CCDF4004CE72B /* TencentOpenApi_IOS_Bundle.bundle */; };
 		2FA042F3207CCDF5004CE72B /* libWeiboSDK.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2FA0423F207CCDF4004CE72B /* libWeiboSDK.a */; };
@@ -546,6 +565,7 @@
 		6BAFB7E61E700B9700692299 /* libz.1.2.8.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.1.2.8.tbd; path = usr/lib/libz.1.2.8.tbd; sourceTree = SDKROOT; };
 		6BAFB7E81E700B9D00692299 /* libicucore.A.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libicucore.A.tbd; path = usr/lib/libicucore.A.tbd; sourceTree = SDKROOT; };
 		6BAFB7EA1E700BA300692299 /* libstdc++.6.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = "libstdc++.6.tbd"; path = "usr/lib/libstdc++.6.tbd"; sourceTree = SDKROOT; };
+		700C45CC20C7D9F50099A9EA /* BBSSDKDemo_WF.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = BBSSDKDemo_WF.entitlements; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -568,27 +588,46 @@
 				2FA042FC207CCF74004CE72B /* libz.tbd in Frameworks */,
 				3ADCBD311F99F0480035EE46 /* libstdc++.6.0.9.tbd in Frameworks */,
 				2FA042FA207CCF63004CE72B /* libc++.tbd in Frameworks */,
+				2FA042EE207CCDF5004CE72B /* WhatsAppConnector.framework in Frameworks */,
 				2FA042D3207CCDF5004CE72B /* MOBFoundation.framework in Frameworks */,
+				2FA042F0207CCDF5004CE72B /* YouTubeConnector.framework in Frameworks */,
+				2FA042DE207CCDF5004CE72B /* DropboxConnector.framework in Frameworks */,
+				2FA042DC207CCDF5004CE72B /* CopyConnector.framework in Frameworks */,
 				2FA042ED207CCDF5004CE72B /* WechatConnector.framework in Frameworks */,
+				2FA042E7207CCDF5004CE72B /* PrintConnector.framework in Frameworks */,
 				2FA0424E207CCDF4004CE72B /* BBSSDK.framework in Frameworks */,
+				2FA042EB207CCDF5004CE72B /* SMSConnector.framework in Frameworks */,
 				2FA042DA207CCDF5004CE72B /* ShareSDKUI.framework in Frameworks */,
+				2FA042E2207CCDF5004CE72B /* InstagramConnector.framework in Frameworks */,
 				44533BC61EC2E6520065E0BD /* libsqlite3.0.tbd in Frameworks */,
 				2FA042E8207CCDF5004CE72B /* QQConnector.framework in Frameworks */,
 				2FA042F5207CCDF5004CE72B /* libWeChatSDK.a in Frameworks */,
+				2FA042E9207CCDF5004CE72B /* RenrenConnector.framework in Frameworks */,
 				6B7FCB7E1E78013F009899F2 /* libz.1.1.3.tbd in Frameworks */,
 				2FA04255207CCDF4004CE72B /* MAMapKit.framework in Frameworks */,
 				2FA042D2207CCDF5004CE72B /* MobLink.framework in Frameworks */,
 				6BAFB7E91E700B9D00692299 /* libicucore.A.tbd in Frameworks */,
+				2FA042E6207CCDF5004CE72B /* MailConnector.framework in Frameworks */,
+				2FA042DF207CCDF5004CE72B /* EvernoteConnector.framework in Frameworks */,
 				2FA042F3207CCDF5004CE72B /* libWeiboSDK.a in Frameworks */,
 				2FA042D8207CCDF5004CE72B /* ShareSDKExtension.framework in Frameworks */,
+				2FA042E0207CCDF5004CE72B /* FacebookConnector.framework in Frameworks */,
 				2FA042D5207CCDF5004CE72B /* ShareSDK.framework in Frameworks */,
 				2FA042F1207CCDF5004CE72B /* TencentOpenAPI.framework in Frameworks */,
 				2FA042D7207CCDF5004CE72B /* ShareSDKConfigFile.framework in Frameworks */,
 				2FA042EA207CCDF5004CE72B /* SinaWeiboConnector.framework in Frameworks */,
+				2FA042E4207CCDF5004CE72B /* KakaoConnector.framework in Frameworks */,
 				2FA04254207CCDF4004CE72B /* AMapSearchKit.framework in Frameworks */,
+				2FA042EF207CCDF5004CE72B /* YiXinConnector.framework in Frameworks */,
+				2FA042DB207CCDF5004CE72B /* AliPayConnector.framework in Frameworks */,
+				2FA042DD207CCDF5004CE72B /* DingTalkConnector.framework in Frameworks */,
+				2FA042E5207CCDF5004CE72B /* LineConnector.framework in Frameworks */,
 				2FA04253207CCDF4004CE72B /* AMapFoundationKit.framework in Frameworks */,
 				2FA042F8207CCDF5004CE72B /* ShareSDKConnector.framework in Frameworks */,
+				2FA042E1207CCDF5004CE72B /* GooglePlusConnector.framework in Frameworks */,
 				2FA04252207CCDF4004CE72B /* BBSSDKUI.framework in Frameworks */,
+				2FA042E3207CCDF5004CE72B /* InstapaperConnector.framework in Frameworks */,
+				2FA042EC207CCDF5004CE72B /* TwitterConnector.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1494,6 +1533,7 @@
 		6BAFB7C01E6FFFCD00692299 /* BBSSDKDemo_WF */ = {
 			isa = PBXGroup;
 			children = (
+				700C45CC20C7D9F50099A9EA /* BBSSDKDemo_WF.entitlements */,
 				3ADCBD321F99F7BF0035EE46 /* BBSSDKDemo.entitlements */,
 				6BAFB7C41E6FFFCD00692299 /* AppDelegate.h */,
 				6BAFB7C51E6FFFCD00692299 /* AppDelegate.m */,
@@ -1595,8 +1635,11 @@
 						DevelopmentTeam = LW5266U92D;
 						ProvisioningStyle = Manual;
 						SystemCapabilities = {
+							com.apple.Keychain = {
+								enabled = 0;
+							};
 							com.apple.SafariKeychain = {
-								enabled = 1;
+								enabled = 0;
 							};
 						};
 					};
@@ -1823,12 +1866,12 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
-				CODE_SIGN_ENTITLEMENTS = BBSSDKDemo_WF/BBSSDKDemo.entitlements;
-				CODE_SIGN_IDENTITY = "iPhone Developer: 永超 李 (6L4556Q7ET)";
+				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
 				DEVELOPMENT_TEAM = LW5266U92D;
 				ENABLE_BITCODE = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"\"$(SRCROOT)/../SDK/BBSSDK/Common/3rdPart/AMap\"",
 					"\"$(SRCROOT)/../SDK/BBSSDK\"",
@@ -1840,13 +1883,13 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
 				HEADER_SEARCH_PATHS = "\"$(SRCROOT)/../SDK/ShareSDK\"/**";
 				INFOPLIST_FILE = BBSSDKDemo_WF/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = "\"$(SRCROOT)/../SDK/ShareSDK\"/**";
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = com.mob.bbssdk.sample;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "fe45b599-0f28-4150-8b13-e21fbd469184";
+				PROVISIONING_PROFILE = "a5c8bb8b-5e8f-4aca-ae28-88801c274f92";
 				PROVISIONING_PROFILE_SPECIFIER = BBSSDKSampleDevelopment;
 			};
 			name = Debug;
@@ -1856,12 +1899,12 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
-				CODE_SIGN_ENTITLEMENTS = BBSSDKDemo_WF/BBSSDKDemo.entitlements;
-				CODE_SIGN_IDENTITY = "iPhone Developer: 永超 李 (6L4556Q7ET)";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
 				DEVELOPMENT_TEAM = LW5266U92D;
 				ENABLE_BITCODE = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"\"$(SRCROOT)/../SDK/BBSSDK/Common/3rdPart/AMap\"",
 					"\"$(SRCROOT)/../SDK/BBSSDK\"",
@@ -1873,13 +1916,13 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
 				HEADER_SEARCH_PATHS = "\"$(SRCROOT)/../SDK/ShareSDK\"/**";
 				INFOPLIST_FILE = BBSSDKDemo_WF/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = "\"$(SRCROOT)/../SDK/ShareSDK\"/**";
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = com.mob.bbssdk.sample;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "fe45b599-0f28-4150-8b13-e21fbd469184";
+				PROVISIONING_PROFILE = "a5c8bb8b-5e8f-4aca-ae28-88801c274f92";
 				PROVISIONING_PROFILE_SPECIFIER = BBSSDKSampleDevelopment;
 			};
 			name = Release;

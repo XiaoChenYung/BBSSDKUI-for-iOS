@@ -90,7 +90,8 @@ static char TAG_ACTIVITY_SHOW;
     }
 }
 
-- (void)sd_cancelCurrentImageLoad {
+- (void)sd_cancelCurrentImageLoad
+{
     [self sd_cancelImageLoadOperationWithKey:NSStringFromClass([self class])];
 }
 
