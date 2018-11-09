@@ -138,7 +138,6 @@
 		3A35365F1FA8746E001FD200 /* MyBBSViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3A35365C1FA8746E001FD200 /* MyBBSViewController.m */; };
 		3A3536601FA8746E001FD200 /* MyBBSViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3A35365D1FA8746E001FD200 /* MyBBSViewController.xib */; };
 		3A8E5C371FC671ED00E453E1 /* MOBShareSDKHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 3A8E5C361FC671ED00E453E1 /* MOBShareSDKHelper.m */; };
-		3ADCBD311F99F0480035EE46 /* libstdc++.6.0.9.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 3ADCBD301F99F0480035EE46 /* libstdc++.6.0.9.tbd */; };
 		3AEDBB251FFCC42500B43A6E /* iPhoneX_Launchscreen.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 3AEDBB231FFCC42500B43A6E /* iPhoneX_Launchscreen.jpg */; };
 		3AEDBB261FFCC42500B43A6E /* Launchscreen.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 3AEDBB241FFCC42500B43A6E /* Launchscreen.jpg */; };
 		44533BC61EC2E6520065E0BD /* libsqlite3.0.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 44533BC51EC2E6520065E0BD /* libsqlite3.0.tbd */; };
@@ -586,7 +585,6 @@
 				2FA04300207CCF7E004CE72B /* AdSupport.framework in Frameworks */,
 				2FA042FE207CCF7A004CE72B /* JavaScriptCore.framework in Frameworks */,
 				2FA042FC207CCF74004CE72B /* libz.tbd in Frameworks */,
-				3ADCBD311F99F0480035EE46 /* libstdc++.6.0.9.tbd in Frameworks */,
 				2FA042FA207CCF63004CE72B /* libc++.tbd in Frameworks */,
 				2FA042EE207CCDF5004CE72B /* WhatsAppConnector.framework in Frameworks */,
 				2FA042D3207CCDF5004CE72B /* MOBFoundation.framework in Frameworks */,

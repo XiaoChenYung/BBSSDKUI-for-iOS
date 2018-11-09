@@ -137,7 +137,6 @@
 		2FA040BE207C6EF2004CE72B /* ShareSDKConnector.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2FA04014207C6EF1004CE72B /* ShareSDKConnector.framework */; };
 		3A35365F1FA8746E001FD200 /* MyBBSViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3A35365C1FA8746E001FD200 /* MyBBSViewController.m */; };
 		3A3536601FA8746E001FD200 /* MyBBSViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3A35365D1FA8746E001FD200 /* MyBBSViewController.xib */; };
-		3ADCBD311F99F0480035EE46 /* libstdc++.6.0.9.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 3ADCBD301F99F0480035EE46 /* libstdc++.6.0.9.tbd */; };
 		3AEDBB251FFCC42500B43A6E /* iPhoneX_Launchscreen.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 3AEDBB231FFCC42500B43A6E /* iPhoneX_Launchscreen.jpg */; };
 		3AEDBB261FFCC42500B43A6E /* Launchscreen.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 3AEDBB241FFCC42500B43A6E /* Launchscreen.jpg */; };
 		44533BC61EC2E6520065E0BD /* libsqlite3.0.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 44533BC51EC2E6520065E0BD /* libsqlite3.0.tbd */; };
@@ -626,7 +625,6 @@
 				2FA03E97207C6BCC004CE72B /* libz.tbd in Frameworks */,
 				2FA040AB207C6EF2004CE72B /* LineConnector.framework in Frameworks */,
 				2FA0401C207C6EF2004CE72B /* MAMapKit.framework in Frameworks */,
-				3ADCBD311F99F0480035EE46 /* libstdc++.6.0.9.tbd in Frameworks */,
 				2FA040AA207C6EF2004CE72B /* KakaoConnector.framework in Frameworks */,
 				2FA040B2207C6EF2004CE72B /* TwitterConnector.framework in Frameworks */,
 				2FA040A2207C6EF2004CE72B /* CopyConnector.framework in Frameworks */,
