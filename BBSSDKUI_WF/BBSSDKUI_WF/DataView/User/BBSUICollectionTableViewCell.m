@@ -456,6 +456,10 @@
 
 - (NSMutableAttributedString *)stringWithString:(NSString *)string lineSpace:(CGFloat)offset
 {
+    if (!string) {
+        string = @"";
+    }
+    
     NSMutableAttributedString *str = [[NSMutableAttributedString alloc] initWithString:string];
     
     NSMutableParagraphStyle *paragrah = [[NSMutableParagraphStyle alloc] init];

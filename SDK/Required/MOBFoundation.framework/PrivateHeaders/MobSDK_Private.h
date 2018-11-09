@@ -47,4 +47,11 @@
  */
 + (void)waitForInitSucceed:(void (^ _Nullable)())handler;
 
+/**
+ 等待公共库授权日志
+
+ @param handler 事件处理器
+ */
++ (void)waitForLogAuth:(void (^ _Nullable)())handler;
+
 @end

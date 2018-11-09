@@ -49,6 +49,8 @@
 @property (nonatomic, strong) BBSUITribuneSegementView *segmentView ;
 @property (nonatomic, strong) UIView *lineView;
 
+@property (nonatomic, strong) NSMutableDictionary *cacheDict;
+
 @end
 
 static NSString *cellIdentifier = @"ThreadSummaryCell";
@@ -83,6 +85,7 @@ static NSString *cellIdentifier = @"ThreadSummaryCell";
     [self _createTabView];
     self.selectType = BBSUIThreadSelectTypeLatest;
     self.orderType = BBSUIThreadOrderCommentTime;
+    self.cacheDict = [NSMutableDictionary dictionary];
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -116,7 +119,7 @@ static NSString *cellIdentifier = @"ThreadSummaryCell";
     [self setNavigationBarTitle];
     
     //最新 最热
-     BBSUITribuneSegementView *segmentView = [[BBSUITribuneSegementView alloc] initWithFrame:CGRectZero];
+     BBSUITribuneSegementView *segmentView = [[BBSUITribuneSegementView alloc] initWithFrame:CGRectZero titleArray:@[@"最新",@"热门",@"精华",@"置顶"]];
     [self.view addSubview:segmentView];
     segmentView.delegate = self;
     self.segmentView = segmentView;
@@ -138,28 +141,6 @@ static NSString *cellIdentifier = @"ThreadSummaryCell";
     lineView.backgroundColor = DZSUIColorFromHex(0xEAEDF2);
 }
 
-- (void) _loadData
-{
-    __weak typeof(self) weakSelf = self;
-    if (_pageType == PageTypeHomePage || _pageType == PageTypePortal) {
-        self.tableView.mj_header = [MJRefreshNormalHeader headerWithRefreshingBlock:^{
-            weakSelf.currentIndex = 1;
-            [weakSelf requestData];
-            
-        }];
-    }else{
-        weakSelf.currentIndex = 1;
-        if (self.pageType != PageTypeSearch) {
-            [weakSelf requestData];
-        }
-    }
-    self.tableView.mj_footer = [MJRefreshBackNormalFooter footerWithRefreshingBlock:^{
-        weakSelf.currentIndex++;
-        [weakSelf requestData];
-    }];
-    
-    [self.tableView.mj_header beginRefreshing];
-}
 
 - (void)_createTabView
 {
@@ -183,6 +164,261 @@ static NSString *cellIdentifier = @"ThreadSummaryCell";
     
     [self _loadData];
 }
+
+#pragma mark - 开始加载数据
+- (void) _loadData
+{
+    __weak typeof(self) weakSelf = self;
+    if (_pageType == PageTypeHomePage || _pageType == PageTypePortal) {
+        self.tableView.mj_header = [MJRefreshNormalHeader headerWithRefreshingBlock:^{
+            weakSelf.currentIndex = 1;
+            [weakSelf requestData];
+            
+        }];
+    }else{
+        weakSelf.currentIndex = 1;
+        if (self.pageType != PageTypeSearch) {
+            [weakSelf requestData];
+        }
+    }
+    
+    self.tableView.mj_footer = [MJRefreshBackNormalFooter footerWithRefreshingBlock:^{
+        weakSelf.currentIndex++;
+        [weakSelf requestData];
+    }];
+    
+    [self.tableView.mj_header beginRefreshing];
+}
+
+
+#pragma mark -加载数据
+- (void)requestData
+{
+    [self getHomePageData];
+}
+
+- (void)getHomePageData
+{
+    NSString *selectTypeString = [self selectTypeStringFromSelectType:self.selectType];
+    NSString *orderTypeString = [self orderTypeStringFromOrderType:self.orderType];
+    
+    __weak typeof(self) weakSelf = self;
+    //[BBSSDK getThreadListWithFid:self.currentForum.fid orderType:orderTypeString selectType:selectTypeString pageIndex:self.currentIndex pageSize:BBSUIPageSize result:^(NSArray *threadList, NSError *error) {
+    
+    [BBSSDK getThreadListWithFid:self.currentForum.fid  orderType:orderTypeString selectType:selectTypeString pageIndex:self.currentIndex pageSize:BBSUIPageSize result:^(NSArray *threadList, NSError *error) {
+        
+        if (!error) {
+            
+            if (_selectedArray.count)
+            {
+                for (BBSThread *obj in threadList)
+                {
+                    if ([_selectedArray containsObject:@(obj.tid)])
+                    {
+                        obj.select = YES;
+                    }
+                }
+            }
+            
+            if (weakSelf.currentIndex == 1) {
+                weakSelf.threadListArray = [NSMutableArray arrayWithArray:threadList];
+            }else{
+                [weakSelf.threadListArray addObjectsFromArray:threadList];
+            }
+            
+            [weakSelf.tableView reloadData];
+            [weakSelf.tableView.mj_footer setHidden:NO];
+            
+            if (threadList.count < BBSUIPageSize) {
+                [weakSelf.tableView.mj_footer endRefreshingWithNoMoreData];
+            }
+            
+            //MARK:————————存储数据——————————
+            [self _cacheLoadData:self.threadListArray selectType:selectTypeString];
+            
+            if (weakSelf.currentIndex == 1) {
+                
+                if (threadList.count == 0) {
+                    if (self.currentForum.fid == 0) {
+                        [self.tableView addSubview:self.noDataView];
+                        [self.noDataImageView setImage:[UIImage BBSImageNamed:@"/Common/wnr@2x.png"]];
+                        [self.noDataLabel setText:@"暂无内容"];
+                    }else{
+                        [weakSelf.view bbs_configureTipViewWithTipMessage:@"暂无内容" hasData:weakSelf.threadListArray.count != 0 hasError:YES reloadButtonBlock:^(id sender) {
+                            [weakSelf.tableView.mj_header beginRefreshing];
+                            [weakSelf requestData];
+                        }];
+                    }
+                }
+            }
+            
+            if (threadList.count > 0) {
+                [weakSelf.view bbs_configureTipViewWithTipMessage:@"" hasData:YES];
+                if (_noDataView.superview) {
+                    [_noDataView removeFromSuperview];
+                }
+            }
+        }
+        else
+        {
+            NSLog(@"======error=====%@",error);
+            [self.tableView addSubview:self.noDataView];
+            [self.noDataImageView setImage:[UIImage BBSImageNamed:@"/Common/wwl@2x.png"]];
+            [self.noDataLabel setText:@"网络不佳，请再次刷新"];
+            [self.threadListArray removeAllObjects];
+            [self.tableView reloadData];
+            [weakSelf.tableView.mj_header endRefreshing];
+        }
+        
+        [weakSelf.tableView.mj_header endRefreshing];
+        [weakSelf.tableView.mj_footer endRefreshing];
+    }];
+}
+
+//MARK:- 缓存数据
+- (void)_cacheLoadData:(NSArray *)loadDataArray selectType:(NSString *)selectType
+{
+    //以type为 key， list为value 存放到字典中
+    [self.cacheDict setObject:loadDataArray forKey:selectType];
+    
+}
+
+- (NSString *)selectTypeStringFromSelectType:(BBSUIThreadSelectType)selectType
+{
+    NSString *selectTypeString = nil;
+    if (selectType == BBSUIThreadSelectTypeLatest) {
+        selectTypeString = @"latest";
+    }else if (selectType == BBSUIThreadSelectTypeHeats)
+    {
+        selectTypeString = @"heats";
+    }else if (selectType == BBSUIThreadSelectTypeDigest)
+    {
+        selectTypeString = @"digest";
+    }else if (selectType == BBSUIThreadSelectTypeDisplayOrder)
+    {
+        selectTypeString = @"displayOrder";
+    }
+    return selectTypeString ? : @"latest";
+}
+
+- (NSString *)orderTypeStringFromOrderType:(BBSUIThreadOrderType)orderType
+{
+    NSString *orderTypeString = nil;
+    if (orderType == BBSUIThreadOrderCommentTime) {
+        orderTypeString = @"lastPost";
+    }else if (orderType == BBSUIThreadOrderPostTime)
+    {
+        orderTypeString = @"createdOn";
+    }
+    
+    return orderTypeString ? : @"lastPost";
+}
+
+- (void)setKeyword:(NSString *)keyword
+{
+    _keyword = keyword;
+    self.currentIndex = 1;
+}
+
+#pragma mark -  -----BBSUITribuneSegementView Delegate---------
+//MARK: ---切换最新，热门，精华置顶---
+- (void)selectSegementTitle:(NSString *)selectTitle
+{
+    //先清除一下暂无内容
+    [self.view bbs_configureTipViewWithTipMessage:@"" hasData:YES hasError:NO reloadButtonBlock:^(id sender) {
+    }];
+    
+    if ([selectTitle isEqualToString:@"最新"])
+    {
+        self.selectType = BBSUIThreadSelectTypeLatest;
+    }
+    else if ([selectTitle isEqualToString:@"热门"])
+    {
+        self.selectType = BBSUIThreadSelectTypeHeats;
+    }
+    else if ([selectTitle isEqualToString:@"精华"])
+    {
+        self.selectType = BBSUIThreadSelectTypeDigest;
+    }
+    else if ([selectTitle isEqualToString:@"置顶"])
+    {
+        self.selectType = BBSUIThreadSelectTypeDisplayOrder;
+    }
+    
+    //self.currentIndex = 1;
+    [self.tableView.mj_header endRefreshing];
+    self.tableView.mj_offsetY = 0;
+    //[self _loadData];
+    
+    [self _showCacheData];
+
+}
+
+- (void)_showCacheData
+{
+    //处理缓存的数据，如果缓存有数据则，加载缓存，没有直接去请求
+    NSString *selectTypeString = [self selectTypeStringFromSelectType:self.selectType];
+    NSArray *dataArray = [self.cacheDict objectForKey:selectTypeString];
+    
+    if (dataArray.count > 0)
+    {//有缓存数据
+        
+        NSLog(@">>>>>---有缓存数据-----");
+        NSLog(@"--->>>>>dataArray--%lu", (unsigned long)dataArray.count);
+        
+        self.currentIndex = dataArray.count / BBSUIPageSize ;
+        
+        if (_selectedArray.count)
+        {
+            for (BBSThread *obj in dataArray)
+            {
+                if ([_selectedArray containsObject:@(obj.tid)])
+                {
+                    obj.select = YES;
+                }
+            }
+        }
+        
+        self.threadListArray = [NSMutableArray arrayWithArray:dataArray];
+        [self.tableView reloadData];
+        [self.tableView.mj_footer setHidden:NO];
+        
+        if (dataArray.count > 0) {
+            if (_noDataView.superview) {
+                [_noDataView removeFromSuperview];
+            }
+        }
+    }
+    else
+    {//没有缓存数据
+        
+        //self.currentIndex = 1;
+        //[self requestData];
+        
+        self.currentIndex = 1;
+        [self _loadData];
+        
+        NSLog(@"----mmmm--没有环迅数据----");
+    }
+}
+
+
+//时间排序
+- (void)selectSortByType:(NSInteger)sortIndex
+{
+    if (sortIndex == BBSUISegmentViewMenuSendSort)
+    {//发帖时间排序
+        self.orderType = BBSUIThreadOrderPostTime;
+    }
+    else if (sortIndex == BBSUISegmentViewMenuReplySort)
+    {//回复时间排序
+        self.orderType = BBSUIThreadOrderCommentTime;
+    }
+    self.currentIndex = 1;
+    [self _loadData];
+    
+}
+
 
 #pragma mark - 导航头
 - (void)setNavigationBarTitle
@@ -383,166 +619,7 @@ static NSString *cellIdentifier = @"ThreadSummaryCell";
 }
 
 
-#pragma mark - 加载数据
-- (void)requestData
-{
-     [self getHomePageData];
-}
 
-- (void)getHomePageData {
-    
-    NSString *selectTypeString = [self selectTypeStringFromSelectType:self.selectType];
-    NSString *orderTypeString = [self orderTypeStringFromOrderType:self.orderType];
-    
-    __weak typeof(self) weakSelf = self;
-    //[BBSSDK getThreadListWithFid:self.currentForum.fid orderType:orderTypeString selectType:selectTypeString pageIndex:self.currentIndex pageSize:BBSUIPageSize result:^(NSArray *threadList, NSError *error) {
-    
-    [BBSSDK getThreadListWithFid:self.currentForum.fid  orderType:orderTypeString selectType:selectTypeString pageIndex:self.currentIndex pageSize:BBSUIPageSize result:^(NSArray *threadList, NSError *error) {
-        
-        if (!error) {
-            
-            if (_selectedArray.count)
-            {
-                for (BBSThread *obj in threadList)
-                {
-                    if ([_selectedArray containsObject:@(obj.tid)])
-                    {
-                        obj.select = YES;
-                    }
-                }
-            }
-            
-            if (weakSelf.currentIndex == 1) {
-                weakSelf.threadListArray = [NSMutableArray arrayWithArray:threadList];
-            }else{
-                [weakSelf.threadListArray addObjectsFromArray:threadList];
-            }
-            
-            [weakSelf.tableView reloadData];
-            [weakSelf.tableView.mj_footer setHidden:NO];
-            
-            if (threadList.count < BBSUIPageSize) {
-                [weakSelf.tableView.mj_footer endRefreshingWithNoMoreData];
-            }
-            
-            if (weakSelf.currentIndex == 1) {
-                
-                if (threadList.count == 0) {
-                    if (self.currentForum.fid == 0) {
-                        [self.tableView addSubview:self.noDataView];
-                        [self.noDataImageView setImage:[UIImage BBSImageNamed:@"/Common/wnr@2x.png"]];
-                        [self.noDataLabel setText:@"暂无内容"];
-                    }else{
-                        [weakSelf.view bbs_configureTipViewWithTipMessage:@"暂无内容" hasData:weakSelf.threadListArray.count != 0 hasError:YES reloadButtonBlock:^(id sender) {
-                            [weakSelf.tableView.mj_header beginRefreshing];
-                            [weakSelf requestData];
-                        }];
-                    }
-                }
-            }
-            
-            if (threadList.count > 0) {
-                [weakSelf.view bbs_configureTipViewWithTipMessage:@"" hasData:YES];
-                if (_noDataView.superview) {
-                    [_noDataView removeFromSuperview];
-                }
-            }
-        }
-        else
-        {
-            NSLog(@"======error=====%@",error);
-            [self.tableView addSubview:self.noDataView];
-            [self.noDataImageView setImage:[UIImage BBSImageNamed:@"/Common/wwl@2x.png"]];
-            [self.noDataLabel setText:@"网络不佳，请再次刷新"];
-            [self.threadListArray removeAllObjects];
-            [self.tableView reloadData];
-            [weakSelf.tableView.mj_header endRefreshing];
-        }
-        
-        [weakSelf.tableView.mj_header endRefreshing];
-        [weakSelf.tableView.mj_footer endRefreshing];
-    }];
-}
-
-- (NSString *)selectTypeStringFromSelectType:(BBSUIThreadSelectType)selectType
-{
-    NSString *selectTypeString = nil;
-    if (selectType == BBSUIThreadSelectTypeLatest) {
-        selectTypeString = @"latest";
-    }else if (selectType == BBSUIThreadSelectTypeHeats)
-    {
-        selectTypeString = @"heats";
-    }else if (selectType == BBSUIThreadSelectTypeDigest)
-    {
-        selectTypeString = @"digest";
-    }else if (selectType == BBSUIThreadSelectTypeDisplayOrder)
-    {
-        selectTypeString = @"displayOrder";
-    }
-    return selectTypeString ? : @"latest";
-}
-
-- (NSString *)orderTypeStringFromOrderType:(BBSUIThreadOrderType)orderType
-{
-    NSString *orderTypeString = nil;
-    if (orderType == BBSUIThreadOrderCommentTime) {
-        orderTypeString = @"lastPost";
-    }else if (orderType == BBSUIThreadOrderPostTime)
-    {
-        orderTypeString = @"createdOn";
-    }
-    
-    return orderTypeString ? : @"lastPost";
-}
-
-- (void)setKeyword:(NSString *)keyword
-{
-    _keyword = keyword;
-    self.currentIndex = 1;
-}
-
-#pragma mark - BBSUITribuneSegementView Delegate
-//最新 最热
-- (void)selectSegementType:(NSInteger)index
-{
-    if (index == BBSUISegmentViewMenuTypeNew)
-    {
-        self.selectType = BBSUIThreadSelectTypeLatest;
-    }
-    else if (index == BBSUISegmentViewMenuTypeHot)
-    {
-        self.selectType = BBSUIThreadSelectTypeHeats;
-    }
-    else if (index == BBSUISegmentViewMenuTypeCream)
-    {
-        self.selectType = BBSUIThreadSelectTypeDigest;
-    }
-    else if (index == BBSUISegmentViewMenuTypeTop)
-    {
-        self.selectType = BBSUIThreadSelectTypeDisplayOrder;
-    }
-    
-    self.currentIndex = 1;
-    [self.tableView.mj_header endRefreshing];
-    self.tableView.mj_offsetY = 0;
-    [self _loadData];
-}
-
-//时间排序
-- (void)selectSortByType:(NSInteger)sortIndex
-{
-    if (sortIndex == BBSUISegmentViewMenuSendSort)
-    {//发帖时间排序
-        self.orderType = BBSUIThreadOrderPostTime;
-    }
-    else if (sortIndex == BBSUISegmentViewMenuReplySort)
-    {//回复时间排序
-        self.orderType = BBSUIThreadOrderCommentTime;
-    }
-    self.currentIndex = 1;
-    [self _loadData];
-    
-}
 
 #pragma mark - 发帖
 - (void)editThread:(id)sender

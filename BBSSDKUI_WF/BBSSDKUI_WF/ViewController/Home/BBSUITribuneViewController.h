@@ -31,8 +31,4 @@
 
 - (instancetype)initWithCatid:(NSInteger)catid;
 
-- (void)refreshData:(BBSUIThreadOrderType)orderType;
-
-- (void)refresh;
-
 @end

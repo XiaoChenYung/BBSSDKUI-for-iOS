@@ -57,7 +57,7 @@
         [_imageArray enumerateObjectsUsingBlock:^(NSString *  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
             
             [theDownload.urlDictionary setObject:@(idx) forKey:obj];
-            
+            //MARK:这个obj就是服务器返回的图片的url，是一个数组，这个图片就是放在详情里面的图片
             [imgGetter getImageDataWithURL:[NSURL URLWithString:obj] result:^(NSData *imageData, NSError *error) {
                 
                 if (imageData && !error)

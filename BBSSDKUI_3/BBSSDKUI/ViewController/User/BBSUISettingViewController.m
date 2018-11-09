@@ -76,7 +76,8 @@
     return 1;
 }
 
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
+{
     return 1;
 }
 
@@ -113,6 +114,7 @@
         {
             dataSize = dataSize *1024;
             cell.detailTextLabel.text = [NSString stringWithFormat:@"%.2fK",dataSize];
+            //cell.detailTextLabel.text = @"0K";
         }
         
         
@@ -143,6 +145,7 @@
         UITableViewCell *cell = [_tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0]];
         cell.detailTextLabel.text = @"0K";
     }
+    
 }
 
 

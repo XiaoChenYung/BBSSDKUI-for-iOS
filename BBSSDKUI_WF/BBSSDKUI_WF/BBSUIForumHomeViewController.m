@@ -22,7 +22,7 @@
     self.interactivePopGestureRecognizer.delegate =  self;
 }
 
-+(BBSUIForumHomeViewController *)forumHomeViewControllerWithTitle:(NSString *)title
++ (BBSUIForumHomeViewController *)forumHomeViewControllerWithTitle:(NSString *)title
 {
     BBSUIHomeViewController *forumVC = [[BBSUIHomeViewController alloc] init];
     BBSUIForumHomeViewController *homeVC = [[BBSUIForumHomeViewController alloc] initWithRootViewController:forumVC];

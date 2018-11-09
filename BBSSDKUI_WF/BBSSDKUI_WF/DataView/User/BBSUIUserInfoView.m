@@ -765,10 +765,19 @@
                     avatarUrlDic[@"avatarSmall"] = avatarDic[@"48"];
                     avatarUrlDic[@"avatarMiddle"] = avatarDic[@"120"];
                     avatarUrlDic[@"avatarBig"] = avatarDic[@"200"];
+                    
                 }
                 [weakSelf editUserInfoWithGender:-1 birthday:nil residence:nil sightml:nil token:_currentUser.token avatarBigUrl:avatarUrlDic[@"avatarBig"] avatarMiddleUrl:avatarUrlDic[@"avatarMiddle"] avatarSmallUrl:avatarUrlDic[@"avatarSmall"] success:^{
+                    
+                    //[[MOBFImageGetter sharedInstance] removeImageForURL:[NSURL URLWithString:avatarUrlDic[@"avatarSmall"]]];
+                    //[[MOBFImageGetter sharedInstance] removeImageForURL:[NSURL URLWithString:avatarUrlDic[@"avatarMiddle"]]];
+                    //[[MOBFImageGetter sharedInstance] removeImageForURL:[NSURL URLWithString:avatarUrlDic[@"avatarBig"]]];
+                    
                     [weakSelf.avatarImageView setImage:image];
                 }];
+                
+                
+                
                 
                 return ;
                 

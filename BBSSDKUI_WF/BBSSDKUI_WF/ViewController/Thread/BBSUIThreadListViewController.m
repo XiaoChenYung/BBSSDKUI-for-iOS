@@ -17,7 +17,7 @@
 #import "BBSUISearchViewController.h"
 #import "Masonry.h"
 #import "UIView+BBSUIExt.h"
-#import "BBSUIStatusBarTip.h"#import "BBSUITribuneSegementView.h"
+#import "BBSUIStatusBarTip.h"
 
 @interface BBSUIThreadListViewController ()<iBBSUIFastPostViewControllerDelegate>
 
@@ -91,7 +91,8 @@
     
     [super viewWillDisappear:animated];
 }
-#pragma mark - UI#pragma mark -导航头
+#pragma mark - UI
+#pragma mark -导航头
 - (void)setNavigationBarTitle
 {
     if (!self.currentForum) {
@@ -134,12 +135,20 @@
     [titleLabel setFrame:CGRectMake((BBS_WIDTH(self.titleView) - buttonSize.width) / 2, (BBS_HEIGHT(self.titleView) - buttonSize.height) / 2, buttonSize.width, buttonSize.height)];
     [titleLabel setTextColor:[UIColor blackColor]];
     
-//    _arrowImageView = [[UIImageView alloc] initWithFrame:CGRectMake(BBS_RIGHT(titleLabel) + 5, (BBS_HEIGHT(self.titleView) - 14) / 2, 14, 14)];//    [_arrowImageView setContentMode:UIViewContentModeScaleAspectFit];//    [_arrowImageView setImage:arrowImage];//    [self.titleView addSubview:_arrowImageView];
+//    _arrowImageView = [[UIImageView alloc] initWithFrame:CGRectMake(BBS_RIGHT(titleLabel) + 5, (BBS_HEIGHT(self.titleView) - 14) / 2, 14, 14)];
+//    [_arrowImageView setContentMode:UIViewContentModeScaleAspectFit];
+//    [_arrowImageView setImage:arrowImage];
+//    [self.titleView addSubview:_arrowImageView];
     //状态栏
     [UIApplication sharedApplication].statusBarStyle = UIStatusBarStyleDefault;
-    //    titleTap.numberOfTouchesRequired = 1;//    [self.titleView addGestureRecognizer:titleTap];//    [self setupRightBarButton];    [self setupRightBarButton];
+    
+//    titleTap.numberOfTouchesRequired = 1;
+//    [self.titleView addGestureRecognizer:titleTap];
+//    [self setupRightBarButton];
+    [self setupRightBarButton];
 }
-#pragma mark - Action
+
+#pragma mark - Action
 - (void)titleViewTappedHandler:(UITapGestureRecognizer *)tap
 {    
     [_arrowImageView setImage:[_arrowImageView.image BBSImageRotation:UIImageOrientationDown]];
@@ -163,7 +172,8 @@
     [self.navigationController popViewControllerAnimated:YES];
 }
 
-- (void)searchAction:(UIButton *)sender{
+- (void)searchAction:(UIButton *)sender
+{
     BBSUISearchViewController *vc = [BBSUISearchViewController new];
     [[MOBFViewController currentViewController].navigationController pushViewController:vc animated:YES];
 }
@@ -184,7 +194,8 @@
     [searchBtn addTarget:self action:@selector(searchAction:) forControlEvents:UIControlEventTouchUpInside];
     
 }
-#pragma mark -发帖
+
+#pragma mark -发帖
 - (void)editThread:(id)sender
 {
     if (![BBSUIContext shareInstance].currentUser)

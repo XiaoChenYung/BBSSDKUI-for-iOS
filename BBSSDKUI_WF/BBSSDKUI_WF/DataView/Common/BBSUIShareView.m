@@ -55,8 +55,10 @@
     self.tag = ShareViewTag;
     
     self.backgroundColor = [UIColor colorWithWhite:0 alpha:0.3];// 设置背景透明度
-    self.imageArr = [NSMutableArray arrayWithArray:@[@"Share/weixin.png", @"Share/pengyouquan.png",@"Share/QQ.png",@"Share/QQzone.png"]];//,@"Share/weibo.png"
-    self.titleArr=[NSMutableArray arrayWithArray:@[@"微信好友", @"微信朋友圈",@"QQ",@"QQ空间"]] ;//,@"微博"
+    //----
+    self.imageArr = [NSMutableArray arrayWithArray:@[@"Share/weixin.png", @"Share/pengyouquan.png",@"Share/QQ.png",@"Share/QQzone.png",@"Share/weibo.png"]];//,@"Share/weibo.png"
+    self.titleArr = [NSMutableArray arrayWithArray:@[@"微信好友", @"微信朋友圈",@"QQ",@"QQ空间",@"微博"]] ;//,@"微博"
+    
     // 加载Tap手势
     UITapGestureRecognizer *tapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(hide)];
     tapRecognizer.delegate = self;
@@ -225,37 +227,47 @@
     
     //分享操作
     //1、创建分享参数
-    NSMutableDictionary *shareParams = [BBSSDK setupShareParamsByText:thread.summary
-                                                               images:images
+    NSMutableDictionary *shareParams = [BBSSDK setupShareParamsByText:thread.summary                                                               images:images
                                                                   url:[NSURL URLWithString:url]
                                                                 title:title
                                                                  type:3
                                                        dataDictionary:nil];
     
     //有的平台要客户端分享需要加此方法，例如微博
-    //        [shareParams SSDKEnableUseClientShare];
+    // [shareParams SSDKEnableUseClientShare];
     
     NSUInteger platformType;
     switch (sender.tag) {
-        case 0:
+        case 0://微信好友
             platformType = 22;
             break;
-        case 1:
+        case 1://微信朋友圈
             platformType = 23;
             break;
-        case 2:
+        case 2://QQ
             platformType = 24;
             break;
             //            case 3:
             //                platformType = SSDKPlatformTypeSinaWeibo;
             //                break;
-        case 3:
+        case 3://QQ空间
             platformType = 6;
+            break;
+            
+        case 4://微博 图片+链接分享
+            shareParams = [BBSSDK setupShareParamsByText:[NSString stringWithFormat:@"%@ %@", thread.summary, url]
+                                                  images:images
+                                                     url:[NSURL URLWithString:url]
+                                                   title:title
+                                                    type:2
+                                          dataDictionary:nil];
+            platformType = 1;
             break;
         default:
             platformType = 0;
             break;
     }
+    
     
     
     [BBSSDK share:platformType parameters:shareParams onStateChanged:nil];

@@ -98,8 +98,8 @@ static NSInteger    BBSUIPageSize = 10;
 
     [self _configureUI];
     [self _initData];
-    [self _requestData];
     
+    [self _requestData];
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -201,19 +201,18 @@ static NSInteger    BBSUIPageSize = 10;
 - (UIView *)_obtainHeaderView
 {
     //计算版块点击高度
-    //    CGFloat forumViewHeight = DZSUIScreen_height / 7;
+    //CGFloat forumViewHeight = DZSUIScreen_height / 7;
     
     CGFloat forumViewHeight;
     if (self.viewType == BBSUIThreadListViewTypeThread)
-    {
-        forumViewHeight = 105;
-    }else
-    {
+    {//论坛
+        forumViewHeight = 145 ;
+    }
+    else
+    {//资讯
         forumViewHeight = 45;
     }
      
-    //UIView *headerView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, DZSUIScreen_width, 245 + forumViewHeight)];
-    
     UIView *headerView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, DZSUIScreen_width, 245 + forumViewHeight)];
     
     if (self.viewType == BBSUIThreadListViewTypeThread)
@@ -229,14 +228,38 @@ static NSInteger    BBSUIPageSize = 10;
         self.maskImage = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, BBS_WIDTH(self.bannerView), BBS_HEIGHT(self.bannerView))];
     
         __weak typeof(self) theController = self;
-        _forumHeader = [[BBSUIForumHeader alloc] initWithFrame:CGRectMake(0, BBS_BOTTOM(self.bannerView), DZSUIScreen_width, forumViewHeight)];
+        //加载版块
+        _forumHeader = [[BBSUIForumHeader alloc] initWithFrame:CGRectMake(0, BBS_BOTTOM(self.bannerView), DZSUIScreen_width, forumViewHeight-40)];
         [_forumHeader setResultHandler:^(BBSForum *forum){
             [theController _pushForumVC:forum];
         }];
         [headerView addSubview:_forumHeader];
         
+        //加载热门标签
+        UIView *titleView = [[UIView alloc] init];
+        [headerView addSubview:titleView];
+        [titleView mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.top.mas_equalTo(_forumHeader.mas_bottom);
+            make.left.mas_equalTo(0);
+            make.size.mas_equalTo(CGSizeMake(DZSUIScreen_width, 40));
+        }];
+        titleView.backgroundColor = DZSUIColorFromHex(0xF2F3F7);
+        
+        UILabel *lab = [UILabel new];
+        [titleView addSubview:lab];
+        [lab mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.left.mas_equalTo(15);
+            make.centerY.mas_equalTo(0);
+        }];
+        
+        lab.text = @"热门";
+        lab.font = BBSFont(12);
+        lab.textColor = DZSUIColorFromHex(0xACADB8);
+        
+        
         [self.maskImage setImage:[UIImage BBSImageNamed:@"/Home/BannerMask.png"]];
         [headerView addSubview:self.maskImage];
+        
     }
     else
     {
@@ -274,7 +297,6 @@ static NSInteger    BBSUIPageSize = 10;
 {
     self.currentIndex = 1;
     self.currentUserId = [[BBSUIContext shareInstance].currentUser.uid integerValue];
-//    self.stateStarted = YES;
 }
 
 #pragma mark -数据加载
@@ -297,7 +319,7 @@ static NSInteger    BBSUIPageSize = 10;
 - (void)_requestThreadList
 {
     __weak typeof(self) theController = self;
-    [BBSSDK getThreadListWithFid:0 orderType:[NSString orderTypeStringFromOrderType:BBSUIThreadOrderPostTime] selectType:[NSString selectTypeStringFromSelectType:BBSUIThreadSelectTypeLatest] pageIndex:self.currentIndex pageSize:BBSUIPageSize result:^(NSArray *threadList, NSError *error) {
+    [BBSSDK getThreadListWithFid:0 orderType:[NSString orderTypeStringFromOrderType:BBSUIThreadOrderPostTime] selectType:[NSString selectTypeStringFromSelectType:BBSUIThreadSelectTypeHeats] pageIndex:self.currentIndex pageSize:BBSUIPageSize result:^(NSArray *threadList, NSError *error) {
         
         if (!error) {
             if (theController.currentIndex == 1) {
@@ -322,7 +344,6 @@ static NSInteger    BBSUIPageSize = 10;
                     [theController.homeTableView.mj_header beginRefreshing];
                     [theController _requestData];
                 }];
-                
             }
         }
         else
@@ -334,13 +355,11 @@ static NSInteger    BBSUIPageSize = 10;
                 
                 [theController.homeTableView.mj_header beginRefreshing];
                 [theController _requestData];
-                
             }];
         }
         
         [theController.homeTableView.mj_header endRefreshing];
         [theController.homeTableView.mj_footer endRefreshing];
-        
     }];
 }
 
@@ -414,7 +433,6 @@ static NSInteger    BBSUIPageSize = 10;
                 
                 [theController.homeTableView.mj_header beginRefreshing];
                 [theController _requestData];
-                
             }];
         }
         

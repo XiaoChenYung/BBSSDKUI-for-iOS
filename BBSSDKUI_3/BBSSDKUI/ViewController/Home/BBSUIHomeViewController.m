@@ -367,7 +367,7 @@ static NSInteger    BBSUIPageSize = 10;
                     UIImageView *img = [UIImageView new];
                     [img setImage:image];
                     [img setFrame:CGRectMake(0, 100, 100, 100)];
-                    //                    [self.view addSubview:img];
+                    //[self.view addSubview:img];
                 }
                 
             }];

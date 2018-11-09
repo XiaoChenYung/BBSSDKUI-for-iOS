@@ -17,6 +17,8 @@
 #import "BBSUIThreadDetailViewController.h"
 #import "BBSUIContext.h"
 #import "UIView+BBSUITipView.h"
+#import "SVProgressHUD.h"
+
 
 
 @interface BBSUIPortalViewController ()<CycleViewDelegate>
@@ -81,6 +83,7 @@
     [self _setupHeaderView];
     
     [self.view.layer addObserver:self forKeyPath:@"sublayers" options:NSKeyValueObservingOptionOld|NSKeyValueObservingOptionNew context:nil];
+    [SVProgressHUD showWithStatus:@"加载中..."];
     [self requestData];
 }
 
@@ -134,17 +137,20 @@
                     
                     self.segmentControl.layer.zPosition = 2.0f;
                     [self.view addSubview:self.segmentControl];
-                    
+                    [SVProgressHUD dismissWithDelay:1.0];
                 }
             });
         }
         else
         {
             [weakSelf.view bbs_configureTipViewWithTipMessage:@"网络不佳，请再次刷新" hasData:NO hasError:YES reloadButtonBlock:^(id sender) {
+                [SVProgressHUD showWithStatus:@"加载中..."];
                 [weakSelf requestData];
             }];
+            [SVProgressHUD dismissWithDelay:1.0];
         }
     }];
+    
 }
 
 #pragma mark -控制segment是否悬停

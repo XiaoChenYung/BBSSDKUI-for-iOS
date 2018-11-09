@@ -17,6 +17,10 @@
 #import "BBSUIThreadTypeSignView.h"
 #import "NSString+BBSUITime.h"
 #import "NSString+BBSUIParagraph.h"
+#import "UIImageView+WebCache.h"
+#import "SDImageCache.h"
+
+
 
 #define kImageWidth (([UIScreen mainScreen].bounds.size.width) * 80 / 375)
 
@@ -134,13 +138,14 @@
         // 光栅化
         avatarImageView.layer.shouldRasterize = true;
         avatarImageView.layer.rasterizationScale = [UIScreen mainScreen].scale;
-        
+
         [self.contentView addSubview:avatarImageView];
-        
+
         avatarImageView.frame = CGRectMake(padding, padding, 20, 20);
-        
+
         avatarImageView ;
     });
+    
     
     //作者名
     self.authorLabel =
@@ -457,18 +462,37 @@
     }
     else
     {
-        _avatarImageView.image = [UIImage BBSImageNamed:@"/User/AvatarDefault.png"];
+    
+         _avatarImageView.image = [UIImage BBSImageNamed:@"/User/AvatarDefault.png"];
+        //MARK:-//这个不能写在cell里面，要写在更换头像的地方
+         //[[MOBFImageGetter sharedInstance] removeImageForURL:[NSURL URLWithString:_threadModel.avatar]];
         
-        [[MOBFImageGetter sharedInstance] getImageDataWithURL:[NSURL URLWithString:_threadModel.avatar] result:^(NSData *imageData, NSError *error) {
+        /*
+        __weak typeof(self) weakSelf = self;
+        [[MOBFImageGetter sharedInstance] getImageDataWithURL:[NSURL URLWithString:_threadModel.avatar] allowReadCache:NO result:^(NSData *imageData, NSError *error) {
+
             if (error)
             {
                 NSLog(@"%@",error);
                 return ;
             }
-            UIImage *image = [UIImage imageWithData:imageData];
-            
-            //        [weadSelf setImageWithImage:image inView:_avatarImageView];
-            _avatarImageView.image = image;
+
+            if (weakSelf.threadModel == _threadModel)
+            {
+                UIImage *image = [UIImage imageWithData:imageData];
+
+                //[weadSelf setImageWithImage:image inView:_avatarImageView];
+                _avatarImageView.image = image;
+            }
+        }];
+         
+         */
+
+        [[SDImageCache sharedImageCache] clearMemory];
+        [[SDImageCache sharedImageCache] clearDiskOnCompletion:^{
+
+            [_avatarImageView sd_setImageWithURL:[NSURL URLWithString:_threadModel.avatar]];
+
         }];
     }
     
@@ -551,6 +575,8 @@
     }else{
         _addressTagView.hidden = YES;
     }
+    
+     [_avatarImageView sd_setImageWithURL:[NSURL URLWithString:_threadModel.avatar]];
 }
 
 /**
@@ -867,7 +893,7 @@
         content = _threadModel.summary;
         [_forumTagView setTitle:[NSString stringWithFormat:@" %@ ",_threadModel.catname] forState:UIControlStateNormal];
         
-        NSLog(@"--%@----vvv---setRead-%ld", _threadModel, (long)_threadModel.viewnum);
+        //NSLog(@"--%@----vvv---setRead-%ld", _threadModel, (long)_threadModel.viewnum);
 
         [_viewsView setupWithCount:_threadModel.viewnum style:BBSUIViewRepliesStyleImage];
         [_repliesView setupWithCount:_threadModel.commentnum style:BBSUIViewRepliesStyleImage];
@@ -1051,7 +1077,7 @@
         
         [_repliesView setupWithCount:_threadModel.replies style:BBSUIViewRepliesStyleImage];
         
-        NSLog(@"--%@----vvv----%ld", _threadModel, (long)_threadModel.views);
+        //NSLog(@"--%@----vvv----%ld", _threadModel, (long)_threadModel.views);
         
         
         [_viewsView setupWithCount:_threadModel.views style:BBSUIViewRepliesStyleImage];

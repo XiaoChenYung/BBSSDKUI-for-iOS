@@ -185,7 +185,6 @@
 		3A769F641F5805B00067C094 /* BBSUIPickerView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3A769F621F5805B00067C094 /* BBSUIPickerView.m */; };
 		3A8D57941F344B7E00979457 /* libicucore.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 3A8D57931F344B7E00979457 /* libicucore.tbd */; };
 		3A8D57961F344B8700979457 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 3A8D57951F344B8700979457 /* libz.tbd */; };
-		3A8D57981F344B9000979457 /* libstdc++.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 3A8D57971F344B9000979457 /* libstdc++.tbd */; };
 		3A8D579A1F344B9500979457 /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3A8D57991F344B9500979457 /* JavaScriptCore.framework */; };
 		3A8D579C1F344BA900979457 /* ImageIO.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3A8D579B1F344BA900979457 /* ImageIO.framework */; };
 		3A8D579E1F344BB000979457 /* libsqlite3.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 3A8D579D1F344BB000979457 /* libsqlite3.tbd */; };
@@ -336,6 +335,9 @@
 		703E65A6207FA49800DA1EFC /* BBSUIAttentionDynamicViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 703E65A4207FA49800DA1EFC /* BBSUIAttentionDynamicViewController.m */; };
 		7042736920772FC500697463 /* BBSUITribuneSegementView.h in Headers */ = {isa = PBXBuildFile; fileRef = 7042736720772FC500697463 /* BBSUITribuneSegementView.h */; };
 		7042736A20772FC500697463 /* BBSUITribuneSegementView.m in Sources */ = {isa = PBXBuildFile; fileRef = 7042736820772FC500697463 /* BBSUITribuneSegementView.m */; };
+		707C952E214F50DB00E14AA8 /* libc++.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 707C952D214F50DA00E14AA8 /* libc++.tbd */; };
+		70A1AA9A216F475A00734C89 /* UIImage+BBSUIFixOrientation.h in Headers */ = {isa = PBXBuildFile; fileRef = 70A1AA99216F475A00734C89 /* UIImage+BBSUIFixOrientation.h */; };
+		70A1AA9C216F47B100734C89 /* UIImage+BBSUIFixOrientation.m in Sources */ = {isa = PBXBuildFile; fileRef = 70A1AA9B216F47B100734C89 /* UIImage+BBSUIFixOrientation.m */; };
 		70B06F88207224CB0028FF34 /* BBSUISignInViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 70B06F86207224CB0028FF34 /* BBSUISignInViewController.h */; };
 		70B06F89207224CB0028FF34 /* BBSUISignInViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 70B06F87207224CB0028FF34 /* BBSUISignInViewController.m */; };
 		70B06F90207319D10028FF34 /* BBSUISignInTableViewCell.h in Headers */ = {isa = PBXBuildFile; fileRef = 70B06F8E207319D10028FF34 /* BBSUISignInTableViewCell.h */; };
@@ -816,6 +818,9 @@
 		703E65A4207FA49800DA1EFC /* BBSUIAttentionDynamicViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BBSUIAttentionDynamicViewController.m; sourceTree = "<group>"; };
 		7042736720772FC500697463 /* BBSUITribuneSegementView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BBSUITribuneSegementView.h; sourceTree = "<group>"; };
 		7042736820772FC500697463 /* BBSUITribuneSegementView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BBSUITribuneSegementView.m; sourceTree = "<group>"; };
+		707C952D214F50DA00E14AA8 /* libc++.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = "libc++.tbd"; path = "Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS12.0.sdk/usr/lib/libc++.tbd"; sourceTree = DEVELOPER_DIR; };
+		70A1AA99216F475A00734C89 /* UIImage+BBSUIFixOrientation.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIImage+BBSUIFixOrientation.h"; sourceTree = "<group>"; };
+		70A1AA9B216F47B100734C89 /* UIImage+BBSUIFixOrientation.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UIImage+BBSUIFixOrientation.m"; sourceTree = "<group>"; };
 		70B06F86207224CB0028FF34 /* BBSUISignInViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BBSUISignInViewController.h; sourceTree = "<group>"; };
 		70B06F87207224CB0028FF34 /* BBSUISignInViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BBSUISignInViewController.m; sourceTree = "<group>"; };
 		70B06F8E207319D10028FF34 /* BBSUISignInTableViewCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BBSUISignInTableViewCell.h; sourceTree = "<group>"; };
@@ -829,11 +834,11 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				707C952E214F50DB00E14AA8 /* libc++.tbd in Frameworks */,
 				3A8D61CA1F39B1C100979457 /* CoreData.framework in Frameworks */,
 				3A8D579E1F344BB000979457 /* libsqlite3.tbd in Frameworks */,
 				3A8D579C1F344BA900979457 /* ImageIO.framework in Frameworks */,
 				3A8D579A1F344B9500979457 /* JavaScriptCore.framework in Frameworks */,
-				3A8D57981F344B9000979457 /* libstdc++.tbd in Frameworks */,
 				3A8D57961F344B8700979457 /* libz.tbd in Frameworks */,
 				3A8D57941F344B7E00979457 /* libicucore.tbd in Frameworks */,
 			);
@@ -942,6 +947,8 @@
 				2FF7AD74208066BD0054BFE8 /* NSBundle+BBSSDKUI.m */,
 				2FF7AD76208066BD0054BFE8 /* UIImage+BBSFunction.h */,
 				2FF7AD75208066BD0054BFE8 /* UIImage+BBSFunction.m */,
+				70A1AA99216F475A00734C89 /* UIImage+BBSUIFixOrientation.h */,
+				70A1AA9B216F47B100734C89 /* UIImage+BBSUIFixOrientation.m */,
 				2FF7AC8D207F57D50054BFE8 /* NSObject+SimpleKVONotification.h */,
 				2FF7AC99207F57D70054BFE8 /* NSObject+SimpleKVONotification.m */,
 				2FF7AC8A207F57D40054BFE8 /* NSString+BBSUIHTML.h */,
@@ -1384,6 +1391,7 @@
 		3A8D57921F344B7E00979457 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				707C952D214F50DA00E14AA8 /* libc++.tbd */,
 				3A8D61BD1F39A02300979457 /* CoreData.framework */,
 				3A8D579D1F344BB000979457 /* libsqlite3.tbd */,
 				3A8D579B1F344BA900979457 /* ImageIO.framework */,
@@ -1625,7 +1633,6 @@
 				4410D6631EA6284A001D331E /* BBSUIThreadSummaryCell.m */,
 				446DC6B51EAF0A5900346D6A /* Forum */,
 				6BF0097A1EA491F00040399D /* Common */,
-				6BF0097B1EA491F00040399D /* Home */,
 				6BF0097C1EA491F00040399D /* Thread */,
 				6BF0097D1EA491F00040399D /* User */,
 				6B3B4A381F55616900884EB6 /* BBSUIAccusationTableViewCell.h */,
@@ -1663,6 +1670,7 @@
 		6BF0097A1EA491F00040399D /* Common */ = {
 			isa = PBXGroup;
 			children = (
+				6BF0097B1EA491F00040399D /* Home */,
 				6B06DE621F3C4030003C18C5 /* Banner */,
 				6B03513D1F3419A8006B5913 /* BBSUIContentInsetsLabel.h */,
 				6B03513E1F3419A8006B5913 /* BBSUIContentInsetsLabel.m */,
@@ -1970,6 +1978,7 @@
 				2FF7ABC1207DC6C40054BFE8 /* BBSUIHRColorUtil.h in Headers */,
 				2FF7AC73207F52290054BFE8 /* BBSUICacheManager.h in Headers */,
 				4410D6961EA62901001D331E /* BBSUIFastPostViewController.h in Headers */,
+				70A1AA9A216F475A00734C89 /* UIImage+BBSUIFixOrientation.h in Headers */,
 				6B1CD2D51EA8C10C004637A2 /* BBSUIEmailSendView.h in Headers */,
 				2FF7ABB2207DC6C40054BFE8 /* BBSUIRTEBaseTextView.h in Headers */,
 				3A098F6D20064083005CCC0B /* BBSSDKUI.pch in Headers */,
@@ -2119,6 +2128,7 @@
 				4410D6971EA62901001D331E /* BBSUIFastPostViewController.m in Sources */,
 				3A769F641F5805B00067C094 /* BBSUIPickerView.m in Sources */,
 				3A19729B1F1CE38A004B658A /* BBSUIInformationTableViewCell.m in Sources */,
+				70A1AA9C216F47B100734C89 /* UIImage+BBSUIFixOrientation.m in Sources */,
 				4476B8DE1ECC25F800AFA1CB /* BBSUIContext.m in Sources */,
 				703E659F207F008200DA1EFC /* BBSUIForumHeaderFooterView.m in Sources */,
 				6BF008141EA479A20040399D /* BBSUIForumHomeViewController.m in Sources */,

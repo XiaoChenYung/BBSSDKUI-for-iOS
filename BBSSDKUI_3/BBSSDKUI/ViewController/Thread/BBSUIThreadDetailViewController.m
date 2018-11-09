@@ -1016,19 +1016,7 @@
         }
         else
         {
-            //HUD.label.text = error.userInfo[@"description"];
-            if ([error.userInfo[@"code"] isEqualToString:@"90090614"])
-            {
-                HUD.label.text = @"论坛提示：已评价过该标题";
-            }
-            else if([error.userInfo[@"code"] isEqualToString:@"900700613"])
-            {
-                HUD.label.text = @"不能评价自己的帖子";
-            }
-            else
-            {
-                HUD.label.text = error.userInfo[@"description"];
-            }
+            HUD.label.text = error.userInfo[@"description"];
             if ([[BBSUIContext shareInstance].currentUser.uid integerValue] == theController.threadModel.authorId) {
                 return;
             }
@@ -1053,7 +1041,7 @@
     
 }
 
-#pragma mark -
+#pragma mark - 分享
 
 - (void)shareButtonHandler:(UIButton *)button
 {
@@ -1070,6 +1058,8 @@
     
     return;
 }
+
+#pragma mark -投诉
 
 - (void)moreButtonHandler:(UIButton *)button
 {

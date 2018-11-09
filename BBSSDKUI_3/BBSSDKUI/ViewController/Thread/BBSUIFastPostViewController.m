@@ -23,6 +23,10 @@
 #import "BBSUILBSShowLocationViewController.h"
 #import "BBSUILBSLocationProxy.h"
 
+#import "UIImage+BBSUIFixOrientation.h"
+
+
+
 @interface BBSUIFastPostViewController ()<UINavigationControllerDelegate,UIImagePickerControllerDelegate,UITextFieldDelegate>
 {
     JSContext *_context ;
@@ -285,7 +289,7 @@
     [self dismissViewControllerAnimated:YES completion:nil];
 }
 
-#pragma mark - Image Picker Delegate
+#pragma mark - Image Picker Delegate 拍照
 
 - (void)imagePickerControllerDidCancel:(UIImagePickerController *)picker{
     //Dismiss the Image Picker
@@ -296,9 +300,9 @@
 {
     UIImage *selectedImage = info[UIImagePickerControllerOriginalImage];
     
-    UIImage *scaleImage = [selectedImage scaleImage];
+//  UIImage *scaleImage = [selectedImage scaleImage];
     
-    NSString *cachePath = [self pathOfsavedImage:scaleImage];
+    NSString *cachePath = [self pathOfsavedImage:[selectedImage fixOrientation]];
 
     NSString *trigger = [NSString stringWithFormat:@"<img src=\"%@\" alt=\"%@\" style=\"max-width:%fpx;\"/>",cachePath,@"BBSUI",self.view.frame.size.width - 27];
     
@@ -785,9 +789,11 @@
     [baseVC presentViewController:vc animated:YES completion:nil];
 }
 
+#pragma mark -缩放图片
 - (NSString *)pathOfsavedImage:(UIImage *)image
 {
-    NSData *data = UIImageJPEGRepresentation(image, 0.7);
+    //NSData *data = UIImageJPEGRepresentation(image, 0.7);
+    NSData *data = UIImageJPEGRepresentation(image, 1.0);
     NSFileManager *fileManager = [NSFileManager defaultManager];
     
     NSString *imageMd5 = [MOBFData stringByMD5Data:data];

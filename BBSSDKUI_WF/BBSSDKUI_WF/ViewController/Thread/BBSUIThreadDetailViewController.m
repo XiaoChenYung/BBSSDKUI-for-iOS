@@ -292,7 +292,6 @@
         NSString *callback = nil;
         if (arguments.count > 0 && [arguments[0] isKindOfClass:[NSString class]]) {
             callback = arguments[0];
-            
         }
         
         [BBSSDK getThreadDetailWithFid:self.fid tid:self.tid result:^(BBSThread *thread, NSError *error) {
@@ -427,6 +426,15 @@
     __weak typeof(self) theWebController = self;
     [self.jsContext registerJSMethod:@"downloadImages" block:^(NSArray *arguments) {
         
+        /*
+         (lldb) po arguments
+         <__NSArrayM 0x283f270c0>(
+         <__NSArrayM 0x283f24ba0>(
+         http://182.92.158.79/utf8_x33_demo_link/data/attachment/forum/201707/24/122930lhlb40w9u99c0cl4.jpeg
+         )
+         )
+         
+         */
         NSLog(@"____________ %@",arguments);
         NSArray *imageUrlsArray = nil;
         
@@ -436,10 +444,11 @@
         }
         
         if (imageUrlsArray.count > 0) {
-            
-            if (!theWebController.imageDownload) {
+            //MARK:-把if (!theWebController.imageDownload) 修复一个bug，当评论的地方有图片时，加载更多会出现图片加载失败
+            //if (!theWebController.imageDownload) {
                 theWebController.imageDownload = [[BBSJSImageDownload alloc] initWithJSContext:theWebController.jsContext imageArray:imageUrlsArray isImageViewer:NO webView:theWebController.webView];
-            }
+            //}
+
         }
     }];
 }
@@ -453,6 +462,8 @@
         
         NSArray *imageUrlsArray = nil;
         NSInteger index = 0;
+        
+        NSLog(@"-------打开图片-----%@", arguments);
         
         if (arguments.count > 0 && [arguments[0] isKindOfClass:[NSArray class]])
         {
@@ -778,7 +789,8 @@
     }];
 }
 
-- (void)registShowAddress{
+- (void)registShowAddress
+{
     __weak typeof(self) theWebController = self;
     [self.jsContext registerJSMethod:@"showAddress" block:^(NSArray *arguments) {
         NSDictionary *comment = nil;
@@ -886,6 +898,8 @@
         
     };
 }
+
+#pragma mark - 分享
 
 - (void)shareButtonHandler:(UIButton *)button
 {

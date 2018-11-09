@@ -70,8 +70,8 @@
     self.tag = ShareViewTag;
     
     self.backgroundColor = [UIColor whiteColor];[UIColor colorWithWhite:0 alpha:0.3];// 设置背景透明度
-    self.imageArr = [NSMutableArray arrayWithArray:@[@"Share/weixin.png", @"Share/pengyouquan.png",@"Share/QQ.png",@"Share/QQzone.png"]];// ,@"Share/weibo.png"
-    self.titleArr=[NSMutableArray arrayWithArray:@[@"微信好友", @"微信朋友圈",@"QQ",@"QQ空间"]] ;// ,@"微博"
+    self.imageArr = [NSMutableArray arrayWithArray:@[@"Share/weixin.png", @"Share/pengyouquan.png",@"Share/QQ.png",@"Share/QQzone.png",@"Share/weibo.png"]];// ,@"Share/weibo.png"
+    self.titleArr=[NSMutableArray arrayWithArray:@[@"微信好友", @"微信朋友圈",@"QQ",@"QQ空间",@"微博"]] ;// ,@"微博"
     // 加载Tap手势
     UITapGestureRecognizer *tapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(hide)];
     tapRecognizer.delegate = self;
@@ -291,14 +291,16 @@
         case 3:
             platformType = 6;
             break;
+        case 4://微博
+            platformType = 1;
+            shareParams = [BBSSDK setupShareParamsByText:[NSString stringWithFormat:@"%@ %@", thread.summary, url] images:images url:[NSURL URLWithString:url] title:title type:2 dataDictionary:nil];
+            break;
         default:
             platformType = 0;
             break;
     }
-        
-
+    
     [BBSSDK share:platformType parameters:shareParams onStateChanged:nil];
-
     
     [self hide];
 }

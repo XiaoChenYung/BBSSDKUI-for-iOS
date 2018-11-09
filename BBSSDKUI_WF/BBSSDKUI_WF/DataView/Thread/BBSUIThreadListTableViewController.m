@@ -116,6 +116,7 @@ static NSString *cellIdentifier = @"ThreadSummaryCell";
         [self.tableView setTableHeaderView:tableHeaderView];
     }
     [self configureUI];
+    
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -382,7 +383,6 @@ static NSString *cellIdentifier = @"ThreadSummaryCell";
             [_noDataLabel setTextColor:[UIColor grayColor]];
             [_noDataLabel setText:@"暂无内容"];
             [_noDataView addSubview:_noDataLabel];
-            
         }
     }
     
@@ -561,9 +561,14 @@ static NSString *cellIdentifier = @"ThreadSummaryCell";
                 
                 if (threadList.count == 0) {
                     if (self.currentForum.fid == 0) {
-                        [self.tableView addSubview:self.noDataView];
-                        [self.noDataImageView setImage:[UIImage BBSImageNamed:@"/Common/wnr@2x.png"]];
-                        [self.noDataLabel setText:@"暂无内容"];
+                        //[self.tableView addSubview:self.noDataView];
+                        //[self.noDataImageView setImage:[UIImage BBSImageNamed:@"/Common/wnr@2x.png"]];
+                        //[self.noDataLabel setText:@"暂无内容"];
+                        
+                        [weakSelf.view bbs_configureTipViewWithTipMessage:@"暂无内容" hasData:NO hasError:NO reloadButtonBlock:^(id sender) {
+                            
+                        }];
+                        
                     }else{
                         [weakSelf.view bbs_configureTipViewWithTipMessage:@"暂无内容" hasData:weakSelf.threadListArray.count != 0 hasError:YES reloadButtonBlock:^(id sender) {
                             [weakSelf.tableView.mj_header beginRefreshing];
@@ -862,6 +867,9 @@ static NSString *cellIdentifier = @"ThreadSummaryCell";
 - (NSString *)selectTypeStringFromSelectType:(BBSUIThreadSelectType)selectType
 {
     NSString *selectTypeString = nil;
+    [self.view bbs_configureTipViewWithTipMessage:@"" hasData:YES hasError:NO reloadButtonBlock:^(id sender) {
+        
+    }];
     if (selectType == BBSUIThreadSelectTypeLatest) {
         selectTypeString = @"latest";
     }else if (selectType == BBSUIThreadSelectTypeHeats)
@@ -875,6 +883,8 @@ static NSString *cellIdentifier = @"ThreadSummaryCell";
         selectTypeString = @"displayOrder";
     }
     return selectTypeString ? : @"latest";
+    
+    
 }
 
 - (NSString *)orderTypeStringFromOrderType:(BBSUIThreadOrderType)orderType

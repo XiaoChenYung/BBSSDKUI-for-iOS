@@ -350,7 +350,8 @@
         [[NSFileManager defaultManager ] removeItemAtPath :filePath error :&error];
     }
     
-    [self.store.persistentStoreCoordinator removePersistentStore:self.store.persistentStoreCoordinator.persistentStores[0]error:nil];
+    [self.store.persistentStoreCoordinator removePersistentStore:self.store.persistentStoreCoordinator.persistentStores[0] error:nil];
+    
     [self.store.persistentStoreCoordinator addPersistentStoreWithType:NSSQLiteStoreType  configuration:nil URL:storeURL options:nil error:&error];
 }
 

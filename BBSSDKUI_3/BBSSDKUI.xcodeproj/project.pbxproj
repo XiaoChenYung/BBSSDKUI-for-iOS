@@ -201,7 +201,6 @@
 		3AB956351F602C8A008D8D58 /* libsqlite3.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 3AB956341F602C8A008D8D58 /* libsqlite3.tbd */; };
 		3AB956371F602C90008D8D58 /* ImageIO.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3AB956361F602C90008D8D58 /* ImageIO.framework */; };
 		3AB956391F602C95008D8D58 /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3AB956381F602C95008D8D58 /* JavaScriptCore.framework */; };
-		3AB9563B1F602C9D008D8D58 /* libstdc++.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 3AB9563A1F602C9D008D8D58 /* libstdc++.tbd */; };
 		3AB9563D1F602CA2008D8D58 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 3AB9563C1F602CA2008D8D58 /* libz.tbd */; };
 		3AB9563F1F602CA7008D8D58 /* libicucore.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 3AB9563E1F602CA7008D8D58 /* libicucore.tbd */; };
 		3AB956421F602D3E008D8D58 /* BBSThread+BBSUI.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AB956401F602D3E008D8D58 /* BBSThread+BBSUI.h */; };
@@ -342,6 +341,9 @@
 		703E65B2208082F500DA1EFC /* BBSUITribuneSegementView.h in Headers */ = {isa = PBXBuildFile; fileRef = 703E65B0208082F500DA1EFC /* BBSUITribuneSegementView.h */; };
 		703E65B52080A43800DA1EFC /* BBSUIForumHeaderFooterView.h in Headers */ = {isa = PBXBuildFile; fileRef = 703E65B32080A43800DA1EFC /* BBSUIForumHeaderFooterView.h */; };
 		703E65B62080A43800DA1EFC /* BBSUIForumHeaderFooterView.m in Sources */ = {isa = PBXBuildFile; fileRef = 703E65B42080A43800DA1EFC /* BBSUIForumHeaderFooterView.m */; };
+		707C9530214F546400E14AA8 /* libc++.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 707C952F214F546400E14AA8 /* libc++.tbd */; };
+		70A1AA9F216F4F5C00734C89 /* UIImage+BBSUIFixOrientation.m in Sources */ = {isa = PBXBuildFile; fileRef = 70A1AA9D216F4F5C00734C89 /* UIImage+BBSUIFixOrientation.m */; };
+		70A1AAA0216F4F5C00734C89 /* UIImage+BBSUIFixOrientation.h in Headers */ = {isa = PBXBuildFile; fileRef = 70A1AA9E216F4F5C00734C89 /* UIImage+BBSUIFixOrientation.h */; };
 		70F04C9D20888E56002EC577 /* BBSUISignInViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 70F04C9B20888E55002EC577 /* BBSUISignInViewController.h */; };
 		70F04C9E20888E56002EC577 /* BBSUISignInViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 70F04C9C20888E55002EC577 /* BBSUISignInViewController.m */; };
 		70F22B0920843DDB001A162E /* BBSUIForumMoreView.h in Headers */ = {isa = PBXBuildFile; fileRef = 70F22B0720843DDB001A162E /* BBSUIForumMoreView.h */; };
@@ -827,6 +829,9 @@
 		703E65B0208082F500DA1EFC /* BBSUITribuneSegementView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BBSUITribuneSegementView.h; sourceTree = "<group>"; };
 		703E65B32080A43800DA1EFC /* BBSUIForumHeaderFooterView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BBSUIForumHeaderFooterView.h; sourceTree = "<group>"; };
 		703E65B42080A43800DA1EFC /* BBSUIForumHeaderFooterView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BBSUIForumHeaderFooterView.m; sourceTree = "<group>"; };
+		707C952F214F546400E14AA8 /* libc++.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = "libc++.tbd"; path = "Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS12.0.sdk/usr/lib/libc++.tbd"; sourceTree = DEVELOPER_DIR; };
+		70A1AA9D216F4F5C00734C89 /* UIImage+BBSUIFixOrientation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+BBSUIFixOrientation.m"; sourceTree = "<group>"; };
+		70A1AA9E216F4F5C00734C89 /* UIImage+BBSUIFixOrientation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+BBSUIFixOrientation.h"; sourceTree = "<group>"; };
 		70F04C9B20888E55002EC577 /* BBSUISignInViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BBSUISignInViewController.h; sourceTree = "<group>"; };
 		70F04C9C20888E55002EC577 /* BBSUISignInViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BBSUISignInViewController.m; sourceTree = "<group>"; };
 		70F22B0720843DDB001A162E /* BBSUIForumMoreView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BBSUIForumMoreView.h; sourceTree = "<group>"; };
@@ -840,9 +845,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				707C9530214F546400E14AA8 /* libc++.tbd in Frameworks */,
 				3AB9563F1F602CA7008D8D58 /* libicucore.tbd in Frameworks */,
 				3AB9563D1F602CA2008D8D58 /* libz.tbd in Frameworks */,
-				3AB9563B1F602C9D008D8D58 /* libstdc++.tbd in Frameworks */,
 				3AB956391F602C95008D8D58 /* JavaScriptCore.framework in Frameworks */,
 				3AB956371F602C90008D8D58 /* ImageIO.framework in Frameworks */,
 				3AB956351F602C8A008D8D58 /* libsqlite3.tbd in Frameworks */,
@@ -959,6 +964,8 @@
 				2F7530E72080C62C00A20894 /* NSBundle+BBSSDKUI.m */,
 				2F7530E92080C62C00A20894 /* UIImage+BBSFunction.h */,
 				2F7530E82080C62C00A20894 /* UIImage+BBSFunction.m */,
+				70A1AA9E216F4F5C00734C89 /* UIImage+BBSUIFixOrientation.h */,
+				70A1AA9D216F4F5C00734C89 /* UIImage+BBSUIFixOrientation.m */,
 				2FF7ACCA207F66400054BFE8 /* NSObject+SimpleKVONotification.h */,
 				2FF7ACCB207F66400054BFE8 /* NSObject+SimpleKVONotification.m */,
 				2FF7ACCC207F66400054BFE8 /* NSString+BBSUIHTML.h */,
@@ -1395,6 +1402,7 @@
 		3AB956311F602C84008D8D58 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				707C952F214F546400E14AA8 /* libc++.tbd */,
 				3AB9563E1F602CA7008D8D58 /* libicucore.tbd */,
 				3AB9563C1F602CA2008D8D58 /* libz.tbd */,
 				3AB9563A1F602C9D008D8D58 /* libstdc++.tbd */,
@@ -1959,6 +1967,7 @@
 				3AB955E11F602587008D8D58 /* BBSUIBaseUserViewController.h in Headers */,
 				2FF7AD38207F66410054BFE8 /* UIView+BBSUIExt.h in Headers */,
 				3AB9566F1F602EF5008D8D58 /* BBSForum+BBSUI.h in Headers */,
+				70A1AAA0216F4F5C00734C89 /* UIImage+BBSUIFixOrientation.h in Headers */,
 				3AB956101F602739008D8D58 /* BBSUIUserOtherInfoTableHeaderView.h in Headers */,
 				3AB956001F6026C7008D8D58 /* BBSUICollectionTableViewCell.h in Headers */,
 				2F7531012080C64300A20894 /* BBSUIPopoverView.h in Headers */,
@@ -2121,8 +2130,7 @@
 				TargetAttributes = {
 					6B3B4DF11F5CF91700884EB6 = {
 						CreatedOnToolsVersion = 8.3.2;
-						DevelopmentTeam = Q87QUX3533;
-						ProvisioningStyle = Automatic;
+						ProvisioningStyle = Manual;
 					};
 					6B3B4E001F5CFD4100884EB6 = {
 						CreatedOnToolsVersion = 8.3.2;
@@ -2254,6 +2262,7 @@
 				2F778AC92085CF0C002A82DF /* BBSUIActionSheet.m in Sources */,
 				2FF7ACBF207F66250054BFE8 /* BBSUIBaseViewController.m in Sources */,
 				3AB956E51F60341C008D8D58 /* BBSUIBannerPreviewViewController.m in Sources */,
+				70A1AA9F216F4F5C00734C89 /* UIImage+BBSUIFixOrientation.m in Sources */,
 				3AB956D81F60332B008D8D58 /* BBSUISystemInformationViewController.m in Sources */,
 				6B6C18771F63A32F002DC31C /* BBSUIForumThreadListViewController.m in Sources */,
 				3AB956301F602864008D8D58 /* BBSUIContext.m in Sources */,
@@ -2449,8 +2458,9 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 6B3B4DFC1F5CF9E200884EB6 /* FMWKConfig-Debug.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
-				DEVELOPMENT_TEAM = Q87QUX3533;
+				DEVELOPMENT_TEAM = "";
 				FRAMEWORK_SEARCH_PATHS = (
 					"\"$(SRCROOT)/../SDK/BBSSDK\"",
 					"\"$(SRCROOT)/../SDK/ShareSDK\"/**",
@@ -2466,6 +2476,7 @@
 				LIBRARY_SEARCH_PATHS = "\"$(SRCROOT)/../SDK/ShareSDK\"/**";
 				PRODUCT_BUNDLE_IDENTIFIER = com.mob.product.BBSSDKUI;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
 				WRAPPER_EXTENSION = framework;
 			};
@@ -2475,8 +2486,9 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 6B3B4DFD1F5CF9E200884EB6 /* FMWKConfig-Release.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
-				DEVELOPMENT_TEAM = Q87QUX3533;
+				DEVELOPMENT_TEAM = "";
 				FRAMEWORK_SEARCH_PATHS = (
 					"\"$(SRCROOT)/../SDK/BBSSDK\"",
 					"\"$(SRCROOT)/../SDK/ShareSDK\"/**",
@@ -2492,6 +2504,7 @@
 				LIBRARY_SEARCH_PATHS = "\"$(SRCROOT)/../SDK/ShareSDK\"/**";
 				PRODUCT_BUNDLE_IDENTIFIER = com.mob.product.BBSSDKUI;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
 				WRAPPER_EXTENSION = framework;
 			};

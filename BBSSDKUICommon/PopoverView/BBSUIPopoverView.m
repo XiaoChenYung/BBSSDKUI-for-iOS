@@ -91,7 +91,7 @@ float BBSUIDegreesToRadians(float angle) {
     
     // keyWindow
     if ([UIApplication sharedApplication].windows.count > 0) {
-        _keyWindow = [UIApplication sharedApplication].windows[0];
+        _keyWindow = [UIApplication sharedApplication].keyWindow;
     }
     _windowWidth = CGRectGetWidth(_keyWindow.bounds);
     _windowHeight = CGRectGetHeight(_keyWindow.bounds);

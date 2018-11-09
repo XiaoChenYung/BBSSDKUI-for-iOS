@@ -22,6 +22,7 @@
 #import "BBSUIForumViewController.h"
 #import "BBSUILBSShowLocationViewController.h"
 #import "BBSUILBSLocationProxy.h"
+#import "UIImage+BBSUIFixOrientation.h"
 
 
 @interface BBSUIFastPostViewController ()<UINavigationControllerDelegate,UIImagePickerControllerDelegate,UITextFieldDelegate>
@@ -292,10 +293,11 @@
 - (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary<NSString *, id> *)info
 {
     UIImage *selectedImage = info[UIImagePickerControllerOriginalImage];
+    //[selectedImage fixOrientation];
     
-    UIImage *scaleImage = [selectedImage scaleImage];
+    //UIImage *scaleImage = [selectedImage scaleImage];
     
-    NSString *cachePath = [self pathOfsavedImage:scaleImage];
+    NSString *cachePath = [self pathOfsavedImage:[selectedImage fixOrientation]];
 
     NSString *trigger = [NSString stringWithFormat:@"<img src=\"%@\" alt=\"%@\" style=\"max-width:%fpx;\"/>",cachePath,@"BBSUI",self.view.frame.size.width - 27];
     
@@ -753,7 +755,8 @@
 
 - (NSString *)pathOfsavedImage:(UIImage *)image
 {
-    NSData *data = UIImageJPEGRepresentation(image, 0.7);
+    //NSData *data = UIImageJPEGRepresentation(image, 0.7);
+    NSData *data = UIImageJPEGRepresentation(image, 1.0);
     NSFileManager *fileManager = [NSFileManager defaultManager];
     
     NSString *imageMd5 = [MOBFData stringByMD5Data:data];

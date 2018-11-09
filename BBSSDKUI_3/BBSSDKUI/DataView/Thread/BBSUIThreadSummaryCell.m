@@ -17,6 +17,10 @@
 #import "BBSUIThreadTypeSignView.h"
 #import "NSString+BBSUITime.h"
 #import "NSString+BBSUIParagraph.h"
+#import "SDImageCache.h"
+#import "UIImageView+WebCache.h"
+
+
 
 #define kImageWidth (([UIScreen mainScreen].bounds.size.width) * 80 / 375)
 
@@ -409,6 +413,7 @@
     [self.subjectLabel setContentHuggingPriority:UILayoutPriorityRequired forAxis:UILayoutConstraintAxisHorizontal];
 }
 
+#pragma mark - 赋值cell
 - (void) setThreadModel:(BBSThread *)threadModel cellType:(BBSUIThreadSummaryCellType)cellType
 {
     _cellType = cellType;
@@ -500,6 +505,7 @@
     
     _avatarImageView.image = [UIImage BBSImageNamed:@"/User/AvatarDefault3.png"];
     
+    /*
     [[MOBFImageGetter sharedInstance] getImageDataWithURL:[NSURL URLWithString:_threadModel.avatar] result:^(NSData *imageData, NSError *error) {
         if (error)
         {
@@ -510,6 +516,15 @@
     
         _avatarImageView.image = image;
     }];
+     */
+    
+    [[SDImageCache sharedImageCache] clearMemory];
+    [[SDImageCache sharedImageCache] clearDiskOnCompletion:^{
+        
+        [_avatarImageView sd_setImageWithURL:[NSURL URLWithString:_threadModel.avatar]];
+        
+    }];
+    
     
     self.read = _threadModel.isSelected;
     
@@ -707,6 +722,7 @@
     return cutted;
 }
 
+#pragma mark - UI
 - (void)_setCellFrame
 {
     if (_cellType == BBSUIThreadSummaryCellTypeForums)

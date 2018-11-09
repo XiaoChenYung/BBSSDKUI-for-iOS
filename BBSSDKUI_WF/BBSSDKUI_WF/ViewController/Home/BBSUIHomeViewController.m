@@ -137,7 +137,7 @@
     [self setupLeftBarButton];
 }
 
-#pragma mark - configure
+#pragma mark - configure VC
 - (void)setCustomNavTitleView
 {
     __weak typeof (self) weakSelf = self;
@@ -155,26 +155,6 @@
     NSDictionary *settings = [BBSUIContext shareInstance].settings;
     BOOL hidden = NO;
     
-    /*
-    if (settings[@"portal"] && [settings[@"portal"] integerValue] == 1)
-    {
-        [self setupSegmentControlWithPortal];
-        hidden = YES;
-    }
-    else
-    {
-        [self setupSegmentControlWithNoPortal];
-        hidden = NO;
-    }
-     ======================================================
-     {
-     address = "http://182.92.158.79/utf8_x33/plugin.php";
-     "bbssdk_version" = "2.0.0";
-     floodctrl = 0;
-     portal = 0;
-     }
-     
-     */
     /* 不管是否用插件接口，要调用一下settings
      * 使用插件，就不再使用settings中的portol字段，默认显示论坛
      * 不是用插件，使用settings中portol字段，来判断是都显示资讯和论坛
@@ -246,10 +226,8 @@
     vc.pageType = PageTypePortal;
 
     //论坛
-//    BBSUIThreadListViewController *vc2 = [[BBSUIThreadListViewController alloc] init];
-//    vc2.pageType = PageTypeHomePage;
+    BBSUITribuneViewController *vc2 = [[BBSUITribuneViewController alloc] initWithForum:nil selectType:1];
     
-    BBSUITribuneViewController *vc2 = [[BBSUITribuneViewController alloc] initWithForum:nil selectType:0];
     self.segmentControl = [[BBSUILBSegmentControl alloc] initStaticTitlesWithFrame:CGRectMake(0, 0, 160, 42) titleFontSize:17 isIntegrated:YES];
     self.segmentControl.titles = @[@"资讯", @"论坛"];
     self.segmentControl.notScroll = YES;
