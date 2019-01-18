@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="13196" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14460.31" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13174"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14460.20"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -41,7 +41,7 @@
                         <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="key" translatesAutoresizingMaskIntoConstraints="NO" id="QA0-PJ-vek">
                             <rect key="frame" x="15" y="11" width="28" height="28"/>
                         </imageView>
-                        <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Appkey" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="hqO-TY-MSR">
+                        <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="29d05012fdeb0" placeholder="Appkey" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="hqO-TY-MSR">
                             <rect key="frame" x="58" y="0.0" width="302" height="49"/>
                             <constraints>
                                 <constraint firstAttribute="height" constant="49" id="7jC-uc-qwn"/>
@@ -57,7 +57,7 @@
                                 <constraint firstAttribute="height" constant="1" id="TgL-GF-41E"/>
                             </constraints>
                         </view>
-                        <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="App secret" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="PXG-bA-LIf">
+                        <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="6c7c51dfd441c9a0c0837ba5660de519" placeholder="App secret" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="PXG-bA-LIf">
                             <rect key="frame" x="58" y="50" width="302" height="49"/>
                             <constraints>
                                 <constraint firstAttribute="height" constant="49" id="EJH-Fw-Szl"/>
@@ -67,7 +67,7 @@
                             <textInputTraits key="textInputTraits" keyboardType="alphabet"/>
                         </textField>
                         <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="secret" translatesAutoresizingMaskIntoConstraints="NO" id="uNl-jc-Fuo">
-                            <rect key="frame" x="15" y="60" width="28" height="28"/>
+                            <rect key="frame" x="15" y="60.5" width="28" height="28"/>
                         </imageView>
                         <view alpha="0.10000000149011612" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="caa-0T-MEX">
                             <rect key="frame" x="0.0" y="99" width="375" height="1"/>
@@ -103,7 +103,7 @@
                     <nil key="highlightedColor"/>
                 </label>
                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="uLL-0Q-MUI">
-                    <rect key="frame" x="15" y="365" width="345" height="44"/>
+                    <rect key="frame" x="15" y="365.5" width="345" height="44"/>
                     <constraints>
                         <constraint firstAttribute="height" constant="44" id="dCR-QT-EbU"/>
                     </constraints>
@@ -125,7 +125,7 @@
                             <nil key="highlightedColor"/>
                         </label>
                         <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="go" translatesAutoresizingMaskIntoConstraints="NO" id="Q3q-5o-PEp">
-                            <rect key="frame" x="349" y="18.5" width="10" height="16"/>
+                            <rect key="frame" x="349" y="19" width="10" height="16"/>
                         </imageView>
                     </subviews>
                     <color key="backgroundColor" red="0.33333333333333331" green="0.51372549019607838" blue="0.792156862745098" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>

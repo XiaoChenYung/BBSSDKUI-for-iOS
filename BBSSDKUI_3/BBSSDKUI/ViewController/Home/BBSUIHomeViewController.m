@@ -251,9 +251,9 @@ static NSInteger    BBSUIPageSize = 10;
     
     self.segments = [self.segmentControl settingTitles:@[@"论坛"] ];
     self.segmentControl.viewControllers = @[vc];
-    [self.segmentControl setBottomViewColor:DZSUIColorFromHex(0xFFAA42)];
+    [self.segmentControl setBottomViewColor:DZSUIColorFromHex(0xF7D64F)];
     [self.segmentControl setTitleNormalColor:[UIColor whiteColor]];
-    [self.segmentControl setTitleSelectColor:DZSUIColorFromHex(0xFFAA42)];
+    [self.segmentControl setTitleSelectColor:DZSUIColorFromHex(0xF7D64F)];
     self.segmentControl.isTitleScale = NO;
     self.segmentControl.isIntegrated = YES;
     self.segmentControl.delegate = self;
@@ -315,6 +315,7 @@ static NSInteger    BBSUIPageSize = 10;
     [self.view addSubview:self.navView];
     
     self.loginButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    [self.loginButton setHidden:true];
     [self.loginButton.layer setMasksToBounds:YES];
     [self.loginButton.layer setCornerRadius:15];
     [self.loginButton addTarget:self action:@selector(login:) forControlEvents:UIControlEventTouchUpInside];
