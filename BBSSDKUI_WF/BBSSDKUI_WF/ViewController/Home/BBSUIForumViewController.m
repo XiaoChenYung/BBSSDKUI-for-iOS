@@ -22,13 +22,12 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    self.forumView = [[BBSUIForumView alloc] initWithFrame:CGRectMake(0,
-                                                                  0,
-                                                                  CGRectGetWidth(self.view.frame),
-                                                                  CGRectGetHeight(self.view.frame) - NavigationBar_Height)];
+    self.forumView = [[BBSUIForumView alloc] init];
     [self.view addSubview:self.forumView];
+    [self.forumView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.edges.equalTo(self.view);
+    }];
     self.title = @"所有版块";
-    self.automaticallyAdjustsScrollViewInsets=NO;
 }
 
 

@@ -83,6 +83,7 @@ static NSString *cellIdentifier = @"ThreadSummaryCell";
     [super viewDidLoad];
     [self _initUI];
     [self _createTabView];
+    [self setNavigationBarTitle];
     self.selectType = BBSUIThreadSelectTypeLatest;
     self.orderType = BBSUIThreadOrderCommentTime;
     self.cacheDict = [NSMutableDictionary dictionary];
@@ -116,7 +117,6 @@ static NSString *cellIdentifier = @"ThreadSummaryCell";
     {
         _iphoneXTopPadding = 10;
     }
-    [self setNavigationBarTitle];
     
     //最新 最热
 //     BBSUITribuneSegementView *segmentView = [[BBSUITribuneSegementView alloc] initWithFrame:CGRectZero titleArray:@[@"最新",@"热门",@"精华",@"置顶"]];
@@ -425,72 +425,76 @@ static NSString *cellIdentifier = @"ThreadSummaryCell";
 {
     if (!self.currentForum) {
         self.title = @"所有";
-        return;
+    } else {
+        self.title = self.currentForum.name;
+        [self setupRightBarButton];
     }
     
-    self.backButton =
-    ({
-        UIButton *back = [UIButton buttonWithType:UIButtonTypeCustom];
-        [back setImage:[UIImage BBSImageNamed:@"/Common/return@2x.png"] forState:UIControlStateNormal];
-        [back addTarget:self action:@selector(cancel:) forControlEvents:UIControlEventTouchUpInside];
-        [self.view addSubview:back];
-        [back mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.left.equalTo(self.view).offset(0);
-            make.top.equalTo(self.view).with.offset(30 + _iphoneXTopPadding);
-            make.width.mas_equalTo(@50);
-        }];
-        back;
-    });
+//    self.backButton =
+//    ({
+//        UIButton *back = [UIButton buttonWithType:UIButtonTypeCustom];
+//        [back setImage:[UIImage BBSImageNamed:@"/Common/return@2x.png"] forState:UIControlStateNormal];
+//        [back addTarget:self action:@selector(cancel:) forControlEvents:UIControlEventTouchUpInside];
+////        [self.view addSubview:back];
+//        [back mas_makeConstraints:^(MASConstraintMaker *make) {
+//            make.right.equalTo(self.view).offset(-20);
+//            make.size.mas_equalTo(CGSizeMake(44, 44));
+//        }];
+//        back;
+//    });
     
     
-    self.titleView = [[UIView alloc] init];
-    [self.view addSubview:self.titleView];
-    [self.titleView setFrame:CGRectMake(50, 20 + _iphoneXTopPadding, BBS_WIDTH(self.view) - 100, 44)];
-    
-    UILabel *titleLabel = [UILabel new];
-    [self.titleView addSubview:titleLabel];
-    if (self.currentForum) {
-        [titleLabel setText:self.currentForum.name];
-    }else{
-        [titleLabel setText:@"所有"];
-    }
-    [titleLabel setFont:[UIFont boldSystemFontOfSize:16]];
-    CGSize size = CGSizeMake(MAXFLOAT, 30.0f);
-    CGSize buttonSize = [titleLabel.text boundingRectWithSize:size
-                                                      options:NSStringDrawingTruncatesLastVisibleLine  | NSStringDrawingUsesLineFragmentOrigin | NSStringDrawingUsesFontLeading
-                                                   attributes:@{ NSFontAttributeName:titleLabel.font}
-                                                      context:nil].size;
-    [titleLabel setFrame:CGRectMake((BBS_WIDTH(self.titleView) - buttonSize.width) / 2, (BBS_HEIGHT(self.titleView) - buttonSize.height) / 2, buttonSize.width, buttonSize.height)];
-    [titleLabel setTextColor:[UIColor blackColor]];
+//    self.titleView = [[UIView alloc] init];
+//    [self.view addSubview:self.titleView];
+//    [self.titleView setFrame:CGRectMake(50, 20 + _iphoneXTopPadding, BBS_WIDTH(self.view) - 100, 44)];
+//
+//    UILabel *titleLabel = [UILabel new];
+//    [self.titleView addSubview:titleLabel];
+//    if (self.currentForum) {
+//        [titleLabel setText:self.currentForum.name];
+//    }else{
+//        [titleLabel setText:@"所有"];
+//    }
+//    [titleLabel setFont:[UIFont boldSystemFontOfSize:16]];
+//    CGSize size = CGSizeMake(MAXFLOAT, 30.0f);
+//    CGSize buttonSize = [titleLabel.text boundingRectWithSize:size
+//                                                      options:NSStringDrawingTruncatesLastVisibleLine  | NSStringDrawingUsesLineFragmentOrigin | NSStringDrawingUsesFontLeading
+//                                                   attributes:@{ NSFontAttributeName:titleLabel.font}
+//                                                      context:nil].size;
+//    [titleLabel setFrame:CGRectMake((BBS_WIDTH(self.titleView) - buttonSize.width) / 2, (BBS_HEIGHT(self.titleView) - buttonSize.height) / 2, buttonSize.width, buttonSize.height)];
+//    [titleLabel setTextColor:[UIColor blackColor]];
     
     //    _arrowImageView = [[UIImageView alloc] initWithFrame:CGRectMake(BBS_RIGHT(titleLabel) + 5, (BBS_HEIGHT(self.titleView) - 14) / 2, 14, 14)];
     //    [_arrowImageView setContentMode:UIViewContentModeScaleAspectFit];
     //    [_arrowImageView setImage:arrowImage];
     //    [self.titleView addSubview:_arrowImageView];
     //状态栏
-    [UIApplication sharedApplication].statusBarStyle = UIStatusBarStyleDefault;
+//    [UIApplication sharedApplication].statusBarStyle = UIStatusBarStyleDefault;
     
     //    titleTap.numberOfTouchesRequired = 1;
     //    [self.titleView addGestureRecognizer:titleTap];
     //    [self setupRightBarButton];
-    [self setupRightBarButton];
 }
 
 - (void)setupRightBarButton
 {
-    CGFloat postThreadButtonWidth = 30;
+//    CGFloat postThreadButtonWidth = 30;
     UIButton *postThread = [UIButton buttonWithType:UIButtonTypeCustom];
-    postThread.frame = CGRectMake(DZSUIScreen_width - postThreadButtonWidth - 10, 25 + _iphoneXTopPadding, 30, 30);
-    [postThread setImage:[UIImage BBSImageNamed:@"Home/postThreadBlack.png"] forState:UIControlStateNormal];
+    [self.view addSubview:postThread];
+    [postThread mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.right.equalTo(self.view).offset(-20);
+        make.size.mas_equalTo(CGSizeMake(44, 44));
+        make.bottom.equalTo(self.view).mas_offset(-100);
+    }];
+    [postThread setImage:[UIImage BBSImageNamed:@"Home/icon_hauti@2x.png"] forState:UIControlStateNormal];
     [postThread addTarget:self action:@selector(editThread:) forControlEvents:UIControlEventTouchUpInside];
-//    [self.view addSubview:postThread];
-    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:postThread];
+//    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:postThread];
     
     //===== 搜索
 //    UIButton *searchBtn = [UIButton buttonWithType:UIButtonTypeCustom];
 //    searchBtn.hidden = true;
 //    [self.view addSubview:searchBtn];
-//    
+//
 //    [searchBtn mas_makeConstraints:^(MASConstraintMaker *make) {
 //        make.top.mas_equalTo(postThread.mas_top);
 //        make.right.mas_equalTo(postThread.mas_left).mas_equalTo(-10);
@@ -642,7 +646,7 @@ static NSString *cellIdentifier = @"ThreadSummaryCell";
         [editVC setForum:_currentForum];
         
         [editVC addPostThreadObserver:self];
-        BBSUIMainStyleNavigationController *mainStyleNav = [[BBSUIMainStyleNavigationController alloc] initWithRootViewController:editVC];
+        UINavigationController *mainStyleNav = [[UINavigationController alloc] initWithRootViewController:editVC];
         [self presentViewController:mainStyleNav animated:YES completion:nil];
     }
 }

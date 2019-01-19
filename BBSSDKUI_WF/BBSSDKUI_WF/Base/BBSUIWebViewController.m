@@ -91,9 +91,9 @@
 
 - (void)delNavLine
 {
-    [self.navigationController.navigationBar setBackgroundImage:[UIImage imageNamed:@"head_bar_pink_.png"] forBarMetrics:UIBarMetricsDefault];
-    
-    [self.navigationController.navigationBar setShadowImage:[self createImageWithColor:[UIColor clearColor]]];
+//    [self.navigationController.navigationBar setBackgroundImage:[UIImage imageNamed:@"head_bar_pink_.png"] forBarMetrics:UIBarMetricsDefault];
+//    
+//    [self.navigationController.navigationBar setShadowImage:[self createImageWithColor:[UIColor clearColor]]];
 }
 
 - (UIImage *)createImageWithColor:(UIColor *)color{

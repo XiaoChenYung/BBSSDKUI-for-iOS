@@ -10,7 +10,7 @@
 #import <BBSSDK/BBSForum.h>
 #import "BBSUIThreadListView.h"
 
-@interface BBSUIForumDetailViewController : BBSUIBackViewController
+@interface BBSUIForumDetailViewController : BBSUIBaseViewController
 
 @property (nonatomic, strong) BBSForum *currentForum;
 // 针对门户  1-允许评论，0-不允许评论

@@ -9,7 +9,7 @@
 #import "BBSUINormalNavViewController.h"
 #import <MOBFoundation/MOBFJSContext.h>
 
-@interface BBSUIWebViewController : BBSUINormalNavViewController<UIWebViewDelegate>
+@interface BBSUIWebViewController : BBSUIBaseViewController<UIWebViewDelegate>
 
 /**
  *  网页视图

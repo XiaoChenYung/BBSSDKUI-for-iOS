@@ -108,22 +108,22 @@ static NSString *headIdentifier = @"header";
 
 - (void)updateHeaderView:(NSArray *)allData isSelectForum:(BOOL)isSelect
 {
-    if (self.sectionTag == 0) {
+//    if (self.sectionTag == 0) {
 //        [self.titleLabel setFrame:CGRectMake(15, 0, DZSUIScreen_width, 32)];
 //        [self.titleLabel setText:@"置顶版块"];
         
-        if (isSelect) {
-            self.setButton.hidden = YES;
-            self.editButton.hidden = YES;
-        }else {
-            self.setButton.hidden = YES;
-            self.editButton.hidden = true;
-        }
-    }
-    else
-    {
-        [self.titleLabel setFrame:CGRectMake(15, -17, DZSUIScreen_width, 32)];
-        NSArray *dicArr = allData[self.sectionTag - 1];
+//        if (isSelect) {
+//            self.setButton.hidden = YES;
+//            self.editButton.hidden = YES;
+//        }else {
+//            self.setButton.hidden = YES;
+//            self.editButton.hidden = true;
+//        }
+//    }
+//    else
+//    {
+        [self.titleLabel setFrame:CGRectMake(15, 0, DZSUIScreen_width, 32)];
+        NSArray *dicArr = allData[self.sectionTag];
         [dicArr enumerateObjectsUsingBlock:^(BBSForum *obj, NSUInteger idx, BOOL * _Nonnull stop) {
             if (obj.groupName.length > 0) {
                  [self.titleLabel setText:obj.groupName];
@@ -135,7 +135,7 @@ static NSString *headIdentifier = @"header";
 
         self.editButton.hidden = YES;
         self.setButton.hidden = true;
-    }
+//    }
 }
 
 #pragma mark - 编辑

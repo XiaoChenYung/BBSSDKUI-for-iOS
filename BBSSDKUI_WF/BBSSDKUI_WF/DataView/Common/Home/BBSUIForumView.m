@@ -55,11 +55,11 @@
 {
     self = [super initWithFrame:frame];
     if (self) {
-        _isEditing = NO;
-
-        [self getStickForumData];
-        [self configureUI];
-        [self requestData];
+//        _isEditing = NO;
+//
+//        [self getStickForumData];
+//        [self configureUI];
+//        [self requestData];
     }
     return self;
 }
@@ -81,20 +81,23 @@
 {
     //设置tableview
     //self.forumTableView = [[UITableView alloc] initWithFrame:self.bounds style:UITableViewStyleGrouped];
-    CGFloat subheight = 0;
-    if (IS_IPHONE_6)
-    {
-        subheight = 40;
-    }
-    else
-    {
-        subheight = 50;
-    }
+//    CGFloat subheight = 0;
+//    if (IS_IPHONE_6)
+//    {
+//        subheight = 40;
+//    }
+//    else
+//    {
+//        subheight = 50;
+//    }
     
-    self.forumTableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, DZSUIScreen_width, DZSUIScreen_height - subheight) style:UITableViewStyleGrouped];
-
+    self.forumTableView = [[UITableView alloc] initWithFrame:CGRectZero style:UITableViewStyleGrouped];
     [self addSubview:self.forumTableView];
-    self.forumTableView.sectionHeaderHeight = 40;
+    [self.forumTableView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.edges.equalTo(self);
+    }];
+    self.forumTableView.sectionHeaderHeight = 0.01;
+    self.forumTableView.sectionFooterHeight = 0.01;
     [self.forumTableView setDelegate:self];
     [self.forumTableView setDataSource:self];
     
@@ -106,10 +109,10 @@
         [weakSelf requestData];
     }];
     
-    if ([MOBFDevice versionCompare:@"11.0"] >= 0)
-    {
-        [self.forumTableView setValue:@0 forKey:@"contentInsetAdjustmentBehavior"];
-    }
+//    if ([MOBFDevice versionCompare:@"11.0"] >= 0)
+//    {
+//        [self.forumTableView setValue:@0 forKey:@"contentInsetAdjustmentBehavior"];
+//    }
     
     [self.forumTableView setSeparatorStyle:UITableViewCellSeparatorStyleNone];
     //[self.forumTableView.mj_header beginRefreshing];
@@ -290,20 +293,20 @@
 #pragma mark - UITableview datasource
 -(NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
-    return self.allDataArr.count + 1;
+    return self.allDataArr.count;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     
-    if (section == 0)
-    {
-        return  self.stickArray.count;
-    }
-    else
-    {
-        
-        NSArray *sArr = self.allDataArr[section-1];
+//    if (section == 0)
+//    {
+//        return  self.stickArray.count;
+//    }
+//    else
+//    {
+    
+        NSArray *sArr = self.allDataArr[section];
         for (BBSForum *model in sArr) {
             if (model.isExpect)
             {
@@ -314,7 +317,7 @@
                 return 0;
             }
         }
-    }
+//    }
     return 0;
 }
 
@@ -333,23 +336,23 @@
      commonArray 论坛版块数据
      isSticked YES置顶 NO不置顶
      */
-    if (indexPath.section == 0) {
+//    if (indexPath.section == 0) {
+//        cell.stickForumArray = self.stickArray;
+//        cell.forumModel = self.stickArray[indexPath.row];
+//        [cell.stickButton setHidden:!self.isEditing];
+//        [cell setStickButtonHidden:!self.isEditing];
+//        cell.delegate = self;
+//        //[cell.seperateView setHidden:((indexPath.row + 1) == self.stickArray.count)];
+//    }
+//    else
+//    {
         cell.stickForumArray = self.stickArray;
-        cell.forumModel = self.stickArray[indexPath.row];
-        [cell.stickButton setHidden:!self.isEditing];
-        [cell setStickButtonHidden:!self.isEditing];
-        cell.delegate = self;
-        //[cell.seperateView setHidden:((indexPath.row + 1) == self.stickArray.count)];
-    }
-    else
-    {
-        cell.stickForumArray = self.stickArray;
-        cell.forumModel = self.allDataArr[indexPath.section - 1][indexPath.row];
+        cell.forumModel = self.allDataArr[indexPath.section][indexPath.row];
         [cell.stickButton setHidden:!self.isEditing];
         [cell setStickButtonHidden:!self.isEditing];
         cell.delegate = self;
         //[cell.seperateView setHidden:((indexPath.row + 1) == self.commonArray.count)];
-    }
+//    }
 
     return cell;
 }
@@ -368,13 +371,13 @@
     headerView.sectionTag = section;
     [headerView updateHeaderView:self.allDataArr isSelectForum:NO];
     
-    if (section > 0) {
-        NSArray *arr = self.allDataArr[section - 1];
+//    if (section > 0) {
+        NSArray *arr = self.allDataArr[section];
         if (arr.count > 0) {
             BBSForum *forum = arr[0];
             headerView.isclicked = forum.isExpect;
         }
-    }
+//    }
     
 //    if (self.stickArray.count > 0) {
 //        BBSForum *stickForum = self.stickArray[0];
@@ -395,7 +398,7 @@
 //    if (section == 0) {
 //        return 32;
 //    }else{
-        return 15;
+        return 32;
 //    }
 }
 
@@ -451,7 +454,7 @@
 
 - (void)expectForumHeaderView:(NSInteger)section
 {
-    NSArray *expectArr = self.allDataArr[section - 1];
+    NSArray *expectArr = self.allDataArr[section];
     [expectArr enumerateObjectsUsingBlock:^(BBSForum *model, NSUInteger idx, BOOL * _Nonnull stop) {
         model.isExpect = !model.isExpect;
 

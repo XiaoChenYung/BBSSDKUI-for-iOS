@@ -96,12 +96,14 @@
 //    MyBBSViewController *vc = [[MyBBSViewController alloc] init];
 //    [_window setRootViewController:vc];
 //    [_window makeKeyAndVisible];
-    
+    [[UINavigationBar appearance] setBarTintColor: [UIColor yellowColor]];
+    [[UINavigationBar appearance] setTitleTextAttributes:[NSDictionary dictionaryWithObjectsAndKeys:[UIColor darkGrayColor], NSForegroundColorAttributeName,nil]];
+    [[UINavigationBar appearance] setTintColor:[UIColor darkGrayColor]];
     _window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
 //    BBSUIForumHomeViewController *homeVC = [BBSUIForumHomeViewController forumHomeViewControllerWithTitle:@"安卓巴士"];
     BBSUIForumViewController *vc = [[BBSUIForumViewController alloc] init];
     UINavigationController *homeVC = [[UINavigationController alloc] initWithRootViewController:vc];
-
+    
     [_window setRootViewController:homeVC];
     [_window makeKeyAndVisible];
     

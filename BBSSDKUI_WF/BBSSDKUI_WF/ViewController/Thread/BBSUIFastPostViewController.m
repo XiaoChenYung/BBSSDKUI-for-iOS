@@ -125,7 +125,7 @@
     [cancelButton setFrame:CGRectMake(0, 0, 44, 44)];
     [cancelButton setTitle:@"取消" forState:UIControlStateNormal];
     [cancelButton.titleLabel setFont:[UIFont systemFontOfSize:15]];
-    [cancelButton setTitleColor:[UIColor colorWithRed:255 green:255 blue:255 alpha:0.8] forState:UIControlStateNormal];
+    [cancelButton setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
     [cancelButton addTarget:self action:@selector(cancelButtonHandler:) forControlEvents:UIControlEventTouchUpInside];
     self.navigationItem.leftBarButtonItems = @[fixedButton, [[UIBarButtonItem alloc] initWithCustomView:cancelButton]];
     
@@ -133,7 +133,7 @@
     UIButton *publishButton = [UIButton buttonWithType:UIButtonTypeCustom];
     [publishButton setFrame:CGRectMake(0, 0, 44, 44)];
     [publishButton setTitle:@"发布" forState:UIControlStateNormal];
-    [publishButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+    [publishButton setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
     [publishButton addTarget:self action:@selector(publishButtonHandler:) forControlEvents:UIControlEventTouchUpInside];
     [publishButton.titleLabel setFont:[UIFont systemFontOfSize:15]];
     
@@ -158,7 +158,7 @@
     [checkMasterButton setTitle:@" 回贴仅楼主可见" forState:UIControlStateNormal];
     [checkMasterButton setImage:[UIImage BBSImageNamed:@"/Thread/hideName@3x.png"] forState: UIControlStateNormal];
     [checkMasterButton setImage:[UIImage BBSImageNamed:@"/Thread/hideNameSelect@3x.png"] forState: UIControlStateSelected];
-    [checkMasterButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+    [checkMasterButton setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
     checkMasterButton.titleLabel.font = [UIFont systemFontOfSize:15];
     [checkMasterButton addTarget:self action:@selector(checkMasterbtnHandler:) forControlEvents:UIControlEventTouchUpInside];
     self.checkMasterButton = checkMasterButton;
