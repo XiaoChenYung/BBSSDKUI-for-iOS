@@ -715,7 +715,7 @@
             [BBSUIContext shareInstance].currentUser = user;
             
             [SVProgressHUD showSuccessWithStatus:@"登录成功"];
-            [SVProgressHUD dismissWithDelay:2.5 completion:^{
+            [SVProgressHUD dismissWithDelay:1 completion:^{
                 [self dismissViewControllerAnimated:YES completion:nil];
             }];
             return ;

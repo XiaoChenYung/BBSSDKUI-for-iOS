@@ -27,7 +27,7 @@
     [self.forumView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.edges.equalTo(self.view);
     }];
-    self.title = @"所有版块";
+    self.title = @"社区";
 }
 
 

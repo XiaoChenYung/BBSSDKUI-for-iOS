@@ -483,8 +483,8 @@ static NSString *cellIdentifier = @"ThreadSummaryCell";
     [self.view addSubview:postThread];
     [postThread mas_makeConstraints:^(MASConstraintMaker *make) {
         make.right.equalTo(self.view).offset(-20);
-        make.size.mas_equalTo(CGSizeMake(44, 44));
-        make.bottom.equalTo(self.view).mas_offset(-100);
+        make.size.mas_equalTo(CGSizeMake(80, 80));
+        make.bottom.equalTo(self.view).mas_offset(-60);
     }];
     [postThread setImage:[UIImage BBSImageNamed:@"Home/icon_hauti@2x.png"] forState:UIControlStateNormal];
     [postThread addTarget:self action:@selector(editThread:) forControlEvents:UIControlEventTouchUpInside];

@@ -692,28 +692,28 @@
  */
 - (void)registOpenAuthor
 {
-    __weak typeof(self) theWebController = self;
-    [self.jsContext registerJSMethod:@"openAuthor" block:^(NSArray *arguments) {
-        
-        if (![BBSUIContext shareInstance].currentUser)
-        {
-            BBSUILoginViewController *vc = [[BBSUILoginViewController alloc] init];
-            UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
-            [self.navigationController presentViewController:nav animated:YES completion:nil];
-        }
-        else
-        {
-            NSInteger authorId = -1;
-            
-            if (arguments.count > 0 && [arguments[0] isKindOfClass:[NSNumber class]])
-            {
-                authorId = [arguments[0] integerValue];
-                BBSUIUserOtherInfoViewController *vc = [[BBSUIUserOtherInfoViewController alloc] initWithAuthorid:authorId];
-                [theWebController.navigationController pushViewController:vc animated:YES];
-            }
-        }
-        //进入其他用户详情入口
-    }];
+//    __weak typeof(self) theWebController = self;
+//    [self.jsContext registerJSMethod:@"openAuthor" block:^(NSArray *arguments) {
+//        
+//        if (![BBSUIContext shareInstance].currentUser)
+//        {
+//            BBSUILoginViewController *vc = [[BBSUILoginViewController alloc] init];
+//            UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
+//            [self.navigationController presentViewController:nav animated:YES completion:nil];
+//        }
+//        else
+//        {
+//            NSInteger authorId = -1;
+//            
+//            if (arguments.count > 0 && [arguments[0] isKindOfClass:[NSNumber class]])
+//            {
+//                authorId = [arguments[0] integerValue];
+//                BBSUIUserOtherInfoViewController *vc = [[BBSUIUserOtherInfoViewController alloc] initWithAuthorid:authorId];
+//                [theWebController.navigationController pushViewController:vc animated:YES];
+//            }
+//        }
+//        //进入其他用户详情入口
+//    }];
 
 }
 
