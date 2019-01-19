@@ -100,12 +100,12 @@
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:YES];
     //导航栏
-    [self.navigationController.navigationBar setBarTintColor:[UIColor whiteColor]];
-    [self.navigationController.navigationBar setTranslucent:YES];
+//    [self.navigationController.navigationBar setBarTintColor:[UIColor whiteColor]];
+//    [self.navigationController.navigationBar setTranslucent:YES];
     //状态栏
-    [UIApplication sharedApplication].statusBarStyle = UIStatusBarStyleDefault;
+//    [UIApplication sharedApplication].statusBarStyle = UIStatusBarStyleDefault;
     
-    self.navigationController.navigationBar.titleTextAttributes = @{NSForegroundColorAttributeName:[UIColor blackColor]};
+//    self.navigationController.navigationBar.titleTextAttributes = @{NSForegroundColorAttributeName:[UIColor blackColor]};
     
     if ([[BBSUIContext shareInstance].currentUser.uid integerValue] == _threadModel.authorId) {
         self.navigationItem.rightBarButtonItem = nil;
@@ -116,11 +116,11 @@
     [super viewWillDisappear:YES];
     
     //导航栏
-    [self.navigationController.navigationBar setBarTintColor:DZSUIColorFromHex(0x5B7EF0)];
-    [self.navigationController.navigationBar setTranslucent:NO];
+//    [self.navigationController.navigationBar setBarTintColor:DZSUIColorFromHex(0x5B7EF0)];
+//    [self.navigationController.navigationBar setTranslucent:NO];
     //状态栏
-    [UIApplication sharedApplication].statusBarStyle = UIStatusBarStyleLightContent;
-    self.navigationController.navigationBar.titleTextAttributes = @{NSForegroundColorAttributeName:[UIColor whiteColor]};
+//    [UIApplication sharedApplication].statusBarStyle = UIStatusBarStyleLightContent;
+//    self.navigationController.navigationBar.titleTextAttributes = @{NSForegroundColorAttributeName:[UIColor whiteColor]};
 }
 
 - (void)setup

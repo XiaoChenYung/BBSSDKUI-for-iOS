@@ -58,7 +58,7 @@
     {
         _iphoneXTopPadding = 10;
     }
-    
+    NSLog(@"论坛加载了");
     //资讯和论坛公用的view
     _threadListView = [[BBSUIThreadListView alloc] initWithFrame:CGRectMake(0, 0, CGRectGetWidth(self.view.bounds), CGRectGetHeight(self.view.bounds))
                                                            forum:self.currentForum
@@ -71,11 +71,11 @@
 
 -(void)viewWillAppear:(BOOL)animated
 {
-    [UIApplication sharedApplication].statusBarStyle = UIStatusBarStyleDefault;
-    if (self.currentForum) {
-        [self.navigationController setNavigationBarHidden:YES animated:YES];
-        [UIApplication sharedApplication].statusBarStyle = UIStatusBarStyleDefault;
-    }
+//    [UIApplication sharedApplication].statusBarStyle = UIStatusBarStyleDefault;
+//    if (self.currentForum) {
+//        [self.navigationController setNavigationBarHidden:YES animated:YES];
+//        [UIApplication sharedApplication].statusBarStyle = UIStatusBarStyleDefault;
+//    }
     
     [super viewWillAppear:animated];
     self.isPresent = NO;
@@ -84,7 +84,7 @@
 -(void)viewWillDisappear:(BOOL)animated
 {
     if (self.currentForum && !self.isPresent) {
-        [self.navigationController setNavigationBarHidden:NO animated:YES];
+//        [self.navigationController setNavigationBarHidden:NO animated:YES];
     }
     
     [self.threadListView dismissRefreshWindow];

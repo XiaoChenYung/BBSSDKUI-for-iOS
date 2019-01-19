@@ -11,6 +11,6 @@
 /**
  板块 VC
  */
-@interface BBSUIForumViewController : BBSUIBackViewController
+@interface BBSUIForumViewController : BBSUIBaseViewController
 
 @end

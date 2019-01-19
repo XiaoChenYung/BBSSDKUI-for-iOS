@@ -199,6 +199,7 @@
     self.forumSelectBtn =
     ({
         UIButton *forumSelectBtn = [UIButton buttonWithType:UIButtonTypeSystem];
+        forumSelectBtn.hidden = true;
         forumSelectBtn.layer.borderWidth = 1.0;
         forumSelectBtn.layer.cornerRadius = 3.0;
         forumSelectBtn.layer.borderColor = DZSUIColorFromHex(0x5B7EF0).CGColor;
@@ -229,7 +230,7 @@
     [seperateView setBackgroundColor:[UIColor darkGrayColor]];
     [seperateView setAlpha:0.25];
     [seperateView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(self.forumSelectBtn.mas_bottom).with.offset(13);
+        make.top.equalTo(self.view).with.offset(13);
         make.left.equalTo(self.view);
         make.right.equalTo(self.view);
         make.height.mas_equalTo(@1);
@@ -244,7 +245,7 @@
         [self.view addSubview:titleTextField];
         [titleTextField mas_makeConstraints:^(MASConstraintMaker *make) {
             make.left.equalTo(self.view).offset(15);
-            make.top.equalTo(self.forumSelectBtn.mas_bottom).offset(11);
+            make.top.equalTo(self.view).offset(11);
             make.right.equalTo(self.view).offset(-15);
             make.height.equalTo(@50);
         }];

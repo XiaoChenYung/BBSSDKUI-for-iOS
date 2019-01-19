@@ -54,7 +54,6 @@
             dispatch_semaphore_wait(self.semaphore, DISPATCH_TIME_FOREVER);
             
         });
-
         [BBSSDK getGlobalSettings:^(NSDictionary *settings, NSError *error) {
             if (settings)
             {

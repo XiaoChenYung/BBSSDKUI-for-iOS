@@ -99,17 +99,18 @@
     [self setupJSNativeWithNativeExtPath:@"/HTML/mobforum/assets/js/NativeExt"];
     [self registerNativeMethods];//注册本地native方法
     [self setup];
+    NSLog(@"进来了");
 }
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:YES];
     //导航栏
-    [self.navigationController.navigationBar setBarTintColor:[UIColor whiteColor]];
-    [self.navigationController.navigationBar setTranslucent:YES];
+//    [self.navigationController.navigationBar setBarTintColor:[UIColor whiteColor]];
+//    [self.navigationController.navigationBar setTranslucent:YES];
     //状态栏
-    [UIApplication sharedApplication].statusBarStyle = UIStatusBarStyleDefault;
+//    [UIApplication sharedApplication].statusBarStyle = UIStatusBarStyleDefault;
     
-    self.navigationController.navigationBar.titleTextAttributes = @{NSForegroundColorAttributeName:[UIColor blackColor]};
+//    self.navigationController.navigationBar.titleTextAttributes = @{NSForegroundColorAttributeName:[UIColor blackColor]};
     
     if ([[BBSUIContext shareInstance].currentUser.uid integerValue] == _threadModel.authorId) {
         self.navigationItem.rightBarButtonItem = nil;
@@ -120,11 +121,11 @@
     [super viewWillDisappear:YES];
     
     //导航栏
-    [self.navigationController.navigationBar setBarTintColor:DZSUIColorFromHex(0x5B7EF0)];
-    [self.navigationController.navigationBar setTranslucent:NO];
-    //状态栏
-    [UIApplication sharedApplication].statusBarStyle = UIStatusBarStyleLightContent;
-    self.navigationController.navigationBar.titleTextAttributes = @{NSForegroundColorAttributeName:[UIColor whiteColor]};
+//    [self.navigationController.navigationBar setBarTintColor:DZSUIColorFromHex(0x5B7EF0)];
+//    [self.navigationController.navigationBar setTranslucent:NO];
+//    //状态栏
+//    [UIApplication sharedApplication].statusBarStyle = UIStatusBarStyleLightContent;
+//    self.navigationController.navigationBar.titleTextAttributes = @{NSForegroundColorAttributeName:[UIColor whiteColor]};
 }
 
 - (void)setup
@@ -198,9 +199,10 @@
     }];
     [shareButton addTarget:self action:@selector(shareButtonHandler:) forControlEvents:UIControlEventTouchUpInside];
     [shareButton setImage:[UIImage BBSImageNamed:@"/Thread/share@2x.png"] forState:UIControlStateNormal];
-    
+    shareButton.hidden = true;
     _favButton = [UIButton buttonWithType:UIButtonTypeCustom];
     [self.bottomBar addSubview:_favButton];
+    _favButton.hidden = true;
     [_favButton mas_makeConstraints:^(MASConstraintMaker *make) {
         make.right.mas_equalTo(shareButton.mas_left).with.offset(-15);
         make.centerY.equalTo(shareButton.mas_centerY);
@@ -212,7 +214,7 @@
     _commentButton = [UIButton buttonWithType:UIButtonTypeCustom];
     [self.bottomBar addSubview:_commentButton];
     [_commentButton mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.right.mas_equalTo(self.favButton.mas_left).with.offset(-15);
+        make.right.equalTo(self.bottomBar).with.offset(-7);
         make.centerY.equalTo(self.favButton.mas_centerY);
         make.size.mas_equalTo(CGSizeMake(30, 30));
     }];

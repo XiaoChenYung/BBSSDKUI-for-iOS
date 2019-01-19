@@ -70,7 +70,7 @@ static NSString *headIdentifier = @"header";
     
     [editButton addTarget:self action:@selector(_editButtonHandler:) forControlEvents:UIControlEventTouchUpInside];
     [headerView addSubview:editButton];
-    
+    editButton.hidden = true;
     //收放按钮
     UIButton *setButton = [UIButton buttonWithType:UIButtonTypeCustom];
     [setButton setFrame:CGRectMake(DZSUIScreen_width - 15 - editButtonWidth, -15, editButtonWidth+8, 32)];
@@ -82,7 +82,7 @@ static NSString *headIdentifier = @"header";
     [setButton setImage:[UIImage BBSImageNamed:@"User/icon_downArrow.png"] forState:UIControlStateSelected];
     setButton.tag = 200 + self.sectionTag;
     self.setButton = setButton;
-    
+    setButton.hidden = true;
     [headerView addSubview:setButton];
 }
 
@@ -109,15 +109,15 @@ static NSString *headIdentifier = @"header";
 - (void)updateHeaderView:(NSArray *)allData isSelectForum:(BOOL)isSelect
 {
     if (self.sectionTag == 0) {
-        [self.titleLabel setFrame:CGRectMake(15, 0, DZSUIScreen_width, 32)];
-        [self.titleLabel setText:@"置顶版块"];
+//        [self.titleLabel setFrame:CGRectMake(15, 0, DZSUIScreen_width, 32)];
+//        [self.titleLabel setText:@"置顶版块"];
         
         if (isSelect) {
             self.setButton.hidden = YES;
             self.editButton.hidden = YES;
         }else {
             self.setButton.hidden = YES;
-            self.editButton.hidden = NO;
+            self.editButton.hidden = true;
         }
     }
     else
@@ -134,7 +134,7 @@ static NSString *headIdentifier = @"header";
         }];
 
         self.editButton.hidden = YES;
-        self.setButton.hidden = NO;
+        self.setButton.hidden = true;
     }
 }
 

@@ -26,7 +26,6 @@
 {
     BBSUIHomeViewController *forumVC = [[BBSUIHomeViewController alloc] init];
     BBSUIForumHomeViewController *homeVC = [[BBSUIForumHomeViewController alloc] initWithRootViewController:forumVC];
-    
     return homeVC;
 }
 

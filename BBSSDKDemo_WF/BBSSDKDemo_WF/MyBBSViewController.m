@@ -8,6 +8,7 @@
 
 #import "MyBBSViewController.h"
 #import <BBSSDK/BBSSDK.h>
+#import <BBSSDKUI/BBSUIForumViewController.h>
 #import <BBSSDKUI/BBSUIForumHomeViewController.h>
 #import "WXApi.h"
 #import <objc/runtime.h>
@@ -79,6 +80,9 @@
 {
     BBSUIForumHomeViewController *vc = [BBSUIForumHomeViewController forumHomeViewControllerWithTitle:@"安卓巴士"];
     [self presentViewController:vc animated:YES completion:nil];
+//    BBSUIForumViewController *forum = [[BBSUIForumViewController alloc] init];
+//    UINavigationController *nav = [[UINavigationController alloc] init];
+//    [self presentViewController:nav animated:YES completion:nil];
 }
 
 - (IBAction)enterMyForum:(id)sender

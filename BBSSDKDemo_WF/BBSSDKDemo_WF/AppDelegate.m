@@ -10,6 +10,7 @@
 #import "MyBBSViewController.h"
 #import <BBSSDK/BBSSDK.h>
 #import <BBSSDKUI/BBSUIForumHomeViewController.h>
+#import <BBSSDKUI/BBSUIForumViewController.h>
 #import <MobLink/MobLink.h>
 #import <MobLink/IMLSDKRestoreDelegate.h>
 
@@ -91,16 +92,18 @@
 //         }
 //     }];
     
-    _window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
-    MyBBSViewController *vc = [[MyBBSViewController alloc] init];
-    [_window setRootViewController:vc];
-    [_window makeKeyAndVisible];
-    
 //    _window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
-//    BBSUIForumHomeViewController *homeVC = [BBSUIForumHomeViewController forumHomeViewControllerWithTitle:@"安卓巴士"];
-//
-//    [_window setRootViewController:homeVC];
+//    MyBBSViewController *vc = [[MyBBSViewController alloc] init];
+//    [_window setRootViewController:vc];
 //    [_window makeKeyAndVisible];
+    
+    _window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
+//    BBSUIForumHomeViewController *homeVC = [BBSUIForumHomeViewController forumHomeViewControllerWithTitle:@"安卓巴士"];
+    BBSUIForumViewController *vc = [[BBSUIForumViewController alloc] init];
+    UINavigationController *homeVC = [[UINavigationController alloc] initWithRootViewController:vc];
+
+    [_window setRootViewController:homeVC];
+    [_window makeKeyAndVisible];
     
     return YES;
 }

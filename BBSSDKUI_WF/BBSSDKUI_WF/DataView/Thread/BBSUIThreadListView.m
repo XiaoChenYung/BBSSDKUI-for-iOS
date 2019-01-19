@@ -246,13 +246,16 @@
 
 - (void)_pushForumVC:(BBSForum *)forum
 {
+    
     if (!forum)
     {
+        NSLog(@"退出form1");
         BBSUIForumViewController *vc = [[BBSUIForumViewController alloc] init];
         [[MOBFViewController currentViewController].navigationController pushViewController:vc animated:YES];
     }
     else
     {
+        NSLog(@"退出form2");
         BBSUIThreadListViewController *threadListViewController = [[BBSUIThreadListViewController alloc] initWithForum:forum];
         if ([MOBFViewController currentViewController].navigationController) {
             [[MOBFViewController currentViewController].navigationController pushViewController:threadListViewController animated:YES];

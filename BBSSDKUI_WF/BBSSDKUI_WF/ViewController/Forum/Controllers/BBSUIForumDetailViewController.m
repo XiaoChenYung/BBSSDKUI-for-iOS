@@ -90,11 +90,11 @@ static NSString *cellIdentifier = @"ThreadSummaryCell";
 
 - (void)viewWillAppear:(BOOL)animated
 {
-    [UIApplication sharedApplication].statusBarStyle = UIStatusBarStyleDefault;
-    if (self.currentForum) {
-        [self.navigationController setNavigationBarHidden:YES animated:YES];
-        [UIApplication sharedApplication].statusBarStyle = UIStatusBarStyleDefault;
-    }
+//    [UIApplication sharedApplication].statusBarStyle = UIStatusBarStyleDefault;
+//    if (self.currentForum) {
+//        [self.navigationController setNavigationBarHidden:YES animated:YES];
+//        [UIApplication sharedApplication].statusBarStyle = UIStatusBarStyleDefault;
+//    }
     [super viewWillAppear:animated];
     self.isPresent = NO;
 }
@@ -102,7 +102,7 @@ static NSString *cellIdentifier = @"ThreadSummaryCell";
 - (void)viewWillDisappear:(BOOL)animated
 {
     if (self.currentForum && !self.isPresent) {
-        [self.navigationController setNavigationBarHidden:NO animated:YES];
+//        [self.navigationController setNavigationBarHidden:NO animated:YES];
     }
     [super viewWillDisappear:animated];
 }
@@ -119,26 +119,26 @@ static NSString *cellIdentifier = @"ThreadSummaryCell";
     [self setNavigationBarTitle];
     
     //最新 最热
-     BBSUITribuneSegementView *segmentView = [[BBSUITribuneSegementView alloc] initWithFrame:CGRectZero titleArray:@[@"最新",@"热门",@"精华",@"置顶"]];
-    [self.view addSubview:segmentView];
-    segmentView.delegate = self;
-    self.segmentView = segmentView;
-    segmentView.backgroundColor = [UIColor clearColor];
-    [segmentView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.mas_equalTo(77);
-        make.left.right.mas_equalTo(0);
-        make.size.height.mas_equalTo(42);
-    }];
+//     BBSUITribuneSegementView *segmentView = [[BBSUITribuneSegementView alloc] initWithFrame:CGRectZero titleArray:@[@"最新",@"热门",@"精华",@"置顶"]];
+//    [self.view addSubview:segmentView];
+//    segmentView.delegate = self;
+//    self.segmentView = segmentView;
+//    segmentView.backgroundColor = [UIColor clearColor];
+//    [segmentView mas_makeConstraints:^(MASConstraintMaker *make) {
+//        make.top.mas_equalTo(77);
+//        make.left.right.mas_equalTo(0);
+//        make.size.height.mas_equalTo(42);
+//    }];
     
-    UIView *lineView = [[UIView alloc] init];
-    [self.view addSubview:lineView];
-    [lineView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.mas_equalTo(segmentView.mas_bottom);
-        make.left.right.mas_equalTo(0);
-        make.size.height.mas_equalTo(5);
-    }];
-    self.lineView = lineView;
-    lineView.backgroundColor = DZSUIColorFromHex(0xEAEDF2);
+//    UIView *lineView = [[UIView alloc] init];
+//    [self.view addSubview:lineView];
+//    [lineView mas_makeConstraints:^(MASConstraintMaker *make) {
+//        make.top.mas_equalTo(segmentView.mas_bottom);
+//        make.left.right.mas_equalTo(0);
+//        make.size.height.mas_equalTo(5);
+//    }];
+//    self.lineView = lineView;
+//    lineView.backgroundColor = DZSUIColorFromHex(0xEAEDF2);
 }
 
 
@@ -147,7 +147,7 @@ static NSString *cellIdentifier = @"ThreadSummaryCell";
     self.tableView = [[UITableView alloc] initWithFrame:CGRectZero style:UITableViewStylePlain];
     [self.view addSubview:self.tableView];
     [self.tableView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.mas_equalTo(self.lineView.mas_bottom);
+        make.top.mas_equalTo(self.view);
         make.left.right.bottom.mas_equalTo(0);
     }];
     self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
@@ -483,21 +483,23 @@ static NSString *cellIdentifier = @"ThreadSummaryCell";
     postThread.frame = CGRectMake(DZSUIScreen_width - postThreadButtonWidth - 10, 25 + _iphoneXTopPadding, 30, 30);
     [postThread setImage:[UIImage BBSImageNamed:@"Home/postThreadBlack.png"] forState:UIControlStateNormal];
     [postThread addTarget:self action:@selector(editThread:) forControlEvents:UIControlEventTouchUpInside];
-    [self.view addSubview:postThread];
+//    [self.view addSubview:postThread];
+    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:postThread];
     
     //===== 搜索
-    UIButton *searchBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-    [self.view addSubview:searchBtn];
-    
-    [searchBtn mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.mas_equalTo(postThread.mas_top);
-        make.right.mas_equalTo(postThread.mas_left).mas_equalTo(-10);
-        make.size.mas_equalTo(CGSizeMake(30, 30));
-    }];
+//    UIButton *searchBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+//    searchBtn.hidden = true;
+//    [self.view addSubview:searchBtn];
+//    
+//    [searchBtn mas_makeConstraints:^(MASConstraintMaker *make) {
+//        make.top.mas_equalTo(postThread.mas_top);
+//        make.right.mas_equalTo(postThread.mas_left).mas_equalTo(-10);
+//        make.size.mas_equalTo(CGSizeMake(30, 30));
+//    }];
     //searchBtn.frame = CGRectMake(0, 0, 30, 30);search.png  search_jianyue.png
-    UIImage *searchScaleImage = [UIImage BBSImageNamed:@"/Common/search.png"];
-    [searchBtn setImage:searchScaleImage forState:UIControlStateNormal];
-    [searchBtn addTarget:self action:@selector(searchAction:) forControlEvents:UIControlEventTouchUpInside];
+//    UIImage *searchScaleImage = [UIImage BBSImageNamed:@"/Common/search.png"];
+//    [searchBtn setImage:searchScaleImage forState:UIControlStateNormal];
+//    [searchBtn addTarget:self action:@selector(searchAction:) forControlEvents:UIControlEventTouchUpInside];
 }
 
 #pragma mark - 搜索
