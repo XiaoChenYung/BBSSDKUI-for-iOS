@@ -38,8 +38,11 @@
     // Do any additional setup after loading the view.
     self.title = @"个人资料";
     
-    _userInfoView = [[BBSUIUserInfoView alloc] initWithFrame:self.view.bounds];
+    _userInfoView = [[BBSUIUserInfoView alloc] init];
     [self.view addSubview:_userInfoView];
+    [_userInfoView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.edges.equalTo(self.view);
+    }];
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -50,6 +53,7 @@
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
+    
     // Dispose of any resources that can be recreated.
 }
 

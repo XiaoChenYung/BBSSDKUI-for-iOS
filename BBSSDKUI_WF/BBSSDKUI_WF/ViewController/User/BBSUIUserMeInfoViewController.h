@@ -12,7 +12,7 @@
 /**
  个人信息
  */
-@interface BBSUIUserMeInfoViewController : BBSUIBackViewController
+@interface BBSUIUserMeInfoViewController : BBSUIBaseViewController
 
 - (instancetype)initWithUser:(BBSUser *)user;
 

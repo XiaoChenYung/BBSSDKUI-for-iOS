@@ -11,7 +11,7 @@
 /**
  修改个性签名
  */
-@interface BBSUIModifySignatureViewController : BBSUIBackViewController
+@interface BBSUIModifySignatureViewController : BBSUIBaseViewController
 
 @property (nonatomic, copy) void(^SightmlBlock)(NSString *sightml);
 

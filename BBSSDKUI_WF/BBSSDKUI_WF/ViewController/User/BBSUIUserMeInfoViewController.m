@@ -41,7 +41,7 @@
     
     [self configUI];
     _needRequestData = NO;
-    [self setInformationImage];
+//    [self setInformationImage];
 
 }
 
@@ -83,9 +83,12 @@
 #pragma mark - init UI
 - (void)configUI {
     self.title = @"个人中心";
-    _userOtherView = [[BBSUIUserOtherInfoView alloc] initWithFrame:CGRectMake(0, -20, self.view.bounds.size.width, self.view.bounds.size.height - 44) :UserTypeMe];
+    _userOtherView = [[BBSUIUserOtherInfoView alloc] init: UserTypeMe];
     [self.view addSubview:_userOtherView];
-    [self setupRightBarButton];
+    [_userOtherView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.edges.equalTo(self.view);
+    }];
+//    [self setupRightBarButton];
 }
 
 - (void)setupRightBarButton

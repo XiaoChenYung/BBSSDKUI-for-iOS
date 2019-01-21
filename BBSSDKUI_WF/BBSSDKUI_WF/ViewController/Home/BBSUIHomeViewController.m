@@ -316,7 +316,8 @@
                 return ;
             }
         }];
-    }}
+    }
+}
 
 #pragma mark - iBBSUIFastPostViewControllerDelegate
 - (void)didBeginPostThread

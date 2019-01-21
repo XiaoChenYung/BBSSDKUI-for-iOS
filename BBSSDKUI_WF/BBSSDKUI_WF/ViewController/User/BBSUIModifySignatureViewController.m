@@ -51,9 +51,10 @@
     viewBg.backgroundColor = [UIColor whiteColor];
     [self.view addSubview:viewBg];
     [viewBg mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.left.right.equalTo(@0);
-        make.top.equalTo(@10);
-        make.height.equalTo(@50);
+        make.left.equalTo(self.view);
+        make.right.equalTo(self.view);
+        make.top.equalTo(self.view).mas_offset(88);
+        make.height.mas_equalTo(50);
     }];
     
     _signatureTextField =
@@ -63,10 +64,10 @@
         signature.attributedText = [NSString bbs_stringWithString:currentUser.sightml fontSize:15 defaultColorValue:@"3C3C3C" lineSpace:0 wordSpace:0];
         
         [signature mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.left.equalTo(@10);
+            make.left.equalTo(viewBg).mas_offset(10);
             make.centerY.equalTo(viewBg);
-            make.right.equalTo(@-15);
-            make.height.equalTo(@40);
+            make.right.equalTo(viewBg).mas_offset(-15);
+            make.height.mas_equalTo(40);
         }];
         
         signature;

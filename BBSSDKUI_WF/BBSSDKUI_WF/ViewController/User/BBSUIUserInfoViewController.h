@@ -10,7 +10,7 @@
 #import <BBSSDK/BBSUser.h>
 #import "BBSUIBackViewController.h"
 
-@interface BBSUIUserInfoViewController : BBSUIBackViewController
+@interface BBSUIUserInfoViewController : BBSUIBaseViewController
 
 - (instancetype)initWithUser:(BBSUser *)user;
 

@@ -74,6 +74,7 @@
         _tableView = [[UITableView alloc] initWithFrame:CGRectZero style:UITableViewStylePlain];
         _tableView.dataSource = self;
         _tableView.delegate = self;
+        _tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
         _tableView.tableFooterView = [UIView new];
         _tableView.rowHeight = BBSUIInformationCellHeight;
         _tableView.backgroundColor = DZSUI_BackgroundColor;
@@ -234,7 +235,7 @@
         
         //MARK:=====修改头部高度=====
         if (_userType == UserTypeMe) {
-            height = 180;
+            height = 113;
         }else{
             height = 339;
         }
@@ -384,7 +385,7 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
     if (_userType == UserTypeMe) {
-        return 4;
+        return 1;
     }
     return 2;
 }
@@ -404,9 +405,12 @@
     NSString *imageName;
     switch (indexPath.row) {
         case 0:
-            text = @"文章收藏";
-            detailText = [NSString stringWithFormat:@"%@",_currentUser.favorites];
-            imageName = @"/User/Attention_user.png";
+//            text = @"文章收藏";
+//            detailText = [NSString stringWithFormat:@"%@",_currentUser.favorites];
+//            imageName = @"/User/Attention_user.png";
+            text = @"我的帖子";
+            detailText = [NSString stringWithFormat:@"%@",_currentUser.threads];
+            imageName = @"/User/Thread_user.png";
             break;
             
         case 1:
@@ -461,8 +465,11 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
     if (indexPath.row == 0) {//文章收藏
+//        BBSUICollectionViewController *VC = [BBSUICollectionViewController new];
+//        VC.collectionViewType = CollectionViewTypeThreadFavorites;
+//        [[MOBFViewController currentViewController].navigationController pushViewController:VC animated:YES];
         BBSUICollectionViewController *VC = [BBSUICollectionViewController new];
-        VC.collectionViewType = CollectionViewTypeThreadFavorites;
+        VC.collectionViewType = CollectionViewTypeThreadList;
         [[MOBFViewController currentViewController].navigationController pushViewController:VC animated:YES];
     }
     if (indexPath.row == 1) {//我的帖子
@@ -604,6 +611,7 @@
     ({
         UIView *viewLine = [UIView new];
         viewLine.backgroundColor = DZSUIColorFromHex(0xDDE1EB);
+        viewLine.hidden = true;
         [self addSubview:viewLine];
         viewLine;
     });
@@ -612,7 +620,7 @@
     ({
         UIButton *attentCount = [UIButton new];
         [self addSubview:attentCount];
-        
+        attentCount.hidden = true;
         attentCount;
     });
     
@@ -620,7 +628,7 @@
     ({
         UIButton *fansCount = [UIButton new];
         [self addSubview:fansCount];
-
+        fansCount.hidden = true;
         fansCount;
     });
     
@@ -826,7 +834,7 @@
         
         [viewLine mas_makeConstraints:^(MASConstraintMaker *make) {
             make.left.right.equalTo(@0);
-            make.bottom.mas_equalTo(self.divViewLine.mas_top).offset(-14-9);
+            make.top.equalTo(self.avatarImageView.mas_bottom).offset(20);
             make.height.equalTo(@1);
         }];
         viewLine;

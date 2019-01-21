@@ -29,9 +29,11 @@
         self.title = @"我的收藏";
     }
     
-    _collectionView = [[BBSUICollectionView alloc] initWithFrame: self.view.bounds type:self.collectionViewType];
-    
+    _collectionView = [[BBSUICollectionView alloc] init:self.collectionViewType];
     [self.view addSubview:_collectionView];
+    [_collectionView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.edges.equalTo(self.view);
+    }];
 }
 
 - (void)viewWillAppear:(BOOL)animated

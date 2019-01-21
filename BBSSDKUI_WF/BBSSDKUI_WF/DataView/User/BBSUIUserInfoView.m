@@ -87,15 +87,15 @@
     return self;
 }
 
-- (instancetype)initWithFrame:(CGRect)frame
-{
-    self = [super initWithFrame:frame];
-    if (self) {
-        [self configureUI];
-    }
-    
-    return self;
-}
+//- (instancetype)initWithFrame:(CGRect)frame
+//{
+//    self = [super initWithFrame:frame];
+//    if (self) {
+//        [self configureUI];
+//    }
+//    
+//    return self;
+//}
 
 - (void)dealloc
 {
@@ -121,7 +121,7 @@
     self.userInfoTableView = [[UITableView alloc] initWithFrame:CGRectZero style:UITableViewStyleGrouped];
     [self addSubview:self.userInfoTableView];
     [self.userInfoTableView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.edges.equalTo(self).with.insets(UIEdgeInsetsMake(0, 0, NavigationBar_Height, 0));
+        make.edges.equalTo(self);
     }];
     [self.userInfoTableView setDelegate:self];
     [self.userInfoTableView setDataSource:self];

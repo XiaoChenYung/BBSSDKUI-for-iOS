@@ -153,6 +153,8 @@ static NSString *cellIdentifier = @"ThreadSummaryCell";
     self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
     self.tableView.estimatedRowHeight = 135;
     self.tableView.rowHeight = UITableViewAutomaticDimension;
+    self.tableView.estimatedSectionHeaderHeight = 0;
+    self.tableView.estimatedSectionFooterHeight = 0;
     
     self.pageType = PageTypeHomePage;
     self.tableView.delegate = self;
@@ -227,7 +229,7 @@ static NSString *cellIdentifier = @"ThreadSummaryCell";
             }
             
             [weakSelf.tableView reloadData];
-            [weakSelf.tableView.mj_footer setHidden:NO];
+//            [weakSelf.tableView.mj_footer setHidden:NO];
             
             if (threadList.count < BBSUIPageSize) {
                 [weakSelf.tableView.mj_footer endRefreshingWithNoMoreData];
@@ -381,7 +383,7 @@ static NSString *cellIdentifier = @"ThreadSummaryCell";
         
         self.threadListArray = [NSMutableArray arrayWithArray:dataArray];
         [self.tableView reloadData];
-        [self.tableView.mj_footer setHidden:NO];
+//        [self.tableView.mj_footer setHidden:NO];
         
         if (dataArray.count > 0) {
             if (_noDataView.superview) {

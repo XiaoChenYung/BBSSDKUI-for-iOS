@@ -451,7 +451,7 @@
     
     if (self.loginType == BBSLoginTypeLogin)
     {
-        [self _configThirdLogin];
+//        [self _configThirdLogin];
     }
     
     self.questionPickerView =

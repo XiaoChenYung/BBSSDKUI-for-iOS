@@ -12,7 +12,7 @@
 /**
  我的收藏、我的帖子
  */
-@interface BBSUICollectionViewController : BBSUIWhiteNavViewController
+@interface BBSUICollectionViewController : BBSUIBaseViewController
 
 @property (nonatomic, assign) BBSUICollectionViewType collectionViewType;
 

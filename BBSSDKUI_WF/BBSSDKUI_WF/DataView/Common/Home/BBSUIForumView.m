@@ -429,7 +429,7 @@
     BBSUIForumDetailViewController *threadListViewController = [[BBSUIForumDetailViewController alloc] init];
     threadListViewController.pageType = PageTypeForumToHome;
     threadListViewController.currentForum = forum;
-
+    threadListViewController.hidesBottomBarWhenPushed = true;
     if ([MOBFViewController currentViewController].navigationController) {
         [[MOBFViewController currentViewController].navigationController pushViewController:threadListViewController animated:YES];
     }

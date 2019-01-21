@@ -9,7 +9,7 @@
 #import "BBSUINormalNavViewController.h"
 #import <BBSSDK/BBSThread.h>
 
-@interface BBSUIAccusationViewController : BBSUINormalNavViewController
+@interface BBSUIAccusationViewController : BBSUIBaseViewController
 
 - (instancetype)initWithThread:(BBSThread *)thread;
 
