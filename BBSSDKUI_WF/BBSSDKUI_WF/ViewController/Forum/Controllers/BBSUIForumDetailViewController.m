@@ -147,9 +147,9 @@ static NSString *cellIdentifier = @"ThreadSummaryCell";
     self.tableView = [[UITableView alloc] initWithFrame:CGRectZero style:UITableViewStylePlain];
     [self.view addSubview:self.tableView];
     [self.tableView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.mas_equalTo(self.view);
-        make.left.right.bottom.mas_equalTo(0);
+        make.edges.equalTo(self.view);
     }];
+    self.tableView.contentInset = UIEdgeInsetsMake(0, 0, [[UIDevice currentDevice] inner_isIphoneXOrLater] ? 34 : 0, 0);
     self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
     self.tableView.estimatedRowHeight = 135;
     self.tableView.rowHeight = UITableViewAutomaticDimension;
@@ -208,7 +208,6 @@ static NSString *cellIdentifier = @"ThreadSummaryCell";
     //[BBSSDK getThreadListWithFid:self.currentForum.fid orderType:orderTypeString selectType:selectTypeString pageIndex:self.currentIndex pageSize:BBSUIPageSize result:^(NSArray *threadList, NSError *error) {
     
     [BBSSDK getThreadListWithFid:self.currentForum.fid  orderType:orderTypeString selectType:selectTypeString pageIndex:self.currentIndex pageSize:BBSUIPageSize result:^(NSArray *threadList, NSError *error) {
-        
         if (!error) {
             
             if (_selectedArray.count)
@@ -222,16 +221,26 @@ static NSString *cellIdentifier = @"ThreadSummaryCell";
                 }
             }
             
+//            if (weakSelf.currentIndex == 1 && threadList.count == BBSUIPageSize) {
+//
+//            }
             if (weakSelf.currentIndex == 1) {
+                [weakSelf.tableView.mj_header endRefreshing];
                 weakSelf.threadListArray = [NSMutableArray arrayWithArray:threadList];
+                [weakSelf.tableView reloadData];
             }else{
-                [weakSelf.threadListArray addObjectsFromArray:threadList];
+                if (threadList.count > 0) {
+                    NSMutableArray *indexPaths = [NSMutableArray array];
+                    for (NSInteger i = 0; i < threadList.count; i++) {
+                        NSIndexPath *path = [NSIndexPath indexPathForRow:weakSelf.threadListArray.count + i inSection:0];
+                        [indexPaths addObject:path];
+                    }
+                    [weakSelf.threadListArray addObjectsFromArray:threadList];
+                    [weakSelf.tableView insertRowsAtIndexPaths:[indexPaths copy] withRowAnimation:UITableViewRowAnimationAutomatic];
+                }
             }
-            
-            [weakSelf.tableView reloadData];
-//            [weakSelf.tableView.mj_footer setHidden:NO];
-            
             if (threadList.count < BBSUIPageSize) {
+                NSLog(@"显示没有更多数据");
                 [weakSelf.tableView.mj_footer endRefreshingWithNoMoreData];
             }
             
@@ -270,10 +279,8 @@ static NSString *cellIdentifier = @"ThreadSummaryCell";
             [self.threadListArray removeAllObjects];
             [self.tableView reloadData];
             [weakSelf.tableView.mj_header endRefreshing];
+            [weakSelf.tableView.mj_footer endRefreshing];
         }
-        
-        [weakSelf.tableView.mj_header endRefreshing];
-        [weakSelf.tableView.mj_footer endRefreshing];
     }];
 }
 

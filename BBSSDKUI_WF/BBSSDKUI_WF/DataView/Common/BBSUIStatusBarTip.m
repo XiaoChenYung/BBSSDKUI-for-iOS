@@ -53,7 +53,13 @@ static  BBSUIStatusBarTip  * msb;
 //        logoImgV.backgroundColor = [UIColor clearColor];
 //        [self addSubview:logoImgV];
 //        msgLab = [[UILabel alloc]initWithFrame:CGRectMake(logoImgV.frame.origin.x + kPading + logoImgV.frame.size.width, 0.0, screenWidth - (logoImgV.frame.origin.x + kPading + logoImgV.frame.size.width), statusFrame.size.height)];
-        msgLab = [[UILabel alloc] initWithFrame:statusFrame];
+        if ([[UIDevice currentDevice] inner_isIphoneXOrLater]) {
+            statusFrame.size.height = 14;
+            statusFrame.origin.y = 30;
+            msgLab = [[UILabel alloc] initWithFrame:statusFrame];
+        } else {
+            msgLab = [[UILabel alloc] initWithFrame:statusFrame];
+        }
         [msgLab setTextAlignment:NSTextAlignmentCenter];
         msgLab.backgroundColor = [UIColor clearColor];
         msgLab.font = [UIFont systemFontOfSize:14.0];
@@ -126,7 +132,7 @@ static  BBSUIStatusBarTip  * msb;
     logoImgV.image = logoImg;
     msgLab.text = strMessage;
     __block CGRect  stateFrame = self.frame;
-    stateFrame.origin.y = -20.0;
+    stateFrame.origin.y = - ([[UIDevice currentDevice] inner_isIphoneXOrLater] ? 44 : 20);
     self.frame = stateFrame;
     [UIView animateWithDuration:0.2 animations:^{
         stateFrame.origin.y = 0.0;

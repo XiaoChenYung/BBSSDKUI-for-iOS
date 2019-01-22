@@ -58,5 +58,6 @@
 #import <MOBFoundation/MOBFoundation.h>
 #import "SVProgressHUD.h"
 #import "Masonry.h"
+#import "UIDevice+Model.h"
 
 #endif /* BBSUIMacro_h */

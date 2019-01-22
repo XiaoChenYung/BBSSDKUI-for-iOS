@@ -458,12 +458,12 @@
     
     if ( (!_threadModel.author || _threadModel.author.length == 0) && _threadModel.tid)
     {
-        _avatarImageView.image = [UIImage BBSImageNamed:@"/Thread/bbs_login_account.png"];
+//        _avatarImageView.image = [UIImage BBSImageNamed:@"/Thread/bbs_login_account.png"];
     }
     else
     {
     
-         _avatarImageView.image = [UIImage BBSImageNamed:@"/User/AvatarDefault.png"];
+//         _avatarImageView.image = [UIImage BBSImageNamed:@"/User/AvatarDefault.png"];
         //MARK:-//这个不能写在cell里面，要写在更换头像的地方
          //[[MOBFImageGetter sharedInstance] removeImageForURL:[NSURL URLWithString:_threadModel.avatar]];
         
@@ -491,7 +491,7 @@
         [[SDImageCache sharedImageCache] clearMemory];
         [[SDImageCache sharedImageCache] clearDiskOnCompletion:^{
 
-            [_avatarImageView sd_setImageWithURL:[NSURL URLWithString:_threadModel.avatar]];
+//            [_avatarImageView sd_setImageWithURL:[NSURL URLWithString:_threadModel.avatar]];
 
         }];
     }
@@ -565,7 +565,7 @@
     if ( (!_threadModel.author || _threadModel.author.length == 0) && _threadModel.tid)
     {
         NSLog(@"0000000000000m  %@ -- %lu  %@",_threadModel.author, _threadModel.tid, _threadModel.subject);
-        _avatarImageView.image = [UIImage BBSImageNamed:@"/Thread/bbs_login_account.png"];
+//        _avatarImageView.image = [UIImage BBSImageNamed:@"/Thread/bbs_login_account.png"];
         _authorLabel.text = @"匿名用户";
     }
     
@@ -576,7 +576,7 @@
         _addressTagView.hidden = YES;
     }
     
-     [_avatarImageView sd_setImageWithURL:[NSURL URLWithString:_threadModel.avatar]];
+//     [_avatarImageView sd_setImageWithURL:[NSURL URLWithString:_threadModel.avatar]];
 }
 
 /**

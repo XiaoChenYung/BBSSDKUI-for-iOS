@@ -36,6 +36,7 @@
 #import <BBSSDK/BBSMOBFScene.h>
 #import "BBSUILBSShowLocationViewController.h"
 #import "BBSUILBSLocationProxy.h"
+#import "UIDevice+Model.h"
 
 @interface BBSUIThreadDetailViewController ()
 
@@ -161,21 +162,24 @@
 
 - (void)configBottomBar
 {
-    [self.webView mas_updateConstraints:^(MASConstraintMaker *make) {
-        make.bottom.mas_equalTo(self.view).with.offset(-50);
-    }];
     
-    self.bottomBar =
-    ({
-        UIView *bottomBar = [[UIView alloc] init];
-        bottomBar.backgroundColor = [UIColor whiteColor];
-        [self.view addSubview:bottomBar];
-        [bottomBar mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.left.right.bottom.equalTo(self.view);
-            make.height.equalTo(@50);
-        }];
-        bottomBar ;
-    });
+    UIView *bottomBar = [[UIView alloc] init];
+    bottomBar.backgroundColor = [UIColor whiteColor];
+    [self.view addSubview:bottomBar];
+    NSInteger offset = [[UIDevice currentDevice] inner_isIphoneXOrLater] ? -34 : 0;
+    NSLog(@"高度%@", @(offset));
+    [bottomBar mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.left.equalTo(self.view);
+        make.right.equalTo(self.view);
+        make.bottom.equalTo(self.view).mas_offset(offset);
+        make.height.mas_equalTo(50);
+    }];
+    self.bottomBar = bottomBar;
+    
+    [self.webView mas_remakeConstraints:^(MASConstraintMaker *make) {
+        make.top.left.right.equalTo(self.view);
+        make.bottom.equalTo(bottomBar.mas_top);
+    }];
     
     UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(reply:)];
     [self.bottomBar addGestureRecognizer:tap];

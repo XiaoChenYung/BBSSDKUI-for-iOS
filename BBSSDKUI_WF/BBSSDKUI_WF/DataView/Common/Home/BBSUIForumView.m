@@ -96,6 +96,7 @@
     [self.forumTableView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.edges.equalTo(self);
     }];
+    self.forumTableView.contentInset = UIEdgeInsetsMake(0, 0, [[UIDevice currentDevice] inner_isIphoneXOrLater] ? 34 : 0, 0);
     self.forumTableView.sectionHeaderHeight = 0.01;
     self.forumTableView.sectionFooterHeight = 0.01;
     [self.forumTableView setDelegate:self];

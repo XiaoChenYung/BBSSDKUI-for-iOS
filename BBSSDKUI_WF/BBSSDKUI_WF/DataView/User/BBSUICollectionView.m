@@ -66,8 +66,9 @@
     [self addSubview:self.collectionTableView];
     
     [self.collectionTableView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.edges.equalTo(self).with.insets(UIEdgeInsetsMake(0, 0, 0, 0));
+        make.edges.equalTo(self);
     }];
+    self.collectionTableView.contentInset = UIEdgeInsetsMake(0, 0, [[UIDevice currentDevice] inner_isIphoneXOrLater] ? 34 : 0, 0);
     self.collectionTableView.dataSource = self;
     self.collectionTableView.delegate = self;
     self.collectionTableView.backgroundColor = DZSUI_BackgroundColor;
@@ -112,13 +113,24 @@
             }
             
             if (weakSelf.currentIndex == 1) {
+                [weakSelf.collectionTableView.mj_header endRefreshing];
                 weakSelf.marrData = [NSMutableArray arrayWithArray:array];
+                [weakSelf.collectionTableView reloadData];
             }else{
-                [weakSelf.marrData addObjectsFromArray:array];
+                if (array.count > 0) {
+                    NSMutableArray *indexPaths = [NSMutableArray array];
+                    for (NSInteger i = 0; i < array.count; i++) {
+                        NSIndexPath *path = [NSIndexPath indexPathForRow:weakSelf.marrData.count + i inSection:0];
+                        [indexPaths addObject:path];
+                    }
+                    [weakSelf.marrData addObjectsFromArray:array];
+                    [weakSelf.collectionTableView insertRowsAtIndexPaths:[indexPaths copy] withRowAnimation:UITableViewRowAnimationAutomatic];
+                }
             }
-            [weakSelf.collectionTableView reloadData];
-            [weakSelf.collectionTableView.mj_header endRefreshing];
-            [weakSelf.collectionTableView.mj_footer endRefreshing];
+            if (array.count < BBSUIPageSize) {
+                NSLog(@"显示没有更多数据");
+                [weakSelf.collectionTableView.mj_footer endRefreshingWithNoMoreData];
+            }
             
             if (weakSelf.currentIndex == 1) {
                 [self bbs_configureTipViewWithTipMessage:@"暂无内容" hasData:weakSelf.marrData.count != 0 hasError:YES reloadButtonBlock:^(id sender) {

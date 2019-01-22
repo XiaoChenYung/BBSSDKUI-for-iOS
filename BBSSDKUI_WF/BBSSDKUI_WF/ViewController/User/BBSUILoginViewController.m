@@ -212,6 +212,7 @@
                 UIButton *button = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 65, 30)];
                 [button setTitleColor:DZSUIColorFromHex(0xABAFBA) forState:UIControlStateNormal];
                 [button setTitle:@"忘记密码？" forState:UIControlStateNormal];
+                button.hidden = true;
                 button.titleLabel.font = [UIFont systemFontOfSize:12];
                 [button addTarget:self action:@selector(forgetPassword:) forControlEvents:UIControlEventTouchUpInside];
                 button;

@@ -100,7 +100,8 @@
         [self addSubview:logoutButton];
         [logoutButton mas_makeConstraints:^(MASConstraintMaker *make) {
             make.left.equalTo(@15);
-            make.bottom.right.equalTo(@-15);
+            make.right.equalTo(@-15);
+            make.bottom.equalTo(self).mas_offset([[UIDevice currentDevice] inner_isIphoneXOrLater] ? -49 : -15);
             make.height.equalTo(@BBSUIUserLogoutButtonHeight);
         }];
         [logoutButton setTitle:@"退出" forState:UIControlStateNormal];
@@ -818,7 +819,7 @@
     UIButton *nextButton = [UIButton buttonWithType:UIButtonTypeCustom];
     [nextButton setImage:[UIImage BBSImageNamed:@"Common/next.png"] forState:UIControlStateNormal];
     [self addSubview:nextButton];
-    
+    nextButton.hidden = true;
     [nextButton mas_makeConstraints:^(MASConstraintMaker *make) {
         make.size.mas_equalTo(CGSizeMake(30, 30));
         make.centerY.equalTo(self.avatarImageView);
@@ -865,8 +866,8 @@
 
 
 - (void)nextAction:(UIButton *)button {
-    BBSUIUserInfoViewController *vc = [BBSUIUserInfoViewController new];
-    [[MOBFViewController currentViewController].navigationController pushViewController:vc animated:YES];
+//    BBSUIUserInfoViewController *vc = [BBSUIUserInfoViewController new];
+//    [[MOBFViewController currentViewController].navigationController pushViewController:vc animated:YES];
 }
 
 

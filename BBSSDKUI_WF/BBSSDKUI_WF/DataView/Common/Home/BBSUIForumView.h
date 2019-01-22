@@ -10,6 +10,6 @@
 
 @interface BBSUIForumView : BBSUIBaseView
 
-- (void)reloadStickData;
+- (void)reloadStickData; 
 
 @end

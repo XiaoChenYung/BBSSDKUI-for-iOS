@@ -344,6 +344,8 @@
 		70B06F91207319D10028FF34 /* BBSUISignInTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 70B06F8F207319D10028FF34 /* BBSUISignInTableViewCell.m */; };
 		70B06F9420746F350028FF34 /* BBSUITribuneViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 70B06F9220746F350028FF34 /* BBSUITribuneViewController.h */; };
 		70B06F9520746F350028FF34 /* BBSUITribuneViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 70B06F9320746F350028FF34 /* BBSUITribuneViewController.m */; };
+		7928A1B921F5D2DF00107820 /* UIDevice+Model.h in Headers */ = {isa = PBXBuildFile; fileRef = 7928A1B721F5D2DE00107820 /* UIDevice+Model.h */; };
+		7928A1BA21F5D2DF00107820 /* UIDevice+Model.m in Sources */ = {isa = PBXBuildFile; fileRef = 7928A1B821F5D2DE00107820 /* UIDevice+Model.m */; };
 		7939B86621F1DD8E00479D40 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 7939B86521F1DD8E00479D40 /* AppDelegate.m */; };
 		7939B86921F1DD8E00479D40 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7939B86821F1DD8E00479D40 /* ViewController.m */; };
 		7939B86C21F1DD8E00479D40 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7939B86A21F1DD8E00479D40 /* Main.storyboard */; };
@@ -833,6 +835,8 @@
 		70B06F8F207319D10028FF34 /* BBSUISignInTableViewCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BBSUISignInTableViewCell.m; sourceTree = "<group>"; };
 		70B06F9220746F350028FF34 /* BBSUITribuneViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BBSUITribuneViewController.h; sourceTree = "<group>"; };
 		70B06F9320746F350028FF34 /* BBSUITribuneViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BBSUITribuneViewController.m; sourceTree = "<group>"; };
+		7928A1B721F5D2DE00107820 /* UIDevice+Model.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIDevice+Model.h"; sourceTree = "<group>"; };
+		7928A1B821F5D2DE00107820 /* UIDevice+Model.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIDevice+Model.m"; sourceTree = "<group>"; };
 		7939B86221F1DD8E00479D40 /* test.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = test.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7939B86421F1DD8E00479D40 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		7939B86521F1DD8E00479D40 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -875,6 +879,8 @@
 			children = (
 				2F3776DA208F2E4A00FEBB74 /* BBSSDKUI.xcdatamodeld */,
 				2FF7AD7C2080679B0054BFE8 /* BBSUIMacro.h */,
+				7928A1B721F5D2DE00107820 /* UIDevice+Model.h */,
+				7928A1B821F5D2DE00107820 /* UIDevice+Model.m */,
 				2FF7AD7E2080699C0054BFE8 /* BadgeView */,
 				2FF7AD832080699C0054BFE8 /* PopoverView */,
 				2FF7AC7D207F52A90054BFE8 /* BaseController */,
@@ -1890,6 +1896,7 @@
 				6B744F0C1F5D7F000081EE4E /* BBSUIBackViewController.h in Headers */,
 				3A1972961F1CE2F4004B658A /* BBSUIInformationView.h in Headers */,
 				2FF7ACA4207F57D80054BFE8 /* NSString+BBSUIMD5.h in Headers */,
+				7928A1B921F5D2DF00107820 /* UIDevice+Model.h in Headers */,
 				6BF008131EA479A20040399D /* BBSUIForumHomeViewController.h in Headers */,
 				44E109441EC16B9400FFFCE7 /* BBSUIImageViewController.h in Headers */,
 				44BABAF41EB2EE2B00972918 /* BBSUIReplyStateView.h in Headers */,
@@ -2164,7 +2171,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# Sets the target folders and the final framework product.\nFMK_NAME=${PROJECT_NAME}\n\n# Install dir will be the final output to the framework.\n# The following line create it in the root folder of the current project.\nINSTALL_BASE_DIR=${SRCROOT}/../SDK/BBSSDK/BBSSDKUI_WF\nINSTALL_DIR=${INSTALL_BASE_DIR}/BBSSDKUI.framework\n\n# Bundle Dir\nINSTALL_DIR_Bundle=${INSTALL_BASE_DIR}/BBSSDKUI.bundle\n\n# Working dir will be deleted after the framework creation.\nWRK_DIR=build\nDEVICE_DIR=${WRK_DIR}/Release-iphoneos/BBSSDKUI.framework\nSIMULATOR_DIR=${WRK_DIR}/Release-iphonesimulator/BBSSDKUI.framework\n\n# -configuration ${CONFIGURATION}\n# Clean and Building both architectures.\nxcodebuild BITCODE_GENERATION_MODE=bitcode OTHER_CFLAGS=\"-fembed-bitcode\" -arch \"arm64\" -configuration \"Release\" -target \"${FMK_NAME}\" -sdk iphoneos clean build\n# xcodebuild BITCODE_GENERATION_MODE=bitcode OTHER_CFLAGS=\"-fembed-bitcode\" -arch \"i386\" -arch \"x86_64\" -configuration \"Release\" -target \"${FMK_NAME}\" -sdk iphonesimulator build\n\n# Cleaning the oldest.\nif [ -d \"${INSTALL_DIR}\" ]\nthen\nrm -rf \"${INSTALL_DIR}\"\nfi\n\nmkdir -p \"${INSTALL_DIR}\"\n\ncp -R \"${DEVICE_DIR}/\" \"${INSTALL_DIR}/\"\n\n# Uses the Lipo Tool to merge both binary files (i386 + armv6/armv7) into one Universal final product.\n# lipo -create \"${DEVICE_DIR}/BBSSDKUI\" \"${SIMULATOR_DIR}/BBSSDKUI\" -output \"${INSTALL_DIR}/BBSSDKUI\"\n\n# Move momd to Bundle Dir\nif [ -d \"${INSTALL_DIR_Bundle}/BBSSDKUI.momd\" ]\nthen\nrm -rf \"${INSTALL_DIR_Bundle}/BBSSDKUI.momd\"\nfi\n\nmv \"${INSTALL_DIR}/BBSSDKUI.momd/\" \"${INSTALL_DIR_Bundle}/BBSSDKUI.momd\"\n\nrm -r \"${WRK_DIR}\"\n";
+			shellScript = "# Sets the target folders and the final framework product.\nFMK_NAME=${PROJECT_NAME}\n\n# Install dir will be the final output to the framework.\n# The following line create it in the root folder of the current project.\nINSTALL_BASE_DIR=${SRCROOT}/../SDK/BBSSDK/BBSSDKUI_WF\nINSTALL_DIR=${INSTALL_BASE_DIR}/BBSSDKUI.framework\n\n# Bundle Dir\nINSTALL_DIR_Bundle=${INSTALL_BASE_DIR}/BBSSDKUI.bundle\n\n# Working dir will be deleted after the framework creation.\nWRK_DIR=build\nDEVICE_DIR=${WRK_DIR}/Release-iphoneos/BBSSDKUI.framework\nSIMULATOR_DIR=${WRK_DIR}/Release-iphonesimulator/BBSSDKUI.framework\n\n# -configuration ${CONFIGURATION}\n# Clean and Building both architectures.\nxcodebuild BITCODE_GENERATION_MODE=bitcode OTHER_CFLAGS=\"-fembed-bitcode\" -arch \"arm64\" -configuration \"Release\" -target \"${FMK_NAME}\" -sdk iphoneos clean build\n# xcodebuild BITCODE_GENERATION_MODE=bitcode OTHER_CFLAGS=\"-fembed-bitcode\" -arch \"x86_64\" -configuration \"Release\" -target \"${FMK_NAME}\" -sdk iphonesimulator clean build\n\n# Cleaning the oldest.\nif [ -d \"${INSTALL_DIR}\" ]\nthen\nrm -rf \"${INSTALL_DIR}\"\nfi\n\nmkdir -p \"${INSTALL_DIR}\"\n\ncp -R \"${DEVICE_DIR}/\" \"${INSTALL_DIR}/\"\n\n# Uses the Lipo Tool to merge both binary files (i386 + armv6/armv7) into one Universal final product.\n# lipo -create \"${DEVICE_DIR}/BBSSDKUI\" \"${SIMULATOR_DIR}/BBSSDKUI\" -output \"${INSTALL_DIR}/BBSSDKUI\"\n\n# Move momd to Bundle Dir\nif [ -d \"${INSTALL_DIR_Bundle}/BBSSDKUI.momd\" ]\nthen\nrm -rf \"${INSTALL_DIR_Bundle}/BBSSDKUI.momd\"\nfi\n\nmv \"${INSTALL_DIR}/BBSSDKUI.momd/\" \"${INSTALL_DIR_Bundle}/BBSSDKUI.momd\"\n\nrm -r \"${WRK_DIR}\"\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -2310,6 +2317,7 @@
 				2FF7AC44207F49FC0054BFE8 /* BBSUILBSegmentControl.m in Sources */,
 				2F778ACE2085F8C7002A82DF /* BBSUIAlertView.m in Sources */,
 				6BF009811EA492D90040399D /* BBSUIHomeViewController.m in Sources */,
+				7928A1BA21F5D2DF00107820 /* UIDevice+Model.m in Sources */,
 				6B92BF781EA722DC00A7A56D /* BBSUIUserEditViewController.m in Sources */,
 				70B06F9520746F350028FF34 /* BBSUITribuneViewController.m in Sources */,
 				6B744F0F1F5D7F000081EE4E /* BBSUIBaseView.m in Sources */,

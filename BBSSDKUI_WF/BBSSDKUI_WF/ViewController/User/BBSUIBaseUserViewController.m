@@ -27,7 +27,8 @@
         [self.view addSubview:titleLabel];
         [titleLabel mas_makeConstraints:^(MASConstraintMaker *make) {
             make.centerX.equalTo(self.view);
-            make.top.equalTo(self.view).offset(32);
+            make.height.mas_equalTo(30);
+            make.top.equalTo(self.view).offset([[UIDevice currentDevice] inner_isIphoneXOrLater] ? 51 : 27);
         }];
         titleLabel;
     });
@@ -41,8 +42,9 @@
         [self.view addSubview:back];
         [back mas_makeConstraints:^(MASConstraintMaker *make) {
             make.left.equalTo(self.view).offset(20);
-            make.top.equalTo(_titleLabel);
+            make.centerY.equalTo(_titleLabel);
             make.width.mas_equalTo(44);
+            make.height.mas_equalTo(44);
         }];
         back;
     });
