@@ -642,9 +642,10 @@ static NSString *cellIdentifier = @"ThreadSummaryCell";
     if (![BBSUIContext shareInstance].currentUser)
     {
         self.isPresent = YES;
-        BBSUILoginViewController *vc = [[BBSUILoginViewController alloc] init];
-        UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
-        [self.navigationController presentViewController:nav animated:YES completion:nil];
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"com.mob.bbs.sdk.BBSNeedLogin" object:nil];
+//        BBSUILoginViewController *vc = [[BBSUILoginViewController alloc] init];
+//        UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
+//        [self.navigationController presentViewController:nav animated:YES completion:nil];
     }
     else
     {
@@ -682,9 +683,10 @@ static NSString *cellIdentifier = @"ThreadSummaryCell";
     
     if (error.code == 9001200) {
         [BBSUIContext shareInstance].currentUser = nil;
-        BBSUILoginViewController *vc = [[BBSUILoginViewController alloc] init];
-        UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
-        [self presentViewController:nav animated:YES completion:nil];
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"com.mob.bbs.sdk.BBSNeedLogin" object:nil];
+//        BBSUILoginViewController *vc = [[BBSUILoginViewController alloc] init];
+//        UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
+//        [self presentViewController:nav animated:YES completion:nil];
     }
 }
 

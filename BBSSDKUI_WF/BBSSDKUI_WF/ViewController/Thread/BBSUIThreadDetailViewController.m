@@ -1293,10 +1293,10 @@
 {
     [BBSUIContext shareInstance].currentUser = nil;
     [BBSSDK logout:nil];
-    
-    BBSUILoginViewController *vc = [[BBSUILoginViewController alloc] init];
-    UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
-    [self presentViewController:nav animated:YES completion:nil];
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"com.mob.bbs.sdk.BBSNeedLogin" object:nil];
+//    BBSUILoginViewController *vc = [[BBSUILoginViewController alloc] init];
+//    UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
+//    [self presentViewController:nav animated:YES completion:nil];
 }
 
 

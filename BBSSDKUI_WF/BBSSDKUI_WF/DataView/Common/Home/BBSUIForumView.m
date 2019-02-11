@@ -99,6 +99,8 @@
     self.forumTableView.contentInset = UIEdgeInsetsMake(0, 0, [[UIDevice currentDevice] inner_isIphoneXOrLater] ? 34 : 0, 0);
     self.forumTableView.sectionHeaderHeight = 0.01;
     self.forumTableView.sectionFooterHeight = 0.01;
+    self.forumTableView.estimatedRowHeight = 60.0;
+    self.forumTableView.rowHeight = UITableViewAutomaticDimension;
     [self.forumTableView setDelegate:self];
     [self.forumTableView setDataSource:self];
     
@@ -358,10 +360,10 @@
     return cell;
 }
 
-- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    return 60.0f;
-}
+//- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
+//{
+//    return 60.0f;
+//}
 
 
 #pragma mark - UITableview delegate
@@ -399,7 +401,7 @@
 //    if (section == 0) {
 //        return 32;
 //    }else{
-        return 32;
+        return 40;
 //    }
 }
 

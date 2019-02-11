@@ -33,41 +33,41 @@
         [view removeFromSuperview];
     }
     
-    if (style == BBSUIViewRepliesStyleImage)
-    {
-        UIImage *image = [UIImage BBSImageNamed:_type?@"/Home/thread_reply@2x.png":@"/Home/thread_see.png"];
-        UIImageView *imageView = [[UIImageView alloc] initWithImage:image];
-        
-        [self addSubview:imageView];
-        [imageView mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.left.top.bottom.equalTo(self);
-            make.width.mas_equalTo(16);
-        }];
-        
-        UILabel *countLabel = [[UILabel alloc] init];
-        countLabel.font = [UIFont systemFontOfSize:11];
-        countLabel.textColor = DZSUIColorFromHex(0xB4B4B4);
-        countLabel.text = [NSString stringWithFormat:@"%zd",count] ;
-        [self addSubview:countLabel];
-        [countLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.centerY.equalTo(imageView);
-            make.left.equalTo(imageView.mas_right);
-            make.right.equalTo(self);
-        }];
-    }
-    else
-    {
-        UILabel *countLabel = [[UILabel alloc] init];
-        countLabel.font = [UIFont systemFontOfSize:11];
-        countLabel.textColor = DZSUIColorFromHex(0xB4B4B4);
-        
-        NSString *text = _type?@"评论":@"查看";
-        countLabel.text = [NSString stringWithFormat:@"%zd%@",count,text] ;
-        [self addSubview:countLabel];
-        [countLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.edges.equalTo(self);
-        }];
-    }
+//    if (true)
+//    {
+    UIImage *image = [UIImage BBSImageNamed:_type?@"Home/thread_reply@2x.png":@"Home/thread_see.png"];
+    UIImageView *imageView = [[UIImageView alloc] initWithImage:image];
+    
+    [self addSubview:imageView];
+    [imageView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.left.top.bottom.equalTo(self);
+        make.width.mas_equalTo(22);
+    }];
+    
+    UILabel *countLabel = [[UILabel alloc] init];
+    countLabel.font = [UIFont systemFontOfSize:10];
+    countLabel.textColor = DZSUIColorFromHex(0xB4B4B4);
+    countLabel.text = [NSString stringWithFormat:@"%zd",count] ;
+    [self addSubview:countLabel];
+    [countLabel mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.centerY.equalTo(imageView);
+        make.left.equalTo(imageView.mas_right);
+        make.right.equalTo(self);
+    }];
+//    }
+//    else
+//    {
+//        UILabel *countLabel = [[UILabel alloc] init];
+//        countLabel.font = [UIFont systemFontOfSize:10];
+//        countLabel.textColor = DZSUIColorFromHex(0xB4B4B4);
+//
+//        NSString *text = _type?@"评论":@"查看";
+//        countLabel.text = [NSString stringWithFormat:@"%zd%@",count,text] ;
+//        [self addSubview:countLabel];
+//        [countLabel mas_makeConstraints:^(MASConstraintMaker *make) {
+//            make.edges.equalTo(self);
+//        }];
+//    }
 }
 
 

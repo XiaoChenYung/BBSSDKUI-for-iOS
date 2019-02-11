@@ -246,9 +246,10 @@
 {
     if (![BBSUIContext shareInstance].currentUser)
     {
-        BBSUILoginViewController *vc = [[BBSUILoginViewController alloc] init];
-        UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
-        [self.navigationController presentViewController:nav animated:YES completion:nil];
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"com.mob.bbs.sdk.BBSNeedLogin" object:nil];
+//        BBSUILoginViewController *vc = [[BBSUILoginViewController alloc] init];
+//        UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
+//        [self.navigationController presentViewController:nav animated:YES completion:nil];
     }
     else
     {
@@ -277,9 +278,10 @@
 {
     if (![BBSUIContext shareInstance].currentUser)
     {
-        BBSUILoginViewController *vc = [[BBSUILoginViewController alloc] init];
-        UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
-        [self.navigationController presentViewController:nav animated:YES completion:nil];
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"com.mob.bbs.sdk.BBSNeedLogin" object:nil];
+//        BBSUILoginViewController *vc = [[BBSUILoginViewController alloc] init];
+//        UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
+//        [self.navigationController presentViewController:nav animated:YES completion:nil];
     }
     else
     {
@@ -306,10 +308,10 @@
                 if (error.code == 9001200) {
                     
                     [BBSUIContext shareInstance].currentUser = nil;
-                    
-                    BBSUILoginViewController *vc = [[BBSUILoginViewController alloc] init];
-                    UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
-                    [self.navigationController presentViewController:nav animated:YES completion:nil];
+                        [[NSNotificationCenter defaultCenter] postNotificationName:@"com.mob.bbs.sdk.BBSNeedLogin" object:nil];
+//                    BBSUILoginViewController *vc = [[BBSUILoginViewController alloc] init];
+//                    UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
+//                    [self.navigationController presentViewController:nav animated:YES completion:nil];
                     //                    [BBSUIProcessHUD showFailInfo:@"登录信息过期，请重新登录后设置" delay:3];
                 }
                 
@@ -342,9 +344,10 @@
     
     if (error.code == 9001200) {
         [BBSUIContext shareInstance].currentUser = nil;
-        BBSUILoginViewController *vc = [[BBSUILoginViewController alloc] init];
-        UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
-        [self presentViewController:nav animated:YES completion:nil];
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"com.mob.bbs.sdk.BBSNeedLogin" object:nil];
+//        BBSUILoginViewController *vc = [[BBSUILoginViewController alloc] init];
+//        UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
+//        [self presentViewController:nav animated:YES completion:nil];
         
         UIImage *scaleImage = [MOBFImage scaleImage:[UIImage BBSImageNamed:@"/Home/NoUser.png"] withSize:CGSizeMake(60, 60)];
         [((UIButton *)self.navigationItem.leftBarButtonItem.customView) setImage:scaleImage forState:UIControlStateNormal];

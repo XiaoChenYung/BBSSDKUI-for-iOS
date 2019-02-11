@@ -126,7 +126,7 @@
 - (void)configUI
 {
     self.contentView.frame = self.frame;
-    CGFloat padding = 15;
+    CGFloat padding = 12;
     
     //头像
     self.avatarImageView =
@@ -141,7 +141,7 @@
 
         [self.contentView addSubview:avatarImageView];
 
-        avatarImageView.frame = CGRectMake(padding, padding, 20, 20);
+        avatarImageView.frame = CGRectMake(padding, 15, 45, 45);
 
         avatarImageView ;
     });
@@ -151,11 +151,11 @@
     self.authorLabel =
     ({
         UILabel *authorLabel = [[UILabel alloc] init];
-        authorLabel.font = [UIFont systemFontOfSize:13];
-        authorLabel.textColor = DZSUIColorFromHex(0x8A8D94);
+        authorLabel.font = [UIFont systemFontOfSize:15];
+        authorLabel.textColor = DZSUIColorFromHex(0x3E3E3E);
         [self.contentView addSubview:authorLabel];
         
-        authorLabel.frame = CGRectMake(CGRectGetMaxX(_avatarImageView.frame)+10, CGRectGetMinY(_avatarImageView.frame), DZSUIScreen_width - CGRectGetMinX(_avatarImageView.frame) - 25, CGRectGetHeight(_avatarImageView.frame));
+        authorLabel.frame = CGRectMake(CGRectGetMaxX(_avatarImageView.frame)+12, CGRectGetMinY(_avatarImageView.frame), DZSUIScreen_width - CGRectGetMinX(_avatarImageView.frame) - 25, 21);
         
         authorLabel ;
     });
@@ -170,7 +170,7 @@
         imagesView.clipsToBounds = YES;
         imagesView.image = [UIImage BBSImageNamed:@"/Home/wutu@2x.png"];
         [self.contentView addSubview:imagesView];
-        
+        imagesView.hidden = true;
         imagesView.frame = CGRectMake(DZSUIScreen_width-imagesViewWH-padding, 46, imagesViewWH, imagesViewWH);
         
         imagesView ;
@@ -182,15 +182,15 @@
         UILabel *subjectLabel = [[UILabel alloc] init];
         subjectLabel.font = [UIFont boldSystemFontOfSize:16];
         subjectLabel.textColor = DZSUIColorFromHex(0x3A4045);
-        subjectLabel.numberOfLines = 2 ;
+        subjectLabel.numberOfLines = 0 ;
         subjectLabel.text = @"subjectContent" ;
 //        subjectLabel.lineBreakMode = NSLineBreakByTruncatingTail;
         [self.contentView addSubview:subjectLabel];
         
         [subjectLabel mas_makeConstraints:^(MASConstraintMaker *make) {
             make.left.equalTo(_avatarImageView);
-            make.top.equalTo(self.contentView).offset(44);
-            make.right.equalTo(_imagesView.mas_left).offset(-15);
+            make.top.equalTo(self.contentView).offset(70);
+            make.right.equalTo(self.contentView).offset(-12);
             //            make.height.equalTo(@30);
         }];
         subjectLabel;
@@ -202,7 +202,7 @@
         UILabel *summaryLabel = [[UILabel alloc] init];
         summaryLabel.font = [UIFont systemFontOfSize:13];
         summaryLabel.textColor = DZSUIColorFromHex(0x787878);
-        summaryLabel.numberOfLines = 2 ;
+        summaryLabel.numberOfLines = 3 ;
         summaryLabel.text = @"summaryContent" ;
         [self.contentView addSubview:summaryLabel];
         
@@ -216,7 +216,6 @@
         [summaryLabel mas_makeConstraints:^(MASConstraintMaker *make) {
             make.left.right.equalTo(_subjectLabel);
             make.top.equalTo(_subjectLabel.mas_bottom).offset(5);
-            make.right.equalTo(@-15);
         }];
         
         summaryLabel ;
@@ -265,25 +264,10 @@
     self.signView =
     ({
         BBSUIThreadTypeSignView *signView = [[BBSUIThreadTypeSignView alloc] init];
-        
+        signView.hidden = true;
         [self.contentView addSubview:signView];
         
         signView ;
-    });
-    
-    // 回复数view
-    self.repliesView =
-    ({
-        BBSUIViewsRepliesView *repliesView = [BBSUIViewsRepliesView viewWithType:BBSUIViewTypeReplies];
-        
-        [self.contentView addSubview:repliesView];
-        [repliesView mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.top.equalTo(_forumTagView);
-            make.left.equalTo(_forumTagView.mas_right).offset(0);
-            make.centerY.equalTo(_forumTagView);
-        }];
-        
-        repliesView ;
     });
     
     // 浏览数view
@@ -293,23 +277,38 @@
         
         [self.contentView addSubview:viewsView];
         [viewsView mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.top.equalTo(_forumTagView);
-            make.left.equalTo(_repliesView.mas_right).offset(15);
-            make.centerY.equalTo(_repliesView);
+            make.top.equalTo(self.summaryLabel.mas_bottom);
+            make.left.equalTo(self.contentView).offset(12);
+            make.height.mas_equalTo(22);
         }];
         viewsView ;
+    });
+    
+    // 回复数view
+    self.repliesView =
+    ({
+        BBSUIViewsRepliesView *repliesView = [BBSUIViewsRepliesView viewWithType:BBSUIViewTypeReplies];
+        
+        [self.contentView addSubview:repliesView];
+        [repliesView mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.left.equalTo(_viewsView.mas_right).offset(34);
+            make.centerY.equalTo(_viewsView);
+            make.height.mas_equalTo(22);
+        }];
+        
+        repliesView ;
     });
     
     // 时间文本
     self.timeLabel =
     ({
         UILabel *timeLabel = [[UILabel alloc] init];
-        timeLabel.font = [UIFont systemFontOfSize:11.5];
-        timeLabel.textColor = DZSUIColorFromHex(0xB4B4B4);
+        timeLabel.font = [UIFont systemFontOfSize:12];
+        timeLabel.textColor = DZSUIColorFromHex(0xA2A2A2);
         timeLabel.text = @"xx时间前";
         [self.contentView addSubview:timeLabel];
         
-        timeLabel.frame = CGRectMake(CGRectGetMaxX(_viewsView.frame)+15, CGRectGetMinY(_forumTagView.frame), 150, CGRectGetHeight(_forumTagView.frame));
+        timeLabel.frame = CGRectMake(CGRectGetMaxX(_avatarImageView.frame)+12, CGRectGetMaxY(_avatarImageView.frame) - 21, DZSUIScreen_width - CGRectGetMinX(_avatarImageView.frame) - 25, 21);
         
         timeLabel ;
     });
@@ -349,7 +348,7 @@
     [_line mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.right.equalTo(self.contentView).priorityHigh();
         make.height.mas_equalTo(1).priorityHigh();
-        make.top.equalTo(_repliesView.mas_bottom).offset(10).priorityHigh();
+        make.top.equalTo(_viewsView.mas_bottom).offset(10).priorityHigh();
         make.left.bottom.equalTo(self.contentView);
     }];
     
@@ -381,8 +380,8 @@
     });
     self.tipLabel.hidden = YES;
     
-    self.subjectLabel.preferredMaxLayoutWidth = [UIScreen mainScreen].bounds.size.width - 66;
-//    self.summaryLabel.preferredMaxLayoutWidth = [UIScreen mainScreen].bounds.size.width - 20;
+    self.subjectLabel.preferredMaxLayoutWidth = [UIScreen mainScreen].bounds.size.width - 24;
+    self.summaryLabel.preferredMaxLayoutWidth = [UIScreen mainScreen].bounds.size.width - 24;
 }
 
 #pragma mark - cell赋值
@@ -648,46 +647,46 @@
         
         
         
-        [_subjectLabel mas_remakeConstraints:^(MASConstraintMaker *make) {
-            make.left.top.equalTo(@15);
-            make.right.equalTo(@-15);
-        }];
+//        [_subjectLabel mas_remakeConstraints:^(MASConstraintMaker *make) {
+//            make.left.top.equalTo(@15);
+//            make.right.equalTo(@-15);
+//        }];
         
-        [_authorLabel mas_remakeConstraints:^(MASConstraintMaker *make) {
-            make.left.equalTo(_subjectLabel);
-            make.top.equalTo(_subjectLabel.mas_bottom).offset(12);
-            make.height.equalTo(@10);
-        }];
+//        [_authorLabel mas_remakeConstraints:^(MASConstraintMaker *make) {
+//            make.left.equalTo(_subjectLabel);
+//            make.top.equalTo(_subjectLabel.mas_bottom).offset(12);
+//            make.height.equalTo(@10);
+//        }];
         
-        [_timeLabel mas_remakeConstraints:^(MASConstraintMaker *make) {
-            make.left.equalTo(_verticalLine.mas_right).offset(10);
-            make.centerY.equalTo(_authorLabel);
-            make.height.equalTo(@10);
-        }];
+//        [_timeLabel mas_remakeConstraints:^(MASConstraintMaker *make) {
+//            make.left.equalTo(_verticalLine.mas_right).offset(10);
+//            make.centerY.equalTo(_authorLabel);
+//            make.height.equalTo(@10);
+//        }];
         
-        [_viewsView mas_remakeConstraints:^(MASConstraintMaker *make) {
-            make.right.equalTo(@-20);
-            make.centerY.equalTo(_authorLabel);
-            make.height.equalTo(@15);
-        }];
+//        [_viewsView mas_remakeConstraints:^(MASConstraintMaker *make) {
+//            make.right.equalTo(@-20);
+//            make.centerY.equalTo(_authorLabel);
+//            make.height.equalTo(@15);
+//        }];
+//
+//        [_repliesView mas_remakeConstraints:^(MASConstraintMaker *make) {
+//            make.right.equalTo(_viewsView.mas_left).offset(-13);
+//            make.height.equalTo(_viewsView);
+//            make.centerY.equalTo(_viewsView);
+//        }];
         
-        [_repliesView mas_remakeConstraints:^(MASConstraintMaker *make) {
-            make.right.equalTo(_viewsView.mas_left).offset(-13);
-            make.height.equalTo(_viewsView);
-            make.centerY.equalTo(_viewsView);
-        }];
+//        [_imagesView mas_remakeConstraints:^(MASConstraintMaker *make) {
+//            make.top.equalTo(_authorLabel.mas_bottom).offset(13);
+//            make.left.right.equalTo(@0);
+//            make.height.equalTo(@120);
+//        }];
         
-        [_imagesView mas_remakeConstraints:^(MASConstraintMaker *make) {
-            make.top.equalTo(_authorLabel.mas_bottom).offset(13);
-            make.left.right.equalTo(@0);
-            make.height.equalTo(@120);
-        }];
-        
-        [_summaryLabel mas_remakeConstraints:^(MASConstraintMaker *make) {
-            make.left.equalTo(_authorLabel);
-            make.top.equalTo(_imagesView.mas_bottom).offset(15);
-            make.right.equalTo(@-15);
-        }];
+//        [_summaryLabel mas_remakeConstraints:^(MASConstraintMaker *make) {
+//            make.left.equalTo(_authorLabel);
+//            make.top.equalTo(_imagesView.mas_bottom).offset(15);
+//            make.right.equalTo(@-15);
+//        }];
         
         [_line mas_remakeConstraints:^(MASConstraintMaker *make) {
             make.left.right.equalTo(self.contentView);
@@ -712,37 +711,37 @@
             }];
         }
         
-        [_imagesView mas_remakeConstraints:^(MASConstraintMaker *make) {
-            make.top.equalTo(self.contentView).offset(46);
-            make.right.equalTo(self.contentView).offset(-15);
-            make.width.equalTo(@(imageWH));
-            make.height.equalTo(@(imageWH));
-        }];
+//        [_imagesView mas_remakeConstraints:^(MASConstraintMaker *make) {
+//            make.top.equalTo(self.contentView).offset(46);
+//            make.right.equalTo(self.contentView).offset(-15);
+//            make.width.equalTo(@(imageWH));
+//            make.height.equalTo(@(imageWH));
+//        }];
         
-        [_subjectLabel mas_remakeConstraints:^(MASConstraintMaker *make) {
-            make.left.equalTo(_avatarImageView);
-            make.top.equalTo(self.contentView).offset(44);
-            make.right.equalTo(_imagesView.mas_left).offset(-15);
-        }];
+//        [_subjectLabel mas_remakeConstraints:^(MASConstraintMaker *make) {
+//            make.left.equalTo(_avatarImageView);
+//            make.top.equalTo(self.contentView).offset(70);
+//            make.right.equalTo(_imagesView.mas_left).offset(-15);
+//        }];
+//
+//        [_summaryLabel mas_remakeConstraints:^(MASConstraintMaker *make) {
+//            make.left.right.equalTo(_subjectLabel);
+//            make.top.equalTo(_subjectLabel.mas_bottom).offset(5);
+//            make.right.equalTo(_imagesView.mas_left).offset(-10);
+//        }];
         
-        [_summaryLabel mas_remakeConstraints:^(MASConstraintMaker *make) {
-            make.left.right.equalTo(_subjectLabel);
-            make.top.equalTo(_subjectLabel.mas_bottom).offset(5);
-            make.right.equalTo(_imagesView.mas_left).offset(-10);
-        }];
-        
-        [_forumTagView mas_remakeConstraints:^(MASConstraintMaker *make) {
-            make.left.equalTo(_summaryLabel);
-            make.top.equalTo(_imagesView.mas_bottom).offset(10);
-            //        make.top.equalTo(self).offset(46+kImageWidth+7);
-            //        make.bottom.equalTo(_line.mas_top).offset(-10).priorityHigh();
-            make.height.mas_equalTo(16);
-        }];
-        
-        [_signView mas_remakeConstraints:^(MASConstraintMaker *make) {
-            make.right.equalTo(@-15);
-            make.centerY.equalTo(_forumTagView);
-        }];
+//        [_forumTagView mas_remakeConstraints:^(MASConstraintMaker *make) {
+//            make.left.equalTo(_summaryLabel);
+//            make.top.equalTo(_imagesView.mas_bottom).offset(10);
+//            //        make.top.equalTo(self).offset(46+kImageWidth+7);
+//            //        make.bottom.equalTo(_line.mas_top).offset(-10).priorityHigh();
+//            make.height.mas_equalTo(16);
+//        }];
+//
+//        [_signView mas_remakeConstraints:^(MASConstraintMaker *make) {
+//            make.right.equalTo(@-15);
+//            make.centerY.equalTo(_forumTagView);
+//        }];
         
 
         // 地址的展示
@@ -755,10 +754,10 @@
             }];
         }else{
             [_line mas_remakeConstraints:^(MASConstraintMaker *make) {
-                make.left.right.equalTo(self.contentView).priorityHigh();
+                make.left.right.bottom.equalTo(self.contentView).priorityHigh();
                 make.height.mas_equalTo(1).priorityHigh();
-                make.top.equalTo(_repliesView.mas_bottom).offset(10).priorityHigh();
-                make.left.bottom.equalTo(self.contentView);
+                make.top.equalTo(_viewsView.mas_bottom).offset(10).priorityHigh();
+//                make.left.bottom.equalTo(self.contentView);
             }];
         }
         
@@ -831,35 +830,35 @@
             }];
         }
         
-        [_imagesView mas_remakeConstraints:^(MASConstraintMaker *make) {
-            make.top.equalTo(self.contentView).offset(46);
-            make.right.equalTo(self.contentView).offset(-15).priorityHigh();
-            make.width.equalTo(@0);
-            make.height.equalTo(@0);
-        }];
+//        [_imagesView mas_remakeConstraints:^(MASConstraintMaker *make) {
+//            make.top.equalTo(self.contentView).offset(46);
+//            make.right.equalTo(self.contentView).offset(-15).priorityHigh();
+//            make.width.equalTo(@0);
+//            make.height.equalTo(@0);
+//        }];
         
-        [_subjectLabel mas_remakeConstraints:^(MASConstraintMaker *make) {
-            make.left.equalTo(_avatarImageView).priorityHigh();
-            make.top.equalTo(self.contentView).offset(44);
-            make.right.equalTo(_imagesView.mas_left);
-        }];
+//        [_subjectLabel mas_remakeConstraints:^(MASConstraintMaker *make) {
+//            make.left.equalTo(_avatarImageView).priorityHigh();
+//            make.top.equalTo(self.contentView).offset(44);
+//            make.right.equalTo(_imagesView.mas_left);
+//        }];
+//
+//        [_summaryLabel mas_remakeConstraints:^(MASConstraintMaker *make) {
+//            make.left.right.equalTo(_subjectLabel);
+//            make.top.equalTo(_subjectLabel.mas_bottom).offset(5);
+//            make.right.equalTo(@-15);
+//        }];
         
-        [_summaryLabel mas_remakeConstraints:^(MASConstraintMaker *make) {
-            make.left.right.equalTo(_subjectLabel);
-            make.top.equalTo(_subjectLabel.mas_bottom).offset(5);
-            make.right.equalTo(@-15);
-        }];
-        
-        [_forumTagView mas_remakeConstraints:^(MASConstraintMaker *make) {
-            make.left.equalTo(_summaryLabel);
-            make.top.equalTo(_summaryLabel.mas_bottom).offset(10).priorityHigh();
-            make.height.mas_equalTo(16);
-        }];
-        
-        [_signView mas_remakeConstraints:^(MASConstraintMaker *make) {
-            make.right.equalTo(@-15);
-            make.centerY.equalTo(_forumTagView);
-        }];
+//        [_forumTagView mas_remakeConstraints:^(MASConstraintMaker *make) {
+//            make.left.equalTo(_summaryLabel);
+//            make.top.equalTo(_summaryLabel.mas_bottom).offset(10).priorityHigh();
+//            make.height.mas_equalTo(16);
+//        }];
+//
+//        [_signView mas_remakeConstraints:^(MASConstraintMaker *make) {
+//            make.right.equalTo(@-15);
+//            make.centerY.equalTo(_forumTagView);
+//        }];
         
         // 地址的展示
         if (_threadModel.poiTitle && _threadModel.poiTitle.length !=0 && _threadModel.tid) {
@@ -871,10 +870,10 @@
             }];
         }else{
             [_line mas_remakeConstraints:^(MASConstraintMaker *make) {
-                make.left.right.equalTo(self.contentView).priorityHigh();
+                make.left.right.bottom.equalTo(self.contentView).priorityHigh();
                 make.height.mas_equalTo(1).priorityHigh();
-                make.top.equalTo(_repliesView.mas_bottom).offset(10).priorityHigh();
-                make.left.bottom.equalTo(self.contentView);
+                make.top.equalTo(_viewsView.mas_bottom).offset(10).priorityHigh();
+//                make.left.bottom.equalTo(self.contentView);
             }];
         }
     }
@@ -1028,7 +1027,7 @@
     
     if (cellType == BBSUIThreadSummaryCellTypeForums)
     {
-        _signView.hidden = NO;
+        _signView.hidden = true;
         _forumTagView.hidden = YES;
         _timeLabel.hidden = NO;
         _subjectLabel.font = [UIFont boldSystemFontOfSize:16];
@@ -1036,16 +1035,16 @@
         [_repliesView setupWithCount:_threadModel.replies style:BBSUIViewRepliesStyleCharacters];
         [_viewsView setupWithCount:_threadModel.views style:BBSUIViewRepliesStyleCharacters];
         
-        [_repliesView mas_remakeConstraints:^(MASConstraintMaker *make) {
-            make.left.equalTo(self.contentView).offset(15);
-            make.centerY.equalTo(_forumTagView);
-        }];
+//        [_repliesView mas_remakeConstraints:^(MASConstraintMaker *make) {
+//            make.left.equalTo(self.contentView).offset(15);
+//            make.centerY.equalTo(_forumTagView);
+//        }];
         
-        [_timeLabel mas_remakeConstraints:^(MASConstraintMaker *make) {
-            make.left.equalTo(_viewsView.mas_right).offset(15);
-            make.top.bottom.equalTo(_viewsView);
-            make.width.equalTo(@120);
-        }];
+//        [_timeLabel mas_remakeConstraints:^(MASConstraintMaker *make) {
+//            make.left.equalTo(_viewsView.mas_right).offset(15);
+//            make.top.bottom.equalTo(_viewsView);
+//            make.width.equalTo(@120);
+//        }];
         
         _timeLabel.textAlignment = NSTextAlignmentLeft;
     }
@@ -1082,10 +1081,10 @@
         
         [_viewsView setupWithCount:_threadModel.views style:BBSUIViewRepliesStyleImage];
         
-        [_repliesView mas_remakeConstraints:^(MASConstraintMaker *make) {
-            make.left.equalTo(_forumTagView.mas_right).offset(23);
-            make.centerY.equalTo(_forumTagView);
-        }];
+//        [_repliesView mas_remakeConstraints:^(MASConstraintMaker *make) {
+//            make.left.equalTo(_forumTagView.mas_right).offset(23);
+//            make.centerY.equalTo(_forumTagView);
+//        }];
     }
     //MARK:--关注  浏览记录 cell
     if (cellType == BBSUIThreadSummaryCellTypeHistory || cellType == BBSUIThreadSummaryCellTypeAttion)

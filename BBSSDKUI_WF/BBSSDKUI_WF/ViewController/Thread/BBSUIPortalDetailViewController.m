@@ -717,9 +717,10 @@
         
         if (![BBSUIContext shareInstance].currentUser)
         {
-            BBSUILoginViewController *vc = [[BBSUILoginViewController alloc] init];
-            UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
-            [self.navigationController presentViewController:nav animated:YES completion:nil];
+            [[NSNotificationCenter defaultCenter] postNotificationName:@"com.mob.bbs.sdk.BBSNeedLogin" object:nil];
+//            BBSUILoginViewController *vc = [[BBSUILoginViewController alloc] init];
+//            UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
+//            [self.navigationController presentViewController:nav animated:YES completion:nil];
         }
         else
         {
@@ -1241,10 +1242,10 @@
 {
     [BBSUIContext shareInstance].currentUser = nil;
     [BBSSDK logout:nil];
-    
-    BBSUILoginViewController *vc = [[BBSUILoginViewController alloc] init];
-    UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
-    [self presentViewController:nav animated:YES completion:nil];
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"com.mob.bbs.sdk.BBSNeedLogin" object:nil];
+//    BBSUILoginViewController *vc = [[BBSUILoginViewController alloc] init];
+//    UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
+//    [self presentViewController:nav animated:YES completion:nil];
 }
 
 @end

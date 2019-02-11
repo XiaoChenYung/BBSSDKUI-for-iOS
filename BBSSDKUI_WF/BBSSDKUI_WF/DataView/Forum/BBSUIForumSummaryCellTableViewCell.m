@@ -14,7 +14,7 @@
 #import "BBSUIProcessHUD.h"
 #import "BBSUIContentInsetsLabel.h"
 
-#define BBSUIForumImageViewHeight 42
+#define BBSUIForumImageViewHeight 50
 
 @interface BBSUIForumSummaryCellTableViewCell ()
 
@@ -44,10 +44,10 @@
     [self.contentView addSubview:self.forumImageView];
     [self.forumImageView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.centerY.mas_equalTo(self.contentView);
-        make.left.equalTo(self.contentView).with.offset(15);
+        make.left.equalTo(self.contentView).with.offset(12);
         make.size.mas_equalTo(CGSizeMake(BBSUIForumImageViewHeight, BBSUIForumImageViewHeight));
     }];
-    [self.forumImageView.layer setCornerRadius:16];
+    [self.forumImageView.layer setCornerRadius:25];
     [self.forumImageView.layer setMasksToBounds:YES];
 
     //MARK:名字29292F
@@ -55,12 +55,13 @@
     [self.contentView addSubview:self.forumNameLabel];
     [self.forumNameLabel setBackgroundColor:[UIColor clearColor]];
     [self.forumNameLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.left.equalTo(self.forumImageView.mas_right).with.offset(10);
-        make.top.equalTo(self).with.offset(12);
+        make.left.equalTo(self.forumImageView.mas_right).mas_offset(10);
+        make.top.equalTo(self.contentView).mas_offset(12);
+        make.height.mas_equalTo(20);
         //make.size.mas_equalTo(CGSizeMake(70, 15));
     }];
     [self.forumNameLabel setFont:[UIFont boldSystemFontOfSize:14.0f]];
-    self.forumNameLabel.textColor = DZSUIColorFromHex(0x29292F);
+    self.forumNameLabel.textColor = DZSUIColorFromHex(0x3E3E3E);
     //self.forumNameLabel.adjustsFontSizeToFitWidth = YES;
     
     
@@ -112,9 +113,15 @@
     //描述
     self.forumDesLabel = [UILabel new];
     [self.contentView addSubview:self.forumDesLabel];
+    self.forumDesLabel.numberOfLines = 0;
+    self.forumDesLabel.preferredMaxLayoutWidth = DZSUIScreen_width - 84;
+    [self.forumDesLabel setContentHuggingPriority:UILayoutPriorityRequired forAxis:UILayoutConstraintAxisVertical];
     [self.forumDesLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.bottom.mas_equalTo(self.forumImageView.mas_bottom);
-        make.left.mas_equalTo(self.forumNameLabel.mas_left);
+        make.top.equalTo(self.forumNameLabel.mas_bottom).mas_offset(6);
+//        make.bottom.equalTo(self.contentView).mas_offset(-12);
+//        make.height.mas_equalTo(20);
+        make.left.equalTo(self.forumNameLabel);
+        make.right.equalTo(self.contentView).mas_offset(-12);
     }];
     [self.forumDesLabel setFont:[UIFont systemFontOfSize:12.0f]];
     [self.forumDesLabel setTextColor:DZSUIColorFromHex(0x9A9CAA)];
@@ -123,6 +130,7 @@
     self.seperateView = [UIView new];
     [self.contentView addSubview:self.seperateView];
     [self.seperateView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self.forumDesLabel.mas_bottom).mas_offset(12);
         make.left.equalTo(self.forumDesLabel.mas_left);
         make.right.equalTo(self.contentView).with.offset(0);
         make.bottom.equalTo(self.contentView).with.offset(-0.5);
@@ -134,8 +142,8 @@
 - (void)setForumModel:(BBSForum *)forumModel
 {
     _forumModel = forumModel;
-    
-    [self setNeedsLayout];
+    [self layoutData:_forumModel];
+//    [self setNeedsLayout];
 }
 
 - (void)layoutSubviews
@@ -173,9 +181,17 @@
     [self.forumNameLabel setText:forum.name];
     if (forum.forumDescription && ![forum.forumDescription isEqualToString:@""]) {
         [self.forumDesLabel setText:[[self strToAttriWithStr:forum.forumDescription] string]];
+        NSLog(@"详情:%@", [[self strToAttriWithStr:forum.forumDescription] string]);
     }else{
         [self.forumDesLabel setText:@"版主很懒，什么也没说"];
     }
+//    CGFloat height = [[[self strToAttriWithStr:forum.forumDescription] string] boundingRectWithSize:CGSizeMake(DZSUIScreen_width - 84, MAXFLOAT) options:NSStringDrawingUsesLineFragmentOrigin attributes:@{NSFontAttributeName:self.forumDesLabel.font} context:nil].size.height;
+//    [self.forumDesLabel mas_updateConstraints:^(MASConstraintMaker *make) {
+//        make.height.mas_equalTo(height + 6);
+//    }];
+//    [self.forumDesLabel setNeedsLayout];
+//    [self.forumDesLabel layoutIfNeeded];
+//    [self.forumDesLabel sizeToFit];
     [self.todayUpdateLabel setText:@" 今日:0 "];
     self.forumCountLab.text = [NSString stringWithFormat:@" 今日:%ld", forum.todayposts];
     if (forum.todayposts > 0) {

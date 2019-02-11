@@ -15,6 +15,7 @@ static NSString *headIdentifier = @"header";
 @interface BBSUIForumHeaderFooterView ()
 
 @property (nonatomic, strong) UILabel *titleLabel;
+@property (nonatomic, strong) UIImageView *imageView;
 //编辑按钮
 @property (nonatomic, strong) UIButton *editButton;
 //收放按钮
@@ -39,18 +40,31 @@ static NSString *headIdentifier = @"header";
     BBSUIForumHeaderFooterView *headView = [tableView dequeueReusableHeaderFooterViewWithIdentifier:headIdentifier];
     if (!headView) {
         headView = [[BBSUIForumHeaderFooterView alloc] initWithReuseIdentifier:headIdentifier];
+        [headView setImageWithSection:section];
     }
     return headView;
+}
+
+- (void)setImageWithSection:(NSInteger)section {
+    if (section == 0) {
+        self.imageView.image = [UIImage BBSImageNamed:@"Thread/icon_mingxing.png"];
+    } else if (section == 1) {
+        self.imageView.image = [UIImage BBSImageNamed:@"Thread/icon_remen.png"];
+    }
 }
 
 #pragma mark - UI
 - (void)_initViews
 {
-    UIView *headerView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, DZSUIScreen_width, 32)];
+    UIView *headerView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, DZSUIScreen_width, 40)];
     [self addSubview:headerView];
     self.headerView = headerView;
     
-    UILabel *titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 50, 32)];
+    UIImageView *imageView = [[UIImageView alloc] initWithFrame:CGRectMake(10, 10, 20, 20)];
+    self.imageView = imageView;
+    [headerView addSubview:imageView];
+    
+    UILabel *titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(40, 4, 50, 32)];
     [titleLabel setFont:[UIFont systemFontOfSize:12]];
     [titleLabel setTextColor:DZSUIColorFromHex(0x6A7081)];
     [titleLabel setTextAlignment:NSTextAlignmentLeft];
@@ -122,7 +136,7 @@ static NSString *headIdentifier = @"header";
 //    }
 //    else
 //    {
-        [self.titleLabel setFrame:CGRectMake(15, 0, DZSUIScreen_width, 32)];
+        [self.titleLabel setFrame:CGRectMake(40, 4, DZSUIScreen_width, 32)];
         NSArray *dicArr = allData[self.sectionTag];
         [dicArr enumerateObjectsUsingBlock:^(BBSForum *obj, NSUInteger idx, BOOL * _Nonnull stop) {
             if (obj.groupName.length > 0) {

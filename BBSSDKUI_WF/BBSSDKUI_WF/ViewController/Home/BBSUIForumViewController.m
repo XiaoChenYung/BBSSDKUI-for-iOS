@@ -41,7 +41,7 @@
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
-    [self setupLeftBarButton];
+//    [self setupLeftBarButton];
     [self.forumView reloadStickData];
 }
 
@@ -144,9 +144,10 @@
 {
     if (![BBSUIContext shareInstance].currentUser)
     {
-        BBSUILoginViewController *vc = [[BBSUILoginViewController alloc] init];
-        UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
-        [self.navigationController presentViewController:nav animated:YES completion:nil];
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"com.mob.bbs.sdk.BBSNeedLogin" object:nil];
+//        BBSUILoginViewController *vc = [[BBSUILoginViewController alloc] init];
+//        UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
+//        [self.navigationController presentViewController:nav animated:YES completion:nil];
     }
     else
     {
@@ -174,10 +175,10 @@
                 if (error.code == 9001200) {
                     
                     [BBSUIContext shareInstance].currentUser = nil;
-                    
-                    BBSUILoginViewController *vc = [[BBSUILoginViewController alloc] init];
-                    UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
-                    [self.navigationController presentViewController:nav animated:YES completion:nil];
+                    [[NSNotificationCenter defaultCenter] postNotificationName:@"com.mob.bbs.sdk.BBSNeedLogin" object:nil];
+//                    BBSUILoginViewController *vc = [[BBSUILoginViewController alloc] init];
+//                    UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
+//                    [self.navigationController presentViewController:nav animated:YES completion:nil];
                     //                    [BBSUIProcessHUD showFailInfo:@"登录信息过期，请重新登录后设置" delay:3];
                 }
                 

@@ -163,17 +163,18 @@
                 if (error.code == 9001200) {
 
                     [BBSUIContext shareInstance].currentUser = nil;
-                    BBSUILoginViewController *vc = [[BBSUILoginViewController alloc] init];
-                    
-                    vc.cancelLoginBlock = ^(){
-                        [[MOBFViewController currentViewController].navigationController popViewControllerAnimated:NO];
-                    };
-                    
-                    UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
-                    
-                    if ([MOBFViewController currentViewController].navigationController) {
-                        [[MOBFViewController currentViewController].navigationController presentViewController:nav animated:YES completion:nil];
-                    }
+                    [[NSNotificationCenter defaultCenter] postNotificationName:@"com.mob.bbs.sdk.BBSNeedLogin" object:nil];
+//                    BBSUILoginViewController *vc = [[BBSUILoginViewController alloc] init];
+//
+//                    vc.cancelLoginBlock = ^(){
+//                        [[MOBFViewController currentViewController].navigationController popViewControllerAnimated:NO];
+//                    };
+//
+//                    UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
+//
+//                    if ([MOBFViewController currentViewController].navigationController) {
+//                        [[MOBFViewController currentViewController].navigationController presentViewController:nav animated:YES completion:nil];
+//                    }
 //                    [BBSUIProcessHUD showFailInfo:@"登录信息过期，请重新登录后设置" delay:3];
                 }
                 

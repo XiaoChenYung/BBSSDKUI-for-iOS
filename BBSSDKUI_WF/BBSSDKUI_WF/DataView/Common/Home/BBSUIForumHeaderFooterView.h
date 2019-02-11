@@ -23,7 +23,7 @@
 
 + (instancetype)sectionHeadViewWithTableView:(UITableView *)tableView section:(NSInteger)section allData:(NSArray *)allData;
 
-- (void)updateHeaderView:(NSArray *)allData;
+//- (void)updateHeaderView:(NSArray *)allData;
 - (void)updateHeaderView:(NSArray *)allData isSelectForum:(BOOL)isSelect;
 
 
