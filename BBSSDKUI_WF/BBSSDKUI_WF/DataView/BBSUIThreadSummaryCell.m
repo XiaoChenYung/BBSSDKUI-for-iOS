@@ -19,7 +19,7 @@
 #import "NSString+BBSUIParagraph.h"
 #import "UIImageView+WebCache.h"
 #import "SDImageCache.h"
-
+#import "BBSUIThreadSummaryImageContentView.h"
 
 
 #define kImageWidth (([UIScreen mainScreen].bounds.size.width) * 80 / 375)
@@ -106,6 +106,8 @@
  地址标签 v2.4.0
  */
 @property (nonatomic, strong) UIButton *addressTagView;
+
+@property (nonatomic, strong) BBSUIThreadSummaryImageContentView *imagesContentView;
 
 @end
 
@@ -380,6 +382,19 @@
     });
     self.tipLabel.hidden = YES;
     
+    self.imagesContentView = ({
+        BBSUIThreadSummaryImageContentView *contentView = [[BBSUIThreadSummaryImageContentView alloc] init];
+        [self.contentView addSubview:contentView];
+        [contentView mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.width.equalTo(self.contentView).mas_offset(-24);
+            make.centerX.equalTo(self.contentView);
+            make.height.mas_equalTo(100);
+            make.top.equalTo(self.summaryLabel.mas_bottom).mas_offset(10);
+        }];
+        contentView.hidden = true;
+        contentView;
+    });
+    
     self.subjectLabel.preferredMaxLayoutWidth = [UIScreen mainScreen].bounds.size.width - 24;
     self.summaryLabel.preferredMaxLayoutWidth = [UIScreen mainScreen].bounds.size.width - 24;
 }
@@ -410,19 +425,20 @@
         
         if(threadModel.pic)
         {
-            NSString * url = _threadModel.pic;
+//            NSString * url = _threadModel.pic;
+//
+//            _imagesView.image = [UIImage BBSImageNamed:@"/Home/wutu@2x.png"];
+//            [[MOBFImageGetter sharedInstance] getImageDataWithURL:[NSURL URLWithString:url] result:^(NSData *imageData, NSError *error) {
+//                if (error)
+//                {
+//                    NSLog(@"%@",error);
+//                    return ;
+//                }
+//
+//                UIImage *image = [UIImage imageWithData:imageData];
+//                _imagesView.image = image;
+//            }];
             
-            _imagesView.image = [UIImage BBSImageNamed:@"/Home/wutu@2x.png"];
-            [[MOBFImageGetter sharedInstance] getImageDataWithURL:[NSURL URLWithString:url] result:^(NSData *imageData, NSError *error) {
-                if (error)
-                {
-                    NSLog(@"%@",error);
-                    return ;
-                }
-                
-                UIImage *image = [UIImage imageWithData:imageData];
-                _imagesView.image = image;
-            }];
             
             [self makeConstraintWithImageType];
         }
@@ -530,29 +546,35 @@
             url = threadModel.pic;
         }
         
-        _imagesView.image = [UIImage BBSImageNamed:@"/Home/wutu@2x.png"];
-        [[MOBFImageGetter sharedInstance] getImageDataWithURL:[NSURL URLWithString:url] result:^(NSData *imageData, NSError *error) {
-            if (error)
-            {
-                NSLog(@"%@",error);
-                return ;
-            }
-            
-            UIImage *image = [UIImage imageWithData:imageData];
-            _imagesView.image = image;
+//        _imagesView.image = [UIImage BBSImageNamed:@"/Home/wutu@2x.png"];
+//        [[MOBFImageGetter sharedInstance] getImageDataWithURL:[NSURL URLWithString:url] result:^(NSData *imageData, NSError *error) {
+//            if (error)
+//            {
+//                NSLog(@"%@",error);
+//                return ;
+//            }
+//
+//            UIImage *image = [UIImage imageWithData:imageData];
+//            _imagesView.image = image;
+//        }];
+        self.imagesContentView.hidden = false;
+        [self.viewsView mas_remakeConstraints:^(MASConstraintMaker *make) {
+            make.top.equalTo(self.imagesContentView.mas_bottom).mas_offset(10);
+            make.left.equalTo(self.contentView).offset(12);
+            make.height.mas_equalTo(22);
         }];
-        
+        self.imagesContentView.images = threadModel.images;
         [self makeConstraintWithImageType];
         
-        if (imageCount > 1)
-        {
-            _imageCountLabel.hidden = NO;
-            _imageCountLabel.text = [@"+" stringByAppendingFormat:@"%zd",_threadModel.images.count];
-        }
-        else
-        {
-            _imageCountLabel.hidden = YES;
-        }
+//        if (imageCount > 1)
+//        {
+//            _imageCountLabel.hidden = NO;
+//            _imageCountLabel.text = [@"+" stringByAppendingFormat:@"%zd",_threadModel.images.count];
+//        }
+//        else
+//        {
+//            _imageCountLabel.hidden = YES;
+//        }
     }
     else
     {

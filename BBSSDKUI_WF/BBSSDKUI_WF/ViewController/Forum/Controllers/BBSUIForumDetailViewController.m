@@ -643,9 +643,9 @@ static NSString *cellIdentifier = @"ThreadSummaryCell";
     {
         self.isPresent = YES;
         [[NSNotificationCenter defaultCenter] postNotificationName:@"com.mob.bbs.sdk.BBSNeedLogin" object:nil];
-//        BBSUILoginViewController *vc = [[BBSUILoginViewController alloc] init];
-//        UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
-//        [self.navigationController presentViewController:nav animated:YES completion:nil];
+        BBSUILoginViewController *vc = [[BBSUILoginViewController alloc] init];
+        UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
+        [self.navigationController presentViewController:nav animated:YES completion:nil];
     }
     else
     {

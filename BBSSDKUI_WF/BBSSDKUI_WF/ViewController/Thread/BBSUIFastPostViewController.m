@@ -125,18 +125,21 @@
     [cancelButton setFrame:CGRectMake(0, 0, 44, 44)];
     [cancelButton setTitle:@"取消" forState:UIControlStateNormal];
     [cancelButton.titleLabel setFont:[UIFont systemFontOfSize:15]];
-    [cancelButton setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+    [cancelButton setTitleColor: DZSUIColorFromHex(0x333333) forState:UIControlStateNormal];
     [cancelButton addTarget:self action:@selector(cancelButtonHandler:) forControlEvents:UIControlEventTouchUpInside];
-    self.navigationItem.leftBarButtonItems = @[fixedButton, [[UIBarButtonItem alloc] initWithCustomView:cancelButton]];
+    self.navigationItem.leftBarButtonItems = @[[[UIBarButtonItem alloc] initWithCustomView:cancelButton]];
     
     //发布
     UIButton *publishButton = [UIButton buttonWithType:UIButtonTypeCustom];
     [publishButton setFrame:CGRectMake(0, 0, 44, 44)];
     [publishButton setTitle:@"发布" forState:UIControlStateNormal];
-    [publishButton setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+    [publishButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     [publishButton addTarget:self action:@selector(publishButtonHandler:) forControlEvents:UIControlEventTouchUpInside];
     [publishButton.titleLabel setFont:[UIFont systemFontOfSize:15]];
-    
+    [publishButton setBackgroundColor:DZSUIColorFromHex(0xFFD919)];
+    publishButton.frame = CGRectMake(0, 0, 44, 28);
+    publishButton.layer.cornerRadius = 3;
+    publishButton.clipsToBounds = true;
     BBSUser *currentUser = [BBSUIContext shareInstance].currentUser;
 //    if ([currentUser.allowAnonymous integerValue])
 //    {
@@ -154,6 +157,7 @@
     
     //楼主
     UIButton *checkMasterButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    checkMasterButton.hidden = true;
     checkMasterButton.frame = CGRectMake(0, 0, 130, 44);
     [checkMasterButton setTitle:@" 回贴仅楼主可见" forState:UIControlStateNormal];
     [checkMasterButton setImage:[UIImage BBSImageNamed:@"/Thread/hideName@3x.png"] forState: UIControlStateNormal];
@@ -177,7 +181,7 @@
     if ([currentUser.allowAnonymous integerValue] == 0 && self.forum.allowAnonymous == 0)
     {
         self.hideNameButton.hidden = YES;
-        self.navigationItem.rightBarButtonItems = @[self.publishButtonItem,self.checkMasterButtonItem];
+        self.navigationItem.rightBarButtonItems = @[self.publishButtonItem];
     }
 }
 
