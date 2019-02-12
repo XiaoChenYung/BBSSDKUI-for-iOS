@@ -35,8 +35,6 @@
     self.alwaysShowToolbar = YES;
     
     self.shouldShowKeyboard = NO;
-    
-    self.placeholder = @"写点什么...";
         
     self.toolbarItemSelectedTintColor = [UIColor colorWithRed:77.0/255 green:162.0/255 blue:210.0/250 alpha:1];
 }

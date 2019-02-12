@@ -229,15 +229,27 @@
         forumSelectBtn ;
     });
     
-    UIView *seperateView = [UIView new];
-    [self.view addSubview:seperateView];
-    [seperateView setBackgroundColor:[UIColor darkGrayColor]];
-    [seperateView setAlpha:0.25];
-    [seperateView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(self.view).with.offset(13);
-        make.left.equalTo(self.view);
-        make.right.equalTo(self.view);
-        make.height.mas_equalTo(@1);
+//    UIView *seperateView = [UIView new];
+//    [self.view addSubview:seperateView];
+//    [seperateView setBackgroundColor:[UIColor darkGrayColor]];
+//    [seperateView setAlpha:0.25];
+//    [seperateView mas_makeConstraints:^(MASConstraintMaker *make) {
+//        make.top.equalTo(self.view).with.offset(13);
+//        make.left.equalTo(self.view);
+//        make.right.equalTo(self.view);
+//        make.height.mas_equalTo(@1);
+//    }];
+    
+    UILabel *titleLabel = [[UILabel alloc] init];
+    [self.view addSubview:titleLabel];
+    titleLabel.text = @"标题:";
+    titleLabel.font = [UIFont fontWithName:@"PingFangSC-Regular" size:15];
+    titleLabel.textColor = [UIColor colorWithRed:161/255.0 green:161/255.0 blue:161/255.0 alpha:1/1.0];
+    [titleLabel mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.left.equalTo(self.view).offset(12);
+        make.height.mas_equalTo(50);
+        make.width.mas_equalTo(60);
+        make.top.equalTo(self.view).offset(11);
     }];
 
     self.titleTextField =
@@ -248,8 +260,8 @@
         [titleTextField setFont:[UIFont systemFontOfSize:18]];
         [self.view addSubview:titleTextField];
         [titleTextField mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.left.equalTo(self.view).offset(15);
-            make.top.equalTo(self.view).offset(11);
+            make.left.equalTo(titleLabel.mas_right).offset(15);
+            make.centerY.equalTo(titleLabel);
             make.right.equalTo(self.view).offset(-15);
             make.height.equalTo(@50);
         }];
@@ -258,14 +270,15 @@
     });
     
     UIView *line = [[UIView alloc] init];
-    line.backgroundColor = [UIColor darkGrayColor];
-    line.alpha = 0.25 ;
+    line.backgroundColor = DZSUIColorFromHex(0xE8E8E8);
     [self.view addSubview:line];
     [line mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.left.right.equalTo(self.view);
+        make.left.right.equalTo(self.view).mas_offset(12);
         make.top.equalTo(_titleTextField.mas_bottom);
-        make.height.equalTo(@1);
+        make.height.equalTo(@0.5);
     }];
+    
+//    \n1、文明发帖，不要辱骂攻击\n2、禁止广告类帖子\n3、禁止恶意刷贴
     
     self.editor =
     ({
@@ -274,7 +287,9 @@
         [self.view addSubview:editor.view];
         [editor.view mas_makeConstraints:^(MASConstraintMaker *make) {
             make.left.right.bottom.equalTo(self.view);
+//            make.left.equalTo(infoLabel.mas_right).mas_offset(12);
             make.top.equalTo(line.mas_bottom).offset(5);
+//            make.height.mas_equalTo(150);
         }];
         
         if ([[BBSUILBSLocationProxy sharedInstance] isLBSUsable]) {
