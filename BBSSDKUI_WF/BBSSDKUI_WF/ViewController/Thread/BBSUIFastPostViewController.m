@@ -708,7 +708,6 @@
             [obj didPostSuccess];
         }
     }
-    
     [BBSUIThreadDraft deleteCachedDraft];
     
     [self.editor setHTML:@""];

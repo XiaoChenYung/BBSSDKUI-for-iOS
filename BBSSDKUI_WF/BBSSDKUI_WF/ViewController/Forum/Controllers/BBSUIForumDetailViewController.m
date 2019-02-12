@@ -633,9 +633,6 @@ static NSString *cellIdentifier = @"ThreadSummaryCell";
     [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationLeft];
 }
 
-
-
-
 #pragma mark - 发帖
 - (void)editThread:(id)sender
 {
@@ -643,9 +640,9 @@ static NSString *cellIdentifier = @"ThreadSummaryCell";
     {
         self.isPresent = YES;
         [[NSNotificationCenter defaultCenter] postNotificationName:@"com.mob.bbs.sdk.BBSNeedLogin" object:nil];
-        BBSUILoginViewController *vc = [[BBSUILoginViewController alloc] init];
-        UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
-        [self.navigationController presentViewController:nav animated:YES completion:nil];
+//        BBSUILoginViewController *vc = [[BBSUILoginViewController alloc] init];
+//        UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
+//        [self.navigationController presentViewController:nav animated:YES completion:nil];
     }
     else
     {
@@ -675,6 +672,18 @@ static NSString *cellIdentifier = @"ThreadSummaryCell";
 - (void)didPostSuccess
 {
     [[BBSUIStatusBarTip shareStatusBar] postSuccess];
+    if (![[NSUserDefaults standardUserDefaults] valueForKey:@"postTip"]) {
+        UIAlertController *controller = [UIAlertController alertControllerWithTitle:nil message:@"发帖待通过管理员审核后展示" preferredStyle:UIAlertControllerStyleAlert];
+        UIAlertAction *confirm = [UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+            
+        }];
+        UIAlertAction *ignore = [UIAlertAction actionWithTitle:@"不再提示" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+            [[NSUserDefaults standardUserDefaults] setValue:@"yes" forKey:@"postTip"];
+        }];
+        [controller addAction:ignore];
+        [controller addAction:confirm];
+        [self presentViewController:controller animated:true completion:nil];
+    }
 }
 
 - (void)didPostFailWithError:(NSError *)error

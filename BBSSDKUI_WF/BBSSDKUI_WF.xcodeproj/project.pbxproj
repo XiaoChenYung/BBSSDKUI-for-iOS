@@ -257,7 +257,7 @@
 		446DC6F41EB0B01B00346D6A /* BBSUILoadUrlViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 446DC6EC1EB0B01B00346D6A /* BBSUILoadUrlViewController.m */; };
 		446DC6F91EB0BCF500346D6A /* BBSUIDownloadView.h in Headers */ = {isa = PBXBuildFile; fileRef = 446DC6F71EB0BCF500346D6A /* BBSUIDownloadView.h */; };
 		446DC6FA1EB0BCF500346D6A /* BBSUIDownloadView.m in Sources */ = {isa = PBXBuildFile; fileRef = 446DC6F81EB0BCF500346D6A /* BBSUIDownloadView.m */; };
-		4476B8DD1ECC25F800AFA1CB /* BBSUIContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 4476B8DB1ECC25F800AFA1CB /* BBSUIContext.h */; };
+		4476B8DD1ECC25F800AFA1CB /* BBSUIContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 4476B8DB1ECC25F800AFA1CB /* BBSUIContext.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4476B8DE1ECC25F800AFA1CB /* BBSUIContext.m in Sources */ = {isa = PBXBuildFile; fileRef = 4476B8DC1ECC25F800AFA1CB /* BBSUIContext.m */; };
 		44BABAF41EB2EE2B00972918 /* BBSUIReplyStateView.h in Headers */ = {isa = PBXBuildFile; fileRef = 44BABAF21EB2EE2B00972918 /* BBSUIReplyStateView.h */; };
 		44BABAF51EB2EE2B00972918 /* BBSUIReplyStateView.m in Sources */ = {isa = PBXBuildFile; fileRef = 44BABAF31EB2EE2B00972918 /* BBSUIReplyStateView.m */; };
@@ -354,6 +354,8 @@
 		7939B87421F1DD9100479D40 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 7939B87321F1DD9100479D40 /* main.m */; };
 		794840EA2211935200D316B6 /* BBSUIThreadSummaryImageContentView.h in Headers */ = {isa = PBXBuildFile; fileRef = 794840E82211935200D316B6 /* BBSUIThreadSummaryImageContentView.h */; };
 		794840EB2211935200D316B6 /* BBSUIThreadSummaryImageContentView.m in Sources */ = {isa = PBXBuildFile; fileRef = 794840E92211935200D316B6 /* BBSUIThreadSummaryImageContentView.m */; };
+		79E956592212BB2E00198254 /* BBSUIPostTip.h in Headers */ = {isa = PBXBuildFile; fileRef = 79E956572212BB2E00198254 /* BBSUIPostTip.h */; };
+		79E9565A2212BB2E00198254 /* BBSUIPostTip.m in Sources */ = {isa = PBXBuildFile; fileRef = 79E956582212BB2E00198254 /* BBSUIPostTip.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -851,6 +853,8 @@
 		7939B87321F1DD9100479D40 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		794840E82211935200D316B6 /* BBSUIThreadSummaryImageContentView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BBSUIThreadSummaryImageContentView.h; sourceTree = "<group>"; };
 		794840E92211935200D316B6 /* BBSUIThreadSummaryImageContentView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BBSUIThreadSummaryImageContentView.m; sourceTree = "<group>"; };
+		79E956572212BB2E00198254 /* BBSUIPostTip.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BBSUIPostTip.h; sourceTree = "<group>"; };
+		79E956582212BB2E00198254 /* BBSUIPostTip.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BBSUIPostTip.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1596,6 +1600,8 @@
 				3A37F9471FF3829600815D8B /* BBSUINewsViewController.m */,
 				4410D6941EA62901001D331E /* BBSUIFastPostViewController.h */,
 				4410D6951EA62901001D331E /* BBSUIFastPostViewController.m */,
+				79E956572212BB2E00198254 /* BBSUIPostTip.h */,
+				79E956582212BB2E00198254 /* BBSUIPostTip.m */,
 				4410D66C1EA628AB001D331E /* BBSUIThreadDetailViewController.h */,
 				4410D66D1EA628AB001D331E /* BBSUIThreadDetailViewController.m */,
 				3ACF949A2018B0F200C2B6AD /* BBSUIPortalDetailViewController.h */,
@@ -1896,6 +1902,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4476B8DD1ECC25F800AFA1CB /* BBSUIContext.h in Headers */,
 				3A2FB73D1F29997D00B8A0E5 /* BBSUIUserMeInfoViewController.h in Headers */,
 				6B92BF5B1EA5FBB600A7A56D /* BBSUIForumViewController.h in Headers */,
 				2FF7AC84207F52A90054BFE8 /* BBSUIBaseViewController.h in Headers */,
@@ -2040,7 +2047,6 @@
 				3A1972921F1CE2A7004B658A /* BBSUIInformationViewController.h in Headers */,
 				4410D69A1EA62942001D331E /* BBSUIViewsRepliesView.h in Headers */,
 				6B1CD2D11EA8C0E3004637A2 /* BBSUIEmailSendViewController.h in Headers */,
-				4476B8DD1ECC25F800AFA1CB /* BBSUIContext.h in Headers */,
 				2FF7AC6A207F52290054BFE8 /* BBSUIExpressionTextView.h in Headers */,
 				6B92BF5F1EA5FE1000A7A56D /* BBSUIThreadListView.h in Headers */,
 				6B06DE691F3C53BD003C18C5 /* BBSUIBannerPreviewViewController.h in Headers */,
@@ -2058,6 +2064,7 @@
 				446CBF321EB8924200E007F9 /* BBSUICostomNavViewController.h in Headers */,
 				2F778ACF2085F8C7002A82DF /* BBSUIAlertView.h in Headers */,
 				6B92BF6F1EA641BA00A7A56D /* BBSUIForumItem.h in Headers */,
+				79E956592212BB2E00198254 /* BBSUIPostTip.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2316,6 +2323,7 @@
 				2FF7AC6B207F52290054BFE8 /* BBSUIExpressionTextView.m in Sources */,
 				3AB828BD1F16211200294863 /* BBSUIFansView.m in Sources */,
 				2FF7AC37207F49F40054BFE8 /* UIView+BBSUIViewController.m in Sources */,
+				79E9565A2212BB2E00198254 /* BBSUIPostTip.m in Sources */,
 				6B1CD2DA1EA9BC56004637A2 /* BBSUIUserInfoViewController.m in Sources */,
 				6B56BBA51EB0C2890033E163 /* BBSForum+BBSUI.m in Sources */,
 				4410D68F1EA628E6001D331E /* BBSUIImageView.m in Sources */,
@@ -2505,7 +2513,7 @@
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 				WRAPPER_EXTENSION = framework;
 			};
 			name = Debug;
@@ -2542,7 +2550,7 @@
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 				WRAPPER_EXTENSION = framework;
 			};
 			name = Release;

@@ -147,7 +147,23 @@
 		6BAFB7C91E6FFFCD00692299 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6BAFB7C81E6FFFCD00692299 /* ViewController.m */; };
 		6BAFB7CE1E6FFFCD00692299 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6BAFB7CD1E6FFFCD00692299 /* Assets.xcassets */; };
 		6BAFB7E91E700B9D00692299 /* libicucore.A.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 6BAFB7E81E700B9D00692299 /* libicucore.A.tbd */; };
+		79E9565D2212C6FD00198254 /* BBSSDKUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2FA040F0207CCDF4004CE72B /* BBSSDKUI.framework */; };
+		79E9565E2212C6FD00198254 /* BBSSDKUI.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 2FA040F0207CCDF4004CE72B /* BBSSDKUI.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		79E9565F2212C6FE00198254 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				79E9565E2212C6FD00198254 /* BBSSDKUI.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		2F778AD2208602E2002A82DF /* AMap.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = AMap.bundle; path = MAMapKit.framework/AMap.bundle; sourceTree = "<group>"; };
@@ -610,6 +626,7 @@
 				2FA042F3207CCDF5004CE72B /* libWeiboSDK.a in Frameworks */,
 				2FA042D8207CCDF5004CE72B /* ShareSDKExtension.framework in Frameworks */,
 				2FA042E0207CCDF5004CE72B /* FacebookConnector.framework in Frameworks */,
+				79E9565D2212C6FD00198254 /* BBSSDKUI.framework in Frameworks */,
 				2FA042D5207CCDF5004CE72B /* ShareSDK.framework in Frameworks */,
 				2FA042F1207CCDF5004CE72B /* TencentOpenAPI.framework in Frameworks */,
 				2FA042D7207CCDF5004CE72B /* ShareSDKConfigFile.framework in Frameworks */,
@@ -1609,6 +1626,7 @@
 				6BAFB7BA1E6FFFCD00692299 /* Sources */,
 				6BAFB7BB1E6FFFCD00692299 /* Frameworks */,
 				6BAFB7BC1E6FFFCD00692299 /* Resources */,
+				79E9565F2212C6FE00198254 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
