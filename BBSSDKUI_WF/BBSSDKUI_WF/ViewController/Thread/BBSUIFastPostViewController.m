@@ -124,7 +124,7 @@
     [cancelButton setFrame:CGRectMake(0, 0, 44, 44)];
     [cancelButton setTitle:@"取消" forState:UIControlStateNormal];
     [cancelButton.titleLabel setFont:[UIFont systemFontOfSize:15]];
-    [cancelButton setTitleColor: DZSUIColorFromHex(0x333333) forState:UIControlStateNormal];
+    [cancelButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     [cancelButton addTarget:self action:@selector(cancelButtonHandler:) forControlEvents:UIControlEventTouchUpInside];
     self.navigationItem.leftBarButtonItems = @[[[UIBarButtonItem alloc] initWithCustomView:cancelButton]];
     
@@ -135,7 +135,7 @@
     [publishButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     [publishButton addTarget:self action:@selector(publishButtonHandler:) forControlEvents:UIControlEventTouchUpInside];
     [publishButton.titleLabel setFont:[UIFont systemFontOfSize:15]];
-    [publishButton setBackgroundColor:DZSUIColorFromHex(0xFFD919)];
+    [publishButton setBackgroundColor:DZSUIColorFromHex(0xFF4284)];
     publishButton.frame = CGRectMake(0, 0, 44, 28);
     publishButton.layer.cornerRadius = 3;
     publishButton.clipsToBounds = true;

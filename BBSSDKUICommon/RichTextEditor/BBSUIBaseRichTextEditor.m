@@ -573,7 +573,7 @@ static CGFloat kDefaultScale = 0.5;
 
 - (void)xieyiLinkButtonClick {
     BBSUIXieYiViewController *vc = [[BBSUIXieYiViewController alloc] init];
-    vc.url = @"https://baidu.com";
+    vc.url = @"http://vodcmsnew.cloutropy.com/h5/community?appid=jkl34idfs90jqwqIJOfaj";
     [self.navigationController pushViewController:vc animated:true];
 }
 

@@ -145,11 +145,11 @@
 		2FF7AD922080699C0054BFE8 /* BBSUIPopoverViewCell.h in Headers */ = {isa = PBXBuildFile; fileRef = 2FF7AD882080699C0054BFE8 /* BBSUIPopoverViewCell.h */; };
 		2FF7AD932080699C0054BFE8 /* BBSUIPopoverViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 2FF7AD892080699C0054BFE8 /* BBSUIPopoverViewCell.m */; };
 		3A098F6D20064083005CCC0B /* BBSSDKUI.pch in Headers */ = {isa = PBXBuildFile; fileRef = 3A098F6C20064083005CCC0B /* BBSSDKUI.pch */; };
-		3A19727E1F1CB887004B658A /* BBSUICollectionView.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A19727C1F1CB887004B658A /* BBSUICollectionView.h */; };
+		3A19727E1F1CB887004B658A /* BBSUICollectionView.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A19727C1F1CB887004B658A /* BBSUICollectionView.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3A19727F1F1CB887004B658A /* BBSUICollectionView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3A19727D1F1CB887004B658A /* BBSUICollectionView.m */; };
 		3A1972821F1CB8A4004B658A /* BBSUICollectionTableViewCell.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A1972801F1CB8A4004B658A /* BBSUICollectionTableViewCell.h */; };
 		3A1972831F1CB8A4004B658A /* BBSUICollectionTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3A1972811F1CB8A4004B658A /* BBSUICollectionTableViewCell.m */; };
-		3A1972861F1CCE93004B658A /* BBSUICollectionViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A1972841F1CCE93004B658A /* BBSUICollectionViewController.h */; };
+		3A1972861F1CCE93004B658A /* BBSUICollectionViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A1972841F1CCE93004B658A /* BBSUICollectionViewController.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3A1972871F1CCE93004B658A /* BBSUICollectionViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3A1972851F1CCE93004B658A /* BBSUICollectionViewController.m */; };
 		3A1972921F1CE2A7004B658A /* BBSUIInformationViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A1972901F1CE2A7004B658A /* BBSUIInformationViewController.h */; };
 		3A1972931F1CE2A7004B658A /* BBSUIInformationViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3A1972911F1CE2A7004B658A /* BBSUIInformationViewController.m */; };
@@ -295,7 +295,7 @@
 		6B744F111F5D7F000081EE4E /* BBSUINormalNavViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6B744F071F5D7F000081EE4E /* BBSUINormalNavViewController.m */; };
 		6B744F121F5D7F000081EE4E /* BBSUIWebViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 6B744F081F5D7F000081EE4E /* BBSUIWebViewController.h */; };
 		6B744F131F5D7F000081EE4E /* BBSUIWebViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6B744F091F5D7F000081EE4E /* BBSUIWebViewController.m */; };
-		6B744F141F5D7F000081EE4E /* BBSUIWhiteNavViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 6B744F0A1F5D7F000081EE4E /* BBSUIWhiteNavViewController.h */; };
+		6B744F141F5D7F000081EE4E /* BBSUIWhiteNavViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 6B744F0A1F5D7F000081EE4E /* BBSUIWhiteNavViewController.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6B744F151F5D7F000081EE4E /* BBSUIWhiteNavViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6B744F0B1F5D7F000081EE4E /* BBSUIWhiteNavViewController.m */; };
 		6B92BF4A1EA5C4AD00A7A56D /* BBSUIDarkBlueViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 6B92BF481EA5C4AD00A7A56D /* BBSUIDarkBlueViewController.h */; };
 		6B92BF4B1EA5C4AD00A7A56D /* BBSUIDarkBlueViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6B92BF491EA5C4AD00A7A56D /* BBSUIDarkBlueViewController.m */; };
@@ -1912,8 +1912,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				4476B8DD1ECC25F800AFA1CB /* BBSUIContext.h in Headers */,
+				3A19727E1F1CB887004B658A /* BBSUICollectionView.h in Headers */,
 				3A2FB73D1F29997D00B8A0E5 /* BBSUIUserMeInfoViewController.h in Headers */,
+				6B744F141F5D7F000081EE4E /* BBSUIWhiteNavViewController.h in Headers */,
 				6B92BF5B1EA5FBB600A7A56D /* BBSUIForumViewController.h in Headers */,
+				3A1972861F1CCE93004B658A /* BBSUICollectionViewController.h in Headers */,
 				2FF7AC84207F52A90054BFE8 /* BBSUIBaseViewController.h in Headers */,
 				6B744F0C1F5D7F000081EE4E /* BBSUIBackViewController.h in Headers */,
 				3A1972961F1CE2F4004B658A /* BBSUIInformationView.h in Headers */,
@@ -1946,7 +1949,6 @@
 				6BF009801EA492D90040399D /* BBSUIHomeViewController.h in Headers */,
 				3A1972821F1CB8A4004B658A /* BBSUICollectionTableViewCell.h in Headers */,
 				2FF7ACA3207F57D80054BFE8 /* NSString+BBSUIParagraph.h in Headers */,
-				3A19727E1F1CB887004B658A /* BBSUICollectionView.h in Headers */,
 				2FF7ACA2207F57D80054BFE8 /* UIView+BBSUITipView.h in Headers */,
 				2FF7AC6E207F52290054BFE8 /* BBSUIExpressionView.h in Headers */,
 				6B93DECB1F34554F00E7FED9 /* BBSUIStatusBarTip.h in Headers */,
@@ -2043,7 +2045,6 @@
 				2FF7AC77207F52290054BFE8 /* BBSUIProcessHUD.h in Headers */,
 				6B03513F1F3419A8006B5913 /* BBSUIContentInsetsLabel.h in Headers */,
 				2FF7AD7B208066BD0054BFE8 /* NSBundle+BBSSDKUI.h in Headers */,
-				6B744F141F5D7F000081EE4E /* BBSUIWhiteNavViewController.h in Headers */,
 				2FF7ABA7207DC6C40054BFE8 /* BBSUIRTEFontsViewController.h in Headers */,
 				3A906B511F742E530082C3BB /* BBSUICoreDataManage.h in Headers */,
 				2FF7ABC1207DC6C40054BFE8 /* BBSUIHRColorUtil.h in Headers */,
@@ -2069,7 +2070,6 @@
 				6B92BF7B1EA7232A00A7A56D /* BBSUIUserEditView.h in Headers */,
 				2FA0432D207CD03E004CE72B /* BBSUILBSLocationCell.h in Headers */,
 				2FF7AC41207F49FC0054BFE8 /* BBSUILBSegment.h in Headers */,
-				3A1972861F1CCE93004B658A /* BBSUICollectionViewController.h in Headers */,
 				6BE90F0D1EBB007A0031541C /* BBSUIRetrievePasswordView.h in Headers */,
 				446CBF321EB8924200E007F9 /* BBSUICostomNavViewController.h in Headers */,
 				2F778ACF2085F8C7002A82DF /* BBSUIAlertView.h in Headers */,
