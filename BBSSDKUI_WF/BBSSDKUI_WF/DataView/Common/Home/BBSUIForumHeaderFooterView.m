@@ -40,8 +40,8 @@ static NSString *headIdentifier = @"header";
     BBSUIForumHeaderFooterView *headView = [tableView dequeueReusableHeaderFooterViewWithIdentifier:headIdentifier];
     if (!headView) {
         headView = [[BBSUIForumHeaderFooterView alloc] initWithReuseIdentifier:headIdentifier];
-        [headView setImageWithSection:section];
     }
+    [headView setImageWithSection:section];
     return headView;
 }
 

@@ -9,6 +9,7 @@
 #import "NSBundle+BBSSDKUI.h"
 #import "BBSUIExpressionViewConfiguration.h"
 #import <BBSSDK/BBSSDK.h>
+#import "BBSUIXieYiViewController.h"
 
 @import JavaScriptCore;
 
@@ -235,6 +236,10 @@ static BOOL keyBoardHidden = NO;
  */
 - (BOOL)isIpad;
 
+@property (nonatomic, strong) UIButton *xieyiButton;
+
+@property (nonatomic, strong) UIButton *xieyiLinkButton;
+
 @end
 
 /*
@@ -252,7 +257,7 @@ static CGFloat kDefaultScale = 0.5;
 - (void)viewDidLoad {
     
     [super viewDidLoad];
-    
+    self.view.backgroundColor = [UIColor colorWithRed:249/255.0 green:248/255.0 blue:249/255.0 alpha:1/1.0];
     //Initialise variables
     self.editorLoaded = NO;
     self.receiveEditorDidChangeEvents = NO;
@@ -264,7 +269,7 @@ static CGFloat kDefaultScale = 0.5;
     self.enabledToolbarItems = [[NSArray alloc] init];
     
     //Frame for the source view and editor view
-    CGRect frame = CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height);
+    CGRect frame = CGRectMake(0, 0, self.view.frame.size.width, 150);
     
     //Source View
     [self createSourceViewWithFrame:frame];
@@ -535,6 +540,7 @@ static CGFloat kDefaultScale = 0.5;
 - (void)createEditorViewWithFrame:(CGRect)frame {
     
     self.editorView = [[UIWebView alloc] initWithFrame:frame];
+    self.editorView.backgroundColor = [UIColor whiteColor];
     self.editorView.delegate = self;
     self.editorView.hidesInputAccessoryView = YES;
     self.editorView.keyboardDisplayRequiresUserAction = NO;
@@ -545,6 +551,34 @@ static CGFloat kDefaultScale = 0.5;
     self.editorView.backgroundColor = [UIColor whiteColor];
     [self.view addSubview:self.editorView];
     
+    self.xieyiButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    self.xieyiButton.selected = true;
+    self.xieyiButton.frame = CGRectMake(12, CGRectGetMaxY(frame), 20, 20);
+    [self.view addSubview:self.xieyiButton];
+    [self.xieyiButton setImage:[UIImage BBSImageNamed:@"RichEditor/icon_selected_nor@2x.png"] forState:UIControlStateNormal];
+    [self.xieyiButton setImage:[UIImage BBSImageNamed:@"RichEditor/icon_selected_pre@2x.png"] forState:UIControlStateSelected];
+    [self.xieyiButton addTarget:self action:@selector(xieyiButtonClick:) forControlEvents:UIControlEventTouchUpInside];
+    self.xieyiLinkButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    self.xieyiLinkButton.frame = CGRectMake(44, CGRectGetMaxY(frame), 150, 20);
+    [self.view addSubview:self.xieyiLinkButton];
+    self.xieyiLinkButton.titleLabel.font = [UIFont systemFontOfSize:10];
+    [self.xieyiLinkButton setTitle:@"发布即同意《圈粉TV社区条款》" forState:UIControlStateNormal];
+    [self.xieyiLinkButton setTitleColor: [UIColor colorWithRed:81/255.0 green:147/255.0 blue:238/255.0 alpha:1/1.0] forState:UIControlStateNormal];
+    [self.xieyiLinkButton addTarget:self action:@selector(xieyiLinkButtonClick) forControlEvents:UIControlEventTouchUpInside];
+}
+
+- (BOOL)isSelectedXieYi {
+    return self.xieyiButton.isSelected;
+}
+
+- (void)xieyiLinkButtonClick {
+    BBSUIXieYiViewController *vc = [[BBSUIXieYiViewController alloc] init];
+    vc.url = @"https://baidu.com";
+    [self.navigationController pushViewController:vc animated:true];
+}
+
+- (void)xieyiButtonClick:(UIButton *)button {
+    self.xieyiButton.selected = !self.xieyiButton.isSelected;
 }
 
 - (void)setUpImagePicker {
@@ -2243,7 +2277,7 @@ static CGFloat kDefaultScale = 0.5;
             // Editor View
             CGRect editorFrame = self.editorView.frame;
             editorFrame.size.height = (self.view.frame.size.height - keyboardHeight) - sizeOfToolbar - extraHeight;
-            self.editorView.frame = editorFrame;
+//            self.editorView.frame = editorFrame;
             self.editorViewFrame = self.editorView.frame;
             self.editorView.scrollView.contentInset = UIEdgeInsetsZero;
             self.editorView.scrollView.scrollIndicatorInsets = UIEdgeInsetsZero;
@@ -2289,7 +2323,7 @@ static CGFloat kDefaultScale = 0.5;
                 editorFrame.size.height = self.view.frame.size.height;
             }
             
-            self.editorView.frame = editorFrame;
+//            self.editorView.frame = editorFrame;
             self.editorViewFrame = self.editorView.frame;
             self.editorView.scrollView.contentInset = UIEdgeInsetsZero;
             self.editorView.scrollView.scrollIndicatorInsets = UIEdgeInsetsZero;

@@ -346,6 +346,8 @@
 		70B06F9520746F350028FF34 /* BBSUITribuneViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 70B06F9320746F350028FF34 /* BBSUITribuneViewController.m */; };
 		7928A1B921F5D2DF00107820 /* UIDevice+Model.h in Headers */ = {isa = PBXBuildFile; fileRef = 7928A1B721F5D2DE00107820 /* UIDevice+Model.h */; };
 		7928A1BA21F5D2DF00107820 /* UIDevice+Model.m in Sources */ = {isa = PBXBuildFile; fileRef = 7928A1B821F5D2DE00107820 /* UIDevice+Model.m */; };
+		792DAA762213BDD700FE697E /* BBSUIXieYiViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 792DAA742213BDD700FE697E /* BBSUIXieYiViewController.h */; };
+		792DAA772213BDD700FE697E /* BBSUIXieYiViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 792DAA752213BDD700FE697E /* BBSUIXieYiViewController.m */; };
 		7939B86621F1DD8E00479D40 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 7939B86521F1DD8E00479D40 /* AppDelegate.m */; };
 		7939B86921F1DD8E00479D40 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7939B86821F1DD8E00479D40 /* ViewController.m */; };
 		7939B86C21F1DD8E00479D40 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7939B86A21F1DD8E00479D40 /* Main.storyboard */; };
@@ -841,6 +843,8 @@
 		70B06F9320746F350028FF34 /* BBSUITribuneViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BBSUITribuneViewController.m; sourceTree = "<group>"; };
 		7928A1B721F5D2DE00107820 /* UIDevice+Model.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIDevice+Model.h"; sourceTree = "<group>"; };
 		7928A1B821F5D2DE00107820 /* UIDevice+Model.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIDevice+Model.m"; sourceTree = "<group>"; };
+		792DAA742213BDD700FE697E /* BBSUIXieYiViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BBSUIXieYiViewController.h; sourceTree = "<group>"; };
+		792DAA752213BDD700FE697E /* BBSUIXieYiViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BBSUIXieYiViewController.m; sourceTree = "<group>"; };
 		7939B86221F1DD8E00479D40 /* test.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = test.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7939B86421F1DD8E00479D40 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		7939B86521F1DD8E00479D40 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -942,6 +946,8 @@
 				2FF7AB89207DC6C30054BFE8 /* BBSUIRTEFontsViewController.m */,
 				2FF7AB8A207DC6C30054BFE8 /* BBSUIBaseRichTextEditor.h */,
 				2FF7AB8B207DC6C30054BFE8 /* BBSUIBaseRichTextEditor.m */,
+				792DAA742213BDD700FE697E /* BBSUIXieYiViewController.h */,
+				792DAA752213BDD700FE697E /* BBSUIXieYiViewController.m */,
 				2FF7AB8C207DC6C30054BFE8 /* BBSUIRTETextView.h */,
 				2FF7AB8D207DC6C30054BFE8 /* BBSUIRTETextView.m */,
 				2FF7AB8F207DC6C30054BFE8 /* Other */,
@@ -1982,6 +1988,7 @@
 				3AB828BC1F16211200294863 /* BBSUIFansView.h in Headers */,
 				4410D68A1EA628DC001D331E /* BBSUIRegistViewController.h in Headers */,
 				2FF7ACAB207F57D80054BFE8 /* UIView+BBSUIVisualEffects.h in Headers */,
+				792DAA762213BDD700FE697E /* BBSUIXieYiViewController.h in Headers */,
 				2FA04327207CD03E004CE72B /* BBSUILBSLocationViewController.h in Headers */,
 				3AEDBB0A1FFB67F200B43A6E /* BBSUIForumHeader.h in Headers */,
 				6B92BF6B1EA63C9C00A7A56D /* BBSUIForumHeaderView.h in Headers */,
@@ -2308,6 +2315,7 @@
 				2FF7ABA6207DC6C40054BFE8 /* BBSUIRTEBarButtonItem.m in Sources */,
 				446CBF331EB8924200E007F9 /* BBSUICostomNavViewController.m in Sources */,
 				3AE3BC9B1F20AAC2005B2201 /* BBSUIDarkBackView.m in Sources */,
+				792DAA772213BDD700FE697E /* BBSUIXieYiViewController.m in Sources */,
 				3ADF94951F4573D100A6129A /* BBSUIZoomImageView.m in Sources */,
 				6B744F151F5D7F000081EE4E /* BBSUIWhiteNavViewController.m in Sources */,
 				2FF7AD79208066BD0054BFE8 /* UIImage+BBSFunction.m in Sources */,

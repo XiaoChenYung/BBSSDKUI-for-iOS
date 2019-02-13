@@ -86,8 +86,7 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    
-    //self.title = @"快速发帖";
+    self.title = @"发布帖子";
     self.edgesForExtendedLayout = UIRectEdgeNone ;
     _images = [NSMutableArray array];
 

@@ -114,6 +114,8 @@ static NSString * const BBSUIRichTextEditorToolbarFonts = @"com.zedsaid.toolbari
 
 @property (nonatomic,assign) BOOL isHiddenLBSMenu;
 
+@property (nonatomic, assign, readonly) BOOL isSelectedXieYi;
+
 
 /**
  *  Sets the HTML for the entire editor
