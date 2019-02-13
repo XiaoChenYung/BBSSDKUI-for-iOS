@@ -11,6 +11,7 @@
 @interface BBSUIPostTip ()
 
 @property (weak, nonatomic) IBOutlet UIButton *selectedButton;
+@property (weak, nonatomic) IBOutlet UIView *infoContent;
 
 @end
 
@@ -18,14 +19,22 @@
 
 - (void)awakeFromNib {
     [super awakeFromNib];
+    self.backgroundColor = [UIColor clearColor];
+    self.infoContent.layer.cornerRadius = 3;
+    self.clipsToBounds = true;
+    [self.selectedButton setImage:[UIImage BBSImageNamed:@"RichEditor/icon_selected_nor@2x.png"] forState:UIControlStateNormal];
+    [self.selectedButton setImage:[UIImage BBSImageNamed:@"RichEditor/icon_selected_pre@2x.png"] forState:UIControlStateSelected];
 }
 
 - (IBAction)confirm:(UIButton *)sender {
-    
+    if (self.selectedButton.isSelected) {
+        [[NSUserDefaults standardUserDefaults] setValue:@"yes" forKey:@"postTip"];
+    }
+    [self removeFromSuperview];
 }
 
 - (IBAction)selected:(UIButton *)sender {
-    
+    self.selectedButton.selected = !self.selectedButton.isSelected;
 }
 
 /*

@@ -7,12 +7,37 @@
 //
 
 #import "BBSUIThreadSummaryImageContentView.h"
+#import "BBSUIImagePreviewHUD.h"
 
 @interface BBSUIThreadSummaryImageContentView ()
 
 @end
 
 @implementation BBSUIThreadSummaryImageContentView
+
+- (instancetype)init
+{
+    self = [super init];
+    if (self) {
+        self.userInteractionEnabled = true;
+        UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tap:)];
+        [self addGestureRecognizer:tap];
+    }
+    return self;
+}
+
+- (void)tap:(UITapGestureRecognizer *)ges {
+    CGPoint point = [ges locationInView:self];
+    NSInteger pos = (NSInteger)(point.x / (self.frame.size.width / 3));
+    NSLog(@"%zu %f %f", pos, point.x, self.frame.size.width);
+    if (pos < self.images.count) {
+        [BBSUIImagePreviewHUD showWithImageUrls:self.images index:pos];
+    }
+//    [[NSNotificationCenter defaultCenter] postNotificationName:@"com.mob.bbs.sdk.CellImageTap" object:@(pos)];
+//    if (self.delegate && [self.delegate respondsToSelector:@selector(threadSummaryImageContentView:didSelectedIndex:)]) {
+//        [self.delegate threadSummaryImageContentView:self didSelectedIndex:pos];
+//    }
+}
 
 - (void)setImages:(NSArray *)images {
     _images = images;

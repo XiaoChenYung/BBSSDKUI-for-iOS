@@ -704,6 +704,7 @@
     BBSLocationCoordinate *coordinate = [[BBSLocationCoordinate alloc] initWithLatitude:[BBSUILBSLocationManager shareManager].latitude longitude:[BBSUILBSLocationManager shareManager].lontitue];
     
     [SVProgressHUD setStatus:@"正在登陆..."];
+    NSLog(@"%@ %@ %@ %@ %@", userName, email, _passwordTextField.text, @(_questionID), _verifyAnswerTextField.text);
     [BBSSDK loginWithUserName:userName email:email password:_passwordTextField.text questionid:_questionID answer:_verifyAnswerTextField.text coordinate:coordinate result:^(BBSUser *user,id res,NSError *error) {
         
 //        NSLog(@"/////////////  %@ - %@",user,error);

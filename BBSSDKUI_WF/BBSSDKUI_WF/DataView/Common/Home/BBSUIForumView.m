@@ -332,6 +332,7 @@
     if (!cell) {
         cell = [[BBSUIForumSummaryCellTableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:forumCellIdentifier];
     }
+    cell.isCube = indexPath.section == 1;
     
     /*
      allForumArray 所有数据

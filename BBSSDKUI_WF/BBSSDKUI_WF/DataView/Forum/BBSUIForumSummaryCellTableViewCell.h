@@ -28,6 +28,7 @@
 
 @property (nonatomic, strong) UIButton *stickButton;
 @property (nonatomic, assign) BOOL isSelectForum;
+@property (nonatomic, assign) BOOL isCube;
 
 - (void)setStickButtonHidden:(BOOL)hidden;
 - (void) hiddForumCountLabel;

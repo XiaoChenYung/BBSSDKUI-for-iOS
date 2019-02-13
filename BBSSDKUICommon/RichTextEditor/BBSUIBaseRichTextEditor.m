@@ -559,7 +559,7 @@ static CGFloat kDefaultScale = 0.5;
     [self.xieyiButton setImage:[UIImage BBSImageNamed:@"RichEditor/icon_selected_pre@2x.png"] forState:UIControlStateSelected];
     [self.xieyiButton addTarget:self action:@selector(xieyiButtonClick:) forControlEvents:UIControlEventTouchUpInside];
     self.xieyiLinkButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    self.xieyiLinkButton.frame = CGRectMake(44, CGRectGetMaxY(frame), 150, 20);
+    self.xieyiLinkButton.frame = CGRectMake(42, CGRectGetMaxY(frame), 150, 20);
     [self.view addSubview:self.xieyiLinkButton];
     self.xieyiLinkButton.titleLabel.font = [UIFont systemFontOfSize:10];
     [self.xieyiLinkButton setTitle:@"发布即同意《圈粉TV社区条款》" forState:UIControlStateNormal];
@@ -582,13 +582,11 @@ static CGFloat kDefaultScale = 0.5;
 }
 
 - (void)setUpImagePicker {
-    
     self.imagePicker = [[UIImagePickerController alloc] init];
     self.imagePicker.delegate = self;
     self.imagePicker.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
     self.imagePicker.allowsEditing = YES;
     self.selectedImageScale = kDefaultScale; //by default scale to half the size
-    
 }
 
 - (void)createToolBarScroll {

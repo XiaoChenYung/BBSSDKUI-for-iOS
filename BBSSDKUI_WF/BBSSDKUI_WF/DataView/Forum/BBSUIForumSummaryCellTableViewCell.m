@@ -42,13 +42,13 @@
 {
     self.forumImageView = [UIImageView new];
     [self.contentView addSubview:self.forumImageView];
+    self.forumImageView.contentMode = UIViewContentModeScaleAspectFill;
     [self.forumImageView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.centerY.mas_equalTo(self.contentView);
         make.left.equalTo(self.contentView).with.offset(12);
         make.size.mas_equalTo(CGSizeMake(BBSUIForumImageViewHeight, BBSUIForumImageViewHeight));
     }];
-    [self.forumImageView.layer setCornerRadius:25];
-    [self.forumImageView.layer setMasksToBounds:YES];
+
 
     //MARK:名字29292F
     self.forumNameLabel = [UILabel new];
@@ -156,6 +156,19 @@
 #pragma mark - 加载数据
 - (void)layoutData:(BBSForum *)forum
 {
+    if (!self.isCube) {
+        [self.forumImageView.layer setCornerRadius:25];
+        [self.forumImageView.layer setMasksToBounds:YES];
+        [self.forumImageView mas_updateConstraints:^(MASConstraintMaker *make) {
+            make.size.mas_equalTo(CGSizeMake(BBSUIForumImageViewHeight, BBSUIForumImageViewHeight));
+        }];
+    } else {
+        [self.forumImageView.layer setCornerRadius:0];
+        [self.forumImageView.layer setMasksToBounds:true];
+        [self.forumImageView mas_updateConstraints:^(MASConstraintMaker *make) {
+            make.size.mas_equalTo(CGSizeMake(70, BBSUIForumImageViewHeight));
+        }];
+    }
     if (forum.forumPic) {
         self.forumImageView.image = [UIImage BBSImageNamed:@"/Common/forumList.png"];
         [[MOBFImageGetter sharedInstance] getImageWithURL:[NSURL URLWithString:forum.forumPic] result:^(UIImage *image, NSError *error) {

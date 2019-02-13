@@ -36,16 +36,19 @@
     self.title = @"社区";
     
     
-    
-//    NSArray *objs = [[[NSBundle alloc] initWithPath:[[NSBundle mainBundle] pathForResource:@"BBSSDKUI" ofType:@"bundle"]] loadNibNamed:@"BBSUIPostTip" owner:nil options:nil];
-//    
-//    UIView *xibView = objs[0];
-////    xibView.backgroundColor = [UIColor redColor];
-//    
-//    [self.view addSubview:xibView];
-//    [xibView mas_makeConstraints:^(MASConstraintMaker *make) {
-//        make.edges.equalTo(self.view);
-//    }];
+//    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+//        NSBundle *bundle = [[NSBundle alloc] initWithPath:[[NSBundle mainBundle] pathForResource:@"Frameworks/BBSSDKUI" ofType:@"framework"]];
+//        NSLog(@"bundle: %@", bundle);
+//        NSArray *objs = [bundle loadNibNamed:@"BBSUIPostTip" owner:nil options:nil];
+//        
+//        UIView *xibView = objs[0];
+//        //    xibView.backgroundColor = [UIColor redColor];
+//        
+//        [[UIApplication sharedApplication].keyWindow addSubview:xibView];
+//        [xibView mas_makeConstraints:^(MASConstraintMaker *make) {
+//            make.edges.equalTo([UIApplication sharedApplication].keyWindow);
+//        }];
+//    });
 }
 
 

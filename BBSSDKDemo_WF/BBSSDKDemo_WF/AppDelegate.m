@@ -103,7 +103,9 @@
 //    BBSUIForumHomeViewController *homeVC = [BBSUIForumHomeViewController forumHomeViewControllerWithTitle:@"安卓巴士"];
     BBSUIForumViewController *vc = [[BBSUIForumViewController alloc] init];
     UINavigationController *homeVC = [[UINavigationController alloc] initWithRootViewController:vc];
-    
+//    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+//        
+//    });
     [_window setRootViewController:homeVC];
     [_window makeKeyAndVisible];
     

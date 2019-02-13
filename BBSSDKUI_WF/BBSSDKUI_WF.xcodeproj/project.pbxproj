@@ -348,6 +348,7 @@
 		7928A1BA21F5D2DF00107820 /* UIDevice+Model.m in Sources */ = {isa = PBXBuildFile; fileRef = 7928A1B821F5D2DE00107820 /* UIDevice+Model.m */; };
 		792DAA762213BDD700FE697E /* BBSUIXieYiViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 792DAA742213BDD700FE697E /* BBSUIXieYiViewController.h */; };
 		792DAA772213BDD700FE697E /* BBSUIXieYiViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 792DAA752213BDD700FE697E /* BBSUIXieYiViewController.m */; };
+		792DAA7922140D3800FE697E /* BBSUIPostTip.xib in Resources */ = {isa = PBXBuildFile; fileRef = 792DAA7822140D3700FE697E /* BBSUIPostTip.xib */; };
 		7939B86621F1DD8E00479D40 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 7939B86521F1DD8E00479D40 /* AppDelegate.m */; };
 		7939B86921F1DD8E00479D40 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7939B86821F1DD8E00479D40 /* ViewController.m */; };
 		7939B86C21F1DD8E00479D40 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7939B86A21F1DD8E00479D40 /* Main.storyboard */; };
@@ -845,6 +846,7 @@
 		7928A1B821F5D2DE00107820 /* UIDevice+Model.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIDevice+Model.m"; sourceTree = "<group>"; };
 		792DAA742213BDD700FE697E /* BBSUIXieYiViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BBSUIXieYiViewController.h; sourceTree = "<group>"; };
 		792DAA752213BDD700FE697E /* BBSUIXieYiViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BBSUIXieYiViewController.m; sourceTree = "<group>"; };
+		792DAA7822140D3700FE697E /* BBSUIPostTip.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = BBSUIPostTip.xib; sourceTree = "<group>"; };
 		7939B86221F1DD8E00479D40 /* test.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = test.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7939B86421F1DD8E00479D40 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		7939B86521F1DD8E00479D40 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -1606,6 +1608,7 @@
 				3A37F9471FF3829600815D8B /* BBSUINewsViewController.m */,
 				4410D6941EA62901001D331E /* BBSUIFastPostViewController.h */,
 				4410D6951EA62901001D331E /* BBSUIFastPostViewController.m */,
+				792DAA7822140D3700FE697E /* BBSUIPostTip.xib */,
 				79E956572212BB2E00198254 /* BBSUIPostTip.h */,
 				79E956582212BB2E00198254 /* BBSUIPostTip.m */,
 				4410D66C1EA628AB001D331E /* BBSUIThreadDetailViewController.h */,
@@ -2165,6 +2168,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				792DAA7922140D3800FE697E /* BBSUIPostTip.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
