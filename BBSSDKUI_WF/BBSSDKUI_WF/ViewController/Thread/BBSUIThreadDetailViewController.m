@@ -129,6 +129,10 @@
 //    self.navigationController.navigationBar.titleTextAttributes = @{NSForegroundColorAttributeName:[UIColor whiteColor]};
 }
 
+- (UIStatusBarStyle)preferredStatusBarStyle {
+    return UIStatusBarStyleLightContent;
+}
+
 - (void)setup
 {
     self.webView.backgroundColor = [UIColor whiteColor];

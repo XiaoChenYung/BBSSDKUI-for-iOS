@@ -289,7 +289,7 @@
 		6B56BBA51EB0C2890033E163 /* BBSForum+BBSUI.m in Sources */ = {isa = PBXBuildFile; fileRef = 6B56BBA31EB0C2890033E163 /* BBSForum+BBSUI.m */; };
 		6B744F0C1F5D7F000081EE4E /* BBSUIBackViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 6B744F021F5D7F000081EE4E /* BBSUIBackViewController.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6B744F0D1F5D7F000081EE4E /* BBSUIBackViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6B744F031F5D7F000081EE4E /* BBSUIBackViewController.m */; };
-		6B744F0E1F5D7F000081EE4E /* BBSUIBaseView.h in Headers */ = {isa = PBXBuildFile; fileRef = 6B744F041F5D7F000081EE4E /* BBSUIBaseView.h */; };
+		6B744F0E1F5D7F000081EE4E /* BBSUIBaseView.h in Headers */ = {isa = PBXBuildFile; fileRef = 6B744F041F5D7F000081EE4E /* BBSUIBaseView.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		6B744F0F1F5D7F000081EE4E /* BBSUIBaseView.m in Sources */ = {isa = PBXBuildFile; fileRef = 6B744F051F5D7F000081EE4E /* BBSUIBaseView.m */; };
 		6B744F101F5D7F000081EE4E /* BBSUINormalNavViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 6B744F061F5D7F000081EE4E /* BBSUINormalNavViewController.h */; };
 		6B744F111F5D7F000081EE4E /* BBSUINormalNavViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6B744F071F5D7F000081EE4E /* BBSUINormalNavViewController.m */; };
@@ -1917,6 +1917,7 @@
 				6B744F141F5D7F000081EE4E /* BBSUIWhiteNavViewController.h in Headers */,
 				6B92BF5B1EA5FBB600A7A56D /* BBSUIForumViewController.h in Headers */,
 				3A1972861F1CCE93004B658A /* BBSUICollectionViewController.h in Headers */,
+				6B744F0E1F5D7F000081EE4E /* BBSUIBaseView.h in Headers */,
 				2FF7AC84207F52A90054BFE8 /* BBSUIBaseViewController.h in Headers */,
 				6B744F0C1F5D7F000081EE4E /* BBSUIBackViewController.h in Headers */,
 				3A1972961F1CE2F4004B658A /* BBSUIInformationView.h in Headers */,
@@ -1931,7 +1932,6 @@
 				6B3B4A361F555F9000884EB6 /* BBSUIAccusationViewController.h in Headers */,
 				4410D68E1EA628E6001D331E /* BBSUIImageView.h in Headers */,
 				3A720ADB1F274511003ABEAE /* BBSUIFansCountView.h in Headers */,
-				6B744F0E1F5D7F000081EE4E /* BBSUIBaseView.h in Headers */,
 				6B0351431F34227D006B5913 /* BBSUIMainStyleNavigationController.h in Headers */,
 				4410D6721EA628AB001D331E /* BBSUIThreadForumListSelectViewController.h in Headers */,
 				3A19729A1F1CE38A004B658A /* BBSUIInformationTableViewCell.h in Headers */,

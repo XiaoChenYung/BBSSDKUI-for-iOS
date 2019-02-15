@@ -296,7 +296,7 @@ static CGFloat kDefaultScale = 0.5;
         
         if (self.uiStyleType == BBSUIRTEStyleTypeTwo) {
             // Toolbar holder used to crop and position toolbar
-            UIView *toolbarCropper = [[UIView alloc] initWithFrame:CGRectMake(self.view.frame.size.width-toolbarCropperW, 40, toolbarCropperW, 44)];
+            UIView *toolbarCropper = [[UIView alloc] initWithFrame:CGRectMake(self.view.frame.size.width-toolbarCropperW, 0, toolbarCropperW, 44)];
             toolbarCropper.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin;
             toolbarCropper.clipsToBounds = YES;
             
@@ -370,7 +370,7 @@ static CGFloat kDefaultScale = 0.5;
             CGFloat toolbarCropperW = 170;
             
             // Toolbar holder used to crop and position toolbar
-            UIView *toolbarCropper = [[UIView alloc] initWithFrame:CGRectMake(self.view.frame.size.width-toolbarCropperW, 40, toolbarCropperW, 44)];
+            UIView *toolbarCropper = [[UIView alloc] initWithFrame:CGRectMake(self.view.frame.size.width-toolbarCropperW, 0, toolbarCropperW, 44)];
             toolbarCropper.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin;
             toolbarCropper.clipsToBounds = YES;
             
@@ -591,7 +591,7 @@ static CGFloat kDefaultScale = 0.5;
 
 - (void)createToolBarScroll {
     
-    self.toolBarScroll = [[UIScrollView alloc] initWithFrame:CGRectMake(0, 40, [self isIpad] ? self.view.frame.size.width : self.view.frame.size.width - 90, 44)];
+    self.toolBarScroll = [[UIScrollView alloc] initWithFrame:CGRectMake(0, 0, [self isIpad] ? self.view.frame.size.width : self.view.frame.size.width - 90, 44)];
     self.toolBarScroll.backgroundColor = [UIColor clearColor];
     self.toolBarScroll.showsHorizontalScrollIndicator = NO;
     
@@ -610,16 +610,16 @@ static CGFloat kDefaultScale = 0.5;
 - (void)createParentHoldingView {
     
     //Background Toolbar
-    UIToolbar *backgroundToolbar = [[UIToolbar alloc] initWithFrame:CGRectMake(0, 40, self.view.frame.size.width, 44)];
+    UIToolbar *backgroundToolbar = [[UIToolbar alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, 44)];
     backgroundToolbar.autoresizingMask = UIViewAutoresizingFlexibleWidth;
     
     //Parent holding view
     self.toolbarHolder = [[UIView alloc] init];
     
     if (_alwaysShowToolbar) {
-        self.toolbarHolder.frame = CGRectMake(0, self.view.frame.size.height - 44 - 40, self.view.frame.size.width, 44 + 40);
+        self.toolbarHolder.frame = CGRectMake(0, self.view.frame.size.height - 44, self.view.frame.size.width, 44);
     } else {
-        self.toolbarHolder.frame = CGRectMake(0, self.view.frame.size.height, self.view.frame.size.width, 44 + 40);
+        self.toolbarHolder.frame = CGRectMake(0, self.view.frame.size.height, self.view.frame.size.width, 44);
     }
     
     self.toolbarHolder.autoresizingMask = self.toolbar.autoresizingMask;
@@ -2171,9 +2171,10 @@ static CGFloat kDefaultScale = 0.5;
 - (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary<NSString *, id> *)info{
 
     UIImage *selectedImage = info[UIImagePickerControllerEditedImage]?:info[UIImagePickerControllerOriginalImage];
-    
+    NSLog(@"图片属性: %@", selectedImage);
     //Scale the image
     CGSize targetSize = CGSizeMake(selectedImage.size.width * self.selectedImageScale, selectedImage.size.height * self.selectedImageScale);
+    NSLog(@"selectedImage.size.width: %f", selectedImage.size.width);
     UIGraphicsBeginImageContext(targetSize);
     [selectedImage drawInRect:CGRectMake(0,0,targetSize.width,targetSize.height)];
     UIImage* scaledImage = UIGraphicsGetImageFromCurrentImageContext();

@@ -51,7 +51,9 @@
 //    });
 }
 
-
+- (UIStatusBarStyle)preferredStatusBarStyle {
+    return UIStatusBarStyleLightContent;
+}
 
 - (void)viewWillAppear:(BOOL)animated
 {

@@ -48,24 +48,24 @@
     
     if (size.height/size.width<2 && size.height/size.width>1 && size.height > 1280)
     {
-        scaled.height = 1280;
-        scaled.width = size.width *(1280.0/size.height);
+        scaled.height = 480;
+        scaled.width = size.width *(480.0/size.height);
     }
     else if (size.width/size.height<2 && size.width/size.height>1 && size.width > 1280)
     {
-        scaled.width = 1280;
+        scaled.width = 480;
         
-        scaled.height = size.height * (1280.0/size.width);
+        scaled.height = size.height * (480/size.width);
     }
     else if (size.height/size.width>2 && size.width>720)
     {
-        scaled.width = 720 ;
-        scaled.height = size.height *(720.0/size.width);
+        scaled.width = 360 ;
+        scaled.height = size.height *(360/size.width);
     }
     else if (size.width/size.height>2 && size.height>720)
     {
-        scaled.height = 720;
-        scaled.width = size.width *(720.0/size.height);
+        scaled.height = 360;
+        scaled.width = size.width *(360/size.height);
     }
     else
     {

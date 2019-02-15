@@ -96,6 +96,10 @@
     
 }
 
+- (UIStatusBarStyle)preferredStatusBarStyle {
+    return UIStatusBarStyleLightContent;
+}
+
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:YES];
@@ -313,10 +317,10 @@
 {
     UIImage *selectedImage = info[UIImagePickerControllerOriginalImage];
     //[selectedImage fixOrientation];
-    
-    //UIImage *scaleImage = [selectedImage scaleImage];
-    
-    NSString *cachePath = [self pathOfsavedImage:[selectedImage fixOrientation]];
+    NSLog(@"selectedImage.size.width: %f", selectedImage.size.width);
+    UIImage *scaleImage = [[selectedImage fixOrientation] scaleImage];
+    NSLog(@"scaleImage: %f", scaleImage.size.width);
+    NSString *cachePath = [self pathOfsavedImage:scaleImage];
 
     NSString *trigger = [NSString stringWithFormat:@"<img src=\"%@\" alt=\"%@\" style=\"max-width:%fpx;\"/>",cachePath,@"BBSUI",self.view.frame.size.width - 27];
     
@@ -476,6 +480,10 @@
 #pragma mark - 发布
 - (void)publishButtonHandler:(UIButton *)button
 {
+    if (!self.editor.isSelectedXieYi) {
+        [BBSUIProcessHUD showFailInfo:@"请同意发帖协议协议" delay:0.5];
+        return;
+    }
     [self.editor hideKeyboard];
     
     // 验证发帖间隔是否符合要求

@@ -39,6 +39,7 @@
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
+    [self.navigationController setNavigationBarHidden:false animated:animated];
     // 设置数据
     [_collectionView refreshData];
 }

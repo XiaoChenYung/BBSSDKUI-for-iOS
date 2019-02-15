@@ -89,6 +89,10 @@ static NSString *cellIdentifier = @"ThreadSummaryCell";
     self.cacheDict = [NSMutableDictionary dictionary];
 }
 
+- (UIStatusBarStyle)preferredStatusBarStyle {
+    return UIStatusBarStyleLightContent;
+}
+
 - (void)viewWillAppear:(BOOL)animated
 {
 //    [UIApplication sharedApplication].statusBarStyle = UIStatusBarStyleDefault;
@@ -667,11 +671,6 @@ static NSString *cellIdentifier = @"ThreadSummaryCell";
 - (void)didBeginPostThread
 {
     [[BBSUIStatusBarTip shareStatusBar] postBegin];
-}
-
-- (void)didPostSuccess
-{
-    [[BBSUIStatusBarTip shareStatusBar] postSuccess];
     if (![[NSUserDefaults standardUserDefaults] valueForKey:@"postTip"]) {
         NSBundle *bundle = [[NSBundle alloc] initWithPath:[[NSBundle mainBundle] pathForResource:@"Frameworks/BBSSDKUI" ofType:@"framework"]];
         NSLog(@"bundle: %@", bundle);
@@ -684,17 +683,12 @@ static NSString *cellIdentifier = @"ThreadSummaryCell";
         [xibView mas_makeConstraints:^(MASConstraintMaker *make) {
             make.edges.equalTo(self.navigationController.view);
         }];
-//        UIAlertController *controller = [UIAlertController alertControllerWithTitle:nil message:@"发帖待通过管理员审核后展示" preferredStyle:UIAlertControllerStyleAlert];
-//        UIAlertAction *confirm = [UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-//
-//        }];
-//        UIAlertAction *ignore = [UIAlertAction actionWithTitle:@"不再提示" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-//            [[NSUserDefaults standardUserDefaults] setValue:@"yes" forKey:@"postTip"];
-//        }];
-//        [controller addAction:ignore];
-//        [controller addAction:confirm];
-//        [self presentViewController:controller animated:true completion:nil];
     }
+}
+
+- (void)didPostSuccess
+{
+    [[BBSUIStatusBarTip shareStatusBar] postSuccess];
 }
 
 - (void)didPostFailWithError:(NSError *)error
@@ -704,9 +698,9 @@ static NSString *cellIdentifier = @"ThreadSummaryCell";
     if (error.code == 9001200) {
         [BBSUIContext shareInstance].currentUser = nil;
         [[NSNotificationCenter defaultCenter] postNotificationName:@"com.mob.bbs.sdk.BBSNeedLogin" object:nil];
-//        BBSUILoginViewController *vc = [[BBSUILoginViewController alloc] init];
-//        UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
-//        [self presentViewController:nav animated:YES completion:nil];
+        BBSUILoginViewController *vc = [[BBSUILoginViewController alloc] init];
+        UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
+        [self presentViewController:nav animated:YES completion:nil];
     }
 }
 
