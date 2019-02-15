@@ -87,6 +87,7 @@
 {
     [super viewDidLoad];
     self.title = @"发布帖子";
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(beginPostThread) name:@"beginPostThread" object:nil];
     self.edgesForExtendedLayout = UIRectEdgeNone ;
     _images = [NSMutableArray array];
 
@@ -94,6 +95,10 @@
     [self.titleTextField becomeFirstResponder];
     [self setupAsDraft];
     
+}
+
+- (void)dealloc {
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
 - (UIStatusBarStyle)preferredStatusBarStyle {
@@ -186,6 +191,22 @@
         self.hideNameButton.hidden = YES;
         self.navigationItem.rightBarButtonItems = @[self.publishButtonItem];
     }
+}
+
+- (void)beginPostThread {
+    for (id<iBBSUIFastPostViewControllerDelegate> obj in _delegates)
+    {
+        if ([obj respondsToSelector:@selector(didBeginPostThread)])
+        {
+            [obj didBeginPostThread];
+        }
+    }
+    
+    
+    [self dismissViewControllerAnimated:YES completion:nil];
+    
+    [self postThread];
+    self.checkMasterButton.selected = NO;
 }
 
 #pragma mark - 取消
@@ -481,7 +502,7 @@
 - (void)publishButtonHandler:(UIButton *)button
 {
     if (!self.editor.isSelectedXieYi) {
-        [BBSUIProcessHUD showFailInfo:@"请同意发帖协议协议" delay:0.5];
+        [BBSUIProcessHUD showFailInfo:@"请同意发帖协议" delay:2];
         return;
     }
     [self.editor hideKeyboard];
@@ -493,13 +514,13 @@
         NSInteger timeOffset = [settings[@"floodctrl"] integerValue];
         
         NSInteger lastime = [BBSUIContext shareInstance].lastFastPostTime;
-        NSLog(@"lastTime = %lu",lastime);
+        NSLog(@"lastTime = %ld",(long)lastime);
         NSTimeInterval currentTime = [[NSDate date] timeIntervalSince1970];
         
         
         if (currentTime - lastime < timeOffset)
         {
-            [BBSUIProcessHUD showFailInfo:[NSString stringWithFormat:@"发帖间隔小于%lu秒",timeOffset] delay:2];
+            [BBSUIProcessHUD showFailInfo:[NSString stringWithFormat:@"发帖间隔小于%ld秒",(long)timeOffset] delay:2];
             return;
         }
     }
@@ -526,21 +547,24 @@
     
     [self.view endEditing:YES];
     
-    
-    for (id<iBBSUIFastPostViewControllerDelegate> obj in _delegates)
-    {
-        if ([obj respondsToSelector:@selector(didBeginPostThread)])
-        {
-            [obj didBeginPostThread];
-        }
+    if (![[NSUserDefaults standardUserDefaults] valueForKey:@"postTip"]) {
+        NSBundle *bundle = [[NSBundle alloc] initWithPath:[[NSBundle mainBundle] pathForResource:@"Frameworks/BBSSDKUI" ofType:@"framework"]];
+        NSLog(@"bundle: %@", bundle);
+        NSArray *objs = [bundle loadNibNamed:@"BBSUIPostTip" owner:nil options:nil];
+        
+        UIView *xibView = objs[0];
+        //    xibView.backgroundColor = [UIColor redColor];
+        
+        [[UIApplication sharedApplication].keyWindow addSubview:xibView];
+        [xibView mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.edges.equalTo([UIApplication sharedApplication].keyWindow);
+        }];
+    } else {
+        [self beginPostThread];
     }
-    
-    
-    [self dismissViewControllerAnimated:YES completion:nil];
-    
-    [self postThread];
-    self.checkMasterButton.selected = NO;
  }
+
+
 
 - (void)hideNamebtnHandler:(UIButton *)button
 {

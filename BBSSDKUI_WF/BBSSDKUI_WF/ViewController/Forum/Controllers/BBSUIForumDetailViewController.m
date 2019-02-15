@@ -644,9 +644,9 @@ static NSString *cellIdentifier = @"ThreadSummaryCell";
     {
         self.isPresent = YES;
         [[NSNotificationCenter defaultCenter] postNotificationName:@"com.mob.bbs.sdk.BBSNeedLogin" object:nil];
-//        BBSUILoginViewController *vc = [[BBSUILoginViewController alloc] init];
-//        UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
-//        [self.navigationController presentViewController:nav animated:YES completion:nil];
+        BBSUILoginViewController *vc = [[BBSUILoginViewController alloc] init];
+        UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
+        [self.navigationController presentViewController:nav animated:YES completion:nil];
     }
     else
     {
@@ -671,19 +671,19 @@ static NSString *cellIdentifier = @"ThreadSummaryCell";
 - (void)didBeginPostThread
 {
     [[BBSUIStatusBarTip shareStatusBar] postBegin];
-    if (![[NSUserDefaults standardUserDefaults] valueForKey:@"postTip"]) {
-        NSBundle *bundle = [[NSBundle alloc] initWithPath:[[NSBundle mainBundle] pathForResource:@"Frameworks/BBSSDKUI" ofType:@"framework"]];
-        NSLog(@"bundle: %@", bundle);
-        NSArray *objs = [bundle loadNibNamed:@"BBSUIPostTip" owner:nil options:nil];
-        
-        UIView *xibView = objs[0];
-        //    xibView.backgroundColor = [UIColor redColor];
-        
-        [self.navigationController.view addSubview:xibView];
-        [xibView mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.edges.equalTo(self.navigationController.view);
-        }];
-    }
+//    if (![[NSUserDefaults standardUserDefaults] valueForKey:@"postTip"]) {
+//        NSBundle *bundle = [[NSBundle alloc] initWithPath:[[NSBundle mainBundle] pathForResource:@"Frameworks/BBSSDKUI" ofType:@"framework"]];
+//        NSLog(@"bundle: %@", bundle);
+//        NSArray *objs = [bundle loadNibNamed:@"BBSUIPostTip" owner:nil options:nil];
+//        
+//        UIView *xibView = objs[0];
+//        //    xibView.backgroundColor = [UIColor redColor];
+//        
+//        [self.navigationController.view addSubview:xibView];
+//        [xibView mas_makeConstraints:^(MASConstraintMaker *make) {
+//            make.edges.equalTo(self.navigationController.view);
+//        }];
+//    }
 }
 
 - (void)didPostSuccess

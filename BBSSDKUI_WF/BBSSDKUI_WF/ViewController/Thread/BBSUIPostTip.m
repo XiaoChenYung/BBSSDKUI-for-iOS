@@ -30,6 +30,7 @@
     if (self.selectedButton.isSelected) {
         [[NSUserDefaults standardUserDefaults] setValue:@"yes" forKey:@"postTip"];
     }
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"beginPostThread" object:nil];
     [self removeFromSuperview];
 }
 

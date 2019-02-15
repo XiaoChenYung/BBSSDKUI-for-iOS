@@ -182,9 +182,10 @@
     self.subjectLabel =
     ({
         UILabel *subjectLabel = [[UILabel alloc] init];
+        subjectLabel.lineBreakMode = NSLineBreakByTruncatingTail;
         subjectLabel.font = [UIFont boldSystemFontOfSize:16];
         subjectLabel.textColor = DZSUIColorFromHex(0x3A4045);
-        subjectLabel.numberOfLines = 0 ;
+        subjectLabel.numberOfLines = 1 ;
         subjectLabel.text = @"subjectContent" ;
 //        subjectLabel.lineBreakMode = NSLineBreakByTruncatingTail;
         [self.contentView addSubview:subjectLabel];
@@ -202,9 +203,10 @@
     self.summaryLabel =
     ({
         UILabel *summaryLabel = [[UILabel alloc] init];
+        summaryLabel.lineBreakMode = NSLineBreakByTruncatingTail;
         summaryLabel.font = [UIFont systemFontOfSize:13];
         summaryLabel.textColor = DZSUIColorFromHex(0x787878);
-        summaryLabel.numberOfLines = 3 ;
+        summaryLabel.numberOfLines = 2 ;
         summaryLabel.text = @"summaryContent" ;
         [self.contentView addSubview:summaryLabel];
         
@@ -1029,6 +1031,7 @@
             _summaryLabel.textColor = DZSUIColorFromHex(0x9A9EA5);
         }
     }
+    _subjectLabel.lineBreakMode = NSLineBreakByTruncatingTail;
     _summaryLabel.lineBreakMode = NSLineBreakByTruncatingTail;
 }
 

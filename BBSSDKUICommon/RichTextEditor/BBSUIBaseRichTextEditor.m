@@ -269,7 +269,7 @@ static CGFloat kDefaultScale = 0.5;
     self.enabledToolbarItems = [[NSArray alloc] init];
     
     //Frame for the source view and editor view
-    CGRect frame = CGRectMake(0, 0, self.view.frame.size.width, 150);
+    CGRect frame = CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height);
     
     //Source View
     [self createSourceViewWithFrame:frame];
@@ -296,7 +296,7 @@ static CGFloat kDefaultScale = 0.5;
         
         if (self.uiStyleType == BBSUIRTEStyleTypeTwo) {
             // Toolbar holder used to crop and position toolbar
-            UIView *toolbarCropper = [[UIView alloc] initWithFrame:CGRectMake(self.view.frame.size.width-toolbarCropperW, 0, toolbarCropperW, 44)];
+            UIView *toolbarCropper = [[UIView alloc] initWithFrame:CGRectMake(self.view.frame.size.width-toolbarCropperW, 40, toolbarCropperW, 44)];
             toolbarCropper.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin;
             toolbarCropper.clipsToBounds = YES;
             
@@ -370,7 +370,7 @@ static CGFloat kDefaultScale = 0.5;
             CGFloat toolbarCropperW = 170;
             
             // Toolbar holder used to crop and position toolbar
-            UIView *toolbarCropper = [[UIView alloc] initWithFrame:CGRectMake(self.view.frame.size.width-toolbarCropperW, 0, toolbarCropperW, 44)];
+            UIView *toolbarCropper = [[UIView alloc] initWithFrame:CGRectMake(self.view.frame.size.width-toolbarCropperW, 40, toolbarCropperW, 44)];
             toolbarCropper.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin;
             toolbarCropper.clipsToBounds = YES;
             
@@ -541,6 +541,8 @@ static CGFloat kDefaultScale = 0.5;
     
     self.editorView = [[UIWebView alloc] initWithFrame:frame];
     self.editorView.backgroundColor = [UIColor whiteColor];
+    self.editorView.scrollView.backgroundColor = [UIColor whiteColor];
+    self.editorView.scrollView.showsHorizontalScrollIndicator = false;
     self.editorView.delegate = self;
     self.editorView.hidesInputAccessoryView = YES;
     self.editorView.keyboardDisplayRequiresUserAction = NO;
@@ -550,21 +552,6 @@ static CGFloat kDefaultScale = 0.5;
     self.editorView.scrollView.bounces = NO;
     self.editorView.backgroundColor = [UIColor whiteColor];
     [self.view addSubview:self.editorView];
-    
-    self.xieyiButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    self.xieyiButton.selected = true;
-    self.xieyiButton.frame = CGRectMake(12, CGRectGetMaxY(frame), 20, 20);
-    [self.view addSubview:self.xieyiButton];
-    [self.xieyiButton setImage:[UIImage BBSImageNamed:@"RichEditor/icon_selected_nor@2x.png"] forState:UIControlStateNormal];
-    [self.xieyiButton setImage:[UIImage BBSImageNamed:@"RichEditor/icon_selected_pre@2x.png"] forState:UIControlStateSelected];
-    [self.xieyiButton addTarget:self action:@selector(xieyiButtonClick:) forControlEvents:UIControlEventTouchUpInside];
-    self.xieyiLinkButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    self.xieyiLinkButton.frame = CGRectMake(42, CGRectGetMaxY(frame), 150, 20);
-    [self.view addSubview:self.xieyiLinkButton];
-    self.xieyiLinkButton.titleLabel.font = [UIFont systemFontOfSize:10];
-    [self.xieyiLinkButton setTitle:@"发布即同意《圈粉TV社区条款》" forState:UIControlStateNormal];
-    [self.xieyiLinkButton setTitleColor: [UIColor colorWithRed:81/255.0 green:147/255.0 blue:238/255.0 alpha:1/1.0] forState:UIControlStateNormal];
-    [self.xieyiLinkButton addTarget:self action:@selector(xieyiLinkButtonClick) forControlEvents:UIControlEventTouchUpInside];
 }
 
 - (BOOL)isSelectedXieYi {
@@ -591,7 +578,7 @@ static CGFloat kDefaultScale = 0.5;
 
 - (void)createToolBarScroll {
     
-    self.toolBarScroll = [[UIScrollView alloc] initWithFrame:CGRectMake(0, 0, [self isIpad] ? self.view.frame.size.width : self.view.frame.size.width - 90, 44)];
+    self.toolBarScroll = [[UIScrollView alloc] initWithFrame:CGRectMake(0, 40, [self isIpad] ? self.view.frame.size.width : self.view.frame.size.width - 90, 44)];
     self.toolBarScroll.backgroundColor = [UIColor clearColor];
     self.toolBarScroll.showsHorizontalScrollIndicator = NO;
     
@@ -610,18 +597,31 @@ static CGFloat kDefaultScale = 0.5;
 - (void)createParentHoldingView {
     
     //Background Toolbar
-    UIToolbar *backgroundToolbar = [[UIToolbar alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, 44)];
+    UIToolbar *backgroundToolbar = [[UIToolbar alloc] initWithFrame:CGRectMake(0, 40, self.view.frame.size.width, 44)];
     backgroundToolbar.autoresizingMask = UIViewAutoresizingFlexibleWidth;
     
     //Parent holding view
     self.toolbarHolder = [[UIView alloc] init];
     
     if (_alwaysShowToolbar) {
-        self.toolbarHolder.frame = CGRectMake(0, self.view.frame.size.height - 44, self.view.frame.size.width, 44);
+        self.toolbarHolder.frame = CGRectMake(0, self.view.frame.size.height - 44 - 40, self.view.frame.size.width, 44 + 40);
     } else {
-        self.toolbarHolder.frame = CGRectMake(0, self.view.frame.size.height, self.view.frame.size.width, 44);
+        self.toolbarHolder.frame = CGRectMake(0, self.view.frame.size.height, self.view.frame.size.width, 44 + 40);
     }
-    
+    self.xieyiButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    self.xieyiButton.selected = true;
+    self.xieyiButton.frame = CGRectMake(12, 10, 20, 20);
+    [self.toolbarHolder addSubview:self.xieyiButton];
+    [self.xieyiButton setImage:[UIImage BBSImageNamed:@"RichEditor/icon_selected_nor@2x.png"] forState:UIControlStateNormal];
+    [self.xieyiButton setImage:[UIImage BBSImageNamed:@"RichEditor/icon_selected_pre@2x.png"] forState:UIControlStateSelected];
+    [self.xieyiButton addTarget:self action:@selector(xieyiButtonClick:) forControlEvents:UIControlEventTouchUpInside];
+    self.xieyiLinkButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    self.xieyiLinkButton.frame = CGRectMake(42, 10, 150, 20);
+    [self.toolbarHolder addSubview:self.xieyiLinkButton];
+    self.xieyiLinkButton.titleLabel.font = [UIFont systemFontOfSize:10];
+    [self.xieyiLinkButton setTitle:@"发布即同意《圈粉TV社区条款》" forState:UIControlStateNormal];
+    [self.xieyiLinkButton setTitleColor: [UIColor colorWithRed:81/255.0 green:147/255.0 blue:238/255.0 alpha:1/1.0] forState:UIControlStateNormal];
+    [self.xieyiLinkButton addTarget:self action:@selector(xieyiLinkButtonClick) forControlEvents:UIControlEventTouchUpInside];
     self.toolbarHolder.autoresizingMask = self.toolbar.autoresizingMask;
     [self.toolbarHolder addSubview:self.toolBarScroll];
     [self.toolbarHolder insertSubview:backgroundToolbar atIndex:0];
@@ -2276,7 +2276,7 @@ static CGFloat kDefaultScale = 0.5;
             // Editor View
             CGRect editorFrame = self.editorView.frame;
             editorFrame.size.height = (self.view.frame.size.height - keyboardHeight) - sizeOfToolbar - extraHeight;
-//            self.editorView.frame = editorFrame;
+            self.editorView.frame = editorFrame;
             self.editorViewFrame = self.editorView.frame;
             self.editorView.scrollView.contentInset = UIEdgeInsetsZero;
             self.editorView.scrollView.scrollIndicatorInsets = UIEdgeInsetsZero;
@@ -2287,7 +2287,7 @@ static CGFloat kDefaultScale = 0.5;
             self.sourceView.frame = sourceFrame;
             
             // Provide editor with keyboard height and editor view height
-            [self setFooterHeight:(keyboardHeight - 8)];
+            [self setFooterHeight:(keyboardHeight - 10)];
             [self setContentHeight: self.editorViewFrame.size.height];
             
         } completion:nil];
@@ -2321,8 +2321,7 @@ static CGFloat kDefaultScale = 0.5;
             } else {
                 editorFrame.size.height = self.view.frame.size.height;
             }
-            
-//            self.editorView.frame = editorFrame;
+            self.editorView.frame = editorFrame;
             self.editorViewFrame = self.editorView.frame;
             self.editorView.scrollView.contentInset = UIEdgeInsetsZero;
             self.editorView.scrollView.scrollIndicatorInsets = UIEdgeInsetsZero;
@@ -2338,7 +2337,7 @@ static CGFloat kDefaultScale = 0.5;
             
             self.sourceView.frame = sourceFrame;
             
-            [self setFooterHeight:0];
+            [self setFooterHeight:10];
             [self setContentHeight:self.editorViewFrame.size.height];
             
         } completion:nil];
