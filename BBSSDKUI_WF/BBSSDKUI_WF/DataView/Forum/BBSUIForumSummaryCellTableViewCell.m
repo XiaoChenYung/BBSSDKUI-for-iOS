@@ -166,7 +166,7 @@
         [self.forumImageView.layer setCornerRadius:0];
         [self.forumImageView.layer setMasksToBounds:true];
         [self.forumImageView mas_updateConstraints:^(MASConstraintMaker *make) {
-            make.size.mas_equalTo(CGSizeMake(70, BBSUIForumImageViewHeight));
+            make.size.mas_equalTo(CGSizeMake(50, BBSUIForumImageViewHeight));
         }];
     }
     if (forum.forumPic) {

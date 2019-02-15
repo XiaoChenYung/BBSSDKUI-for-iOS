@@ -487,6 +487,10 @@ static CGFloat kDefaultScale = 0.5;
     
 }
 
+- (UIStatusBarStyle)preferredStatusBarStyle {
+    return UIStatusBarStyleLightContent;
+}
+
 - (void)viewDidDisappear:(BOOL)animated
 {
     [super viewDidDisappear:YES];
@@ -616,9 +620,9 @@ static CGFloat kDefaultScale = 0.5;
     [self.xieyiButton setImage:[UIImage BBSImageNamed:@"RichEditor/icon_selected_pre@2x.png"] forState:UIControlStateSelected];
     [self.xieyiButton addTarget:self action:@selector(xieyiButtonClick:) forControlEvents:UIControlEventTouchUpInside];
     self.xieyiLinkButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    self.xieyiLinkButton.frame = CGRectMake(42, 10, 150, 20);
+    self.xieyiLinkButton.frame = CGRectMake(42, 10, 206, 20);
     [self.toolbarHolder addSubview:self.xieyiLinkButton];
-    self.xieyiLinkButton.titleLabel.font = [UIFont systemFontOfSize:10];
+    self.xieyiLinkButton.titleLabel.font = [UIFont systemFontOfSize:14];
     [self.xieyiLinkButton setTitle:@"发布即同意《圈粉TV社区条款》" forState:UIControlStateNormal];
     [self.xieyiLinkButton setTitleColor: [UIColor colorWithRed:81/255.0 green:147/255.0 blue:238/255.0 alpha:1/1.0] forState:UIControlStateNormal];
     [self.xieyiLinkButton addTarget:self action:@selector(xieyiLinkButtonClick) forControlEvents:UIControlEventTouchUpInside];

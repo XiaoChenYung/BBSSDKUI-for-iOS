@@ -133,7 +133,7 @@
     //头像
     self.avatarImageView =
     ({
-        UIImage *placeholdImage = [UIImage BBSImageNamed:@"/User/AvatarDefault.png"];
+        UIImage *placeholdImage = [UIImage BBSImageNamed:@"/User/AvatarDefault2.png"];
         UIImageView *avatarImageView = [[UIImageView alloc] initWithImage:placeholdImage];
         avatarImageView.layer.cornerRadius = 10;
         avatarImageView.layer.masksToBounds = YES;
