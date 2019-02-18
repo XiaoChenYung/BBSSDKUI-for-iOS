@@ -548,13 +548,13 @@
     [self.view endEditing:YES];
     
     if (![[NSUserDefaults standardUserDefaults] valueForKey:@"postTip"]) {
-        NSBundle *bundle = [[NSBundle alloc] initWithPath:[[NSBundle mainBundle] pathForResource:@"Frameworks/BBSSDKUI" ofType:@"framework"]];
-        NSLog(@"bundle: %@", bundle);
-        NSArray *objs = [bundle loadNibNamed:@"BBSUIPostTip" owner:nil options:nil];
-        
+//        NSBundle *bundle = [[NSBundle alloc] initWithPath:[[NSBundle mainBundle] pathForResource:@"Frameworks/BBSSDKUI" ofType:@"framework"]];
+//        NSLog(@"bundle: %@", bundle);
+        NSArray *objs = [[NSBundle mainBundle] loadNibNamed:@"BBSUIPostTip" owner:nil options:nil];
+
         UIView *xibView = objs[0];
         //    xibView.backgroundColor = [UIColor redColor];
-        
+
         [[UIApplication sharedApplication].keyWindow addSubview:xibView];
         [xibView mas_makeConstraints:^(MASConstraintMaker *make) {
             make.edges.equalTo([UIApplication sharedApplication].keyWindow);

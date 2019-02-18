@@ -85,7 +85,7 @@ static NSString *cellIdentifier = @"ThreadSummaryCell";
     [self _createTabView];
     [self setNavigationBarTitle];
     self.selectType = BBSUIThreadSelectTypeLatest;
-    self.orderType = BBSUIThreadOrderCommentTime;
+    self.orderType = BBSUIThreadOrderPostTime;
     self.cacheDict = [NSMutableDictionary dictionary];
 }
 
@@ -102,6 +102,38 @@ static NSString *cellIdentifier = @"ThreadSummaryCell";
 //    }
     [super viewWillAppear:animated];
     self.isPresent = NO;
+    if ([[NSUserDefaults standardUserDefaults] valueForKey:@"BlockUserID"]) {
+        NSNumber *numberUserID = [[NSUserDefaults standardUserDefaults] valueForKey:@"BlockUserID"];
+        NSArray *numberUserIDs = [[NSUserDefaults standardUserDefaults] valueForKey:@"BlockUserIDs"];
+        if (numberUserIDs) {
+            NSMutableArray *mNumberUserIDs = [NSMutableArray arrayWithArray:numberUserIDs];
+            [mNumberUserIDs addObject:numberUserID];
+            [[NSUserDefaults standardUserDefaults] setObject:[mNumberUserIDs copy] forKey:@"BlockUserIDs"];
+        } else {
+            NSMutableArray *mNumberUserIDs = [NSMutableArray array];
+            [mNumberUserIDs addObject:numberUserID];
+            [[NSUserDefaults standardUserDefaults] setObject:[mNumberUserIDs copy] forKey:@"BlockUserIDs"];
+        }
+        [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"BlockUserID"];
+        NSInteger userID = [numberUserID integerValue];
+        NSMutableArray *indexPaths = [NSMutableArray array];
+        NSMutableArray *tempThreads = [NSMutableArray array];
+        for (NSInteger i = 0; i < self.threadListArray.count; i++) {
+            BBSThread *thread = self.threadListArray[i];
+            if (thread.authorId == userID) {
+                [indexPaths addObject:[NSIndexPath indexPathForRow:i inSection:0]];
+            } else {
+                [tempThreads addObject:thread];
+            }
+        }
+        self.threadListArray = tempThreads;
+        [self.tableView deleteRowsAtIndexPaths:indexPaths withRowAnimation:UITableViewRowAnimationAutomatic];
+        if (self.threadListArray.count == 0) {
+            [self.tableView addSubview:self.noDataView];
+            [self.noDataImageView setImage:[UIImage BBSImageNamed:@"/Common/wnr@2x.png"]];
+            [self.noDataLabel setText:@"暂无内容"];
+        }
+    }
 }
 
 - (void)viewWillDisappear:(BOOL)animated
@@ -213,10 +245,29 @@ static NSString *cellIdentifier = @"ThreadSummaryCell";
     
     [BBSSDK getThreadListWithFid:self.currentForum.fid  orderType:orderTypeString selectType:selectTypeString pageIndex:self.currentIndex pageSize:BBSUIPageSize result:^(NSArray *threadList, NSError *error) {
         if (!error) {
-            
+            NSArray *blockUserIDs = [[NSUserDefaults standardUserDefaults] valueForKey:@"BlockUserIDs"];
+            NSLog(@"blockUserIDs: %@", blockUserIDs);
+            NSMutableArray *tempThreadList = [NSMutableArray array];
+            if (blockUserIDs && threadList.count > 0) {
+                for (BBSThread *thread in threadList) {
+                    NSInteger count = 0;
+                    NSLog(@"BBSThreadUserIDs: %@", @(thread.authorId));
+                    for (NSNumber *number in blockUserIDs) {
+                        if (thread.authorId == [number integerValue]) {
+                            break;
+                        }
+                        count ++;
+                    }
+                    if (count == blockUserIDs.count) {
+                        [tempThreadList addObject:thread];
+                    }
+                }
+            } else if (blockUserIDs == nil && threadList.count > 0) {
+                tempThreadList = [NSMutableArray arrayWithArray:threadList];
+            }
             if (_selectedArray.count)
             {
-                for (BBSThread *obj in threadList)
+                for (BBSThread *obj in tempThreadList)
                 {
                     if ([_selectedArray containsObject:@(obj.tid)])
                     {
@@ -230,16 +281,16 @@ static NSString *cellIdentifier = @"ThreadSummaryCell";
 //            }
             if (weakSelf.currentIndex == 1) {
                 [weakSelf.tableView.mj_header endRefreshing];
-                weakSelf.threadListArray = [NSMutableArray arrayWithArray:threadList];
+                weakSelf.threadListArray = [NSMutableArray arrayWithArray:tempThreadList];
                 [weakSelf.tableView reloadData];
             }else{
-                if (threadList.count > 0) {
+                if (tempThreadList.count > 0) {
                     NSMutableArray *indexPaths = [NSMutableArray array];
-                    for (NSInteger i = 0; i < threadList.count; i++) {
+                    for (NSInteger i = 0; i < tempThreadList.count; i++) {
                         NSIndexPath *path = [NSIndexPath indexPathForRow:weakSelf.threadListArray.count + i inSection:0];
                         [indexPaths addObject:path];
                     }
-                    [weakSelf.threadListArray addObjectsFromArray:threadList];
+                    [weakSelf.threadListArray addObjectsFromArray:tempThreadList];
                     [weakSelf.tableView insertRowsAtIndexPaths:[indexPaths copy] withRowAnimation:UITableViewRowAnimationAutomatic];
                 }
             }
@@ -253,7 +304,7 @@ static NSString *cellIdentifier = @"ThreadSummaryCell";
             
             if (weakSelf.currentIndex == 1) {
                 
-                if (threadList.count == 0) {
+                if (tempThreadList.count == 0) {
                     if (self.currentForum.fid == 0) {
                         [self.tableView addSubview:self.noDataView];
                         [self.noDataImageView setImage:[UIImage BBSImageNamed:@"/Common/wnr@2x.png"]];
@@ -267,7 +318,7 @@ static NSString *cellIdentifier = @"ThreadSummaryCell";
                 }
             }
             
-            if (threadList.count > 0) {
+            if (tempThreadList.count > 0) {
                 [weakSelf.view bbs_configureTipViewWithTipMessage:@"" hasData:YES];
                 if (_noDataView.superview) {
                     [_noDataView removeFromSuperview];
@@ -651,6 +702,7 @@ static NSString *cellIdentifier = @"ThreadSummaryCell";
     else
     {
 
+        NSLog(@"token: %@", [BBSUIContext shareInstance].currentUser.token);
         self.isPresent = YES;
         BBSUIFastPostViewController *editVC = [BBSUIFastPostViewController shareInstance];
         editVC.isEnterVc = YES;

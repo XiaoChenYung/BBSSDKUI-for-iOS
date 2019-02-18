@@ -312,7 +312,7 @@
                 [theWebController updateUI];
                 NSDictionary * res = [theWebController dictionaryWithThread:thread];
                 NSMutableDictionary *mutDic = [[NSMutableDictionary alloc] initWithDictionary:res];
-                
+                NSLog(@"bbs message: %@", thread.message);
                 if ([BBSSDK isUsePlug])
                 {
                     mutDic[@"isPlug"] = @1;
@@ -389,6 +389,7 @@
 
             for (BBSPost *obj in postList)
             {
+                NSLog(@"bbs message: %@", obj.message);
                 if ([obj isKindOfClass:[BBSPost class]])
                 {
                     
@@ -951,7 +952,73 @@
         
     }];
     
-    return @[createdOnOrderAction];
+    BBSUIPopoverAction *blockUserAction = [BBSUIPopoverAction actionWithSelectedImage:nil deselectedImage:nil title:@"拉黑用户" handler:^(BBSUIPopoverAction *action) {
+        
+        if (![BBSUIContext shareInstance].currentUser)
+        {
+            [theController presentLogin];
+            return ;
+        }
+        
+        UIAlertController *blockVC = [UIAlertController alertControllerWithTitle:nil message:@"拉黑用户，你将不再看到该用户的发帖" preferredStyle:UIAlertControllerStyleAlert];
+        UIAlertAction *blockCancelAction = [UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
+            
+        }];
+        UIAlertAction *blockConfirmAction = [UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+            
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                UIAlertController *alertVC = [UIAlertController alertControllerWithTitle:nil message:@"拉黑成功" preferredStyle:UIAlertControllerStyleAlert];
+                UIAlertAction *confirmAction = [UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+                    [self.navigationController popViewControllerAnimated:true];
+                    [[NSUserDefaults standardUserDefaults] setObject: @(self.threadModel.authorId) forKey:@"BlockUserID"];
+                }];
+                [alertVC addAction:confirmAction];
+                //        BBSUIAccusationViewController *accusationVC = [[BBSUIAccusationViewController alloc] initWithThread:theController.threadModel];
+                //        [theController.navigationController pushViewController:accusationVC animated:YES];
+                [self presentViewController:alertVC animated:true completion:nil];
+            });
+            
+            //1.创建会话对象
+            NSURLSession *session = [NSURLSession sharedSession];
+            NSString *urlStr = [NSString stringWithFormat:@"http://47.105.63.78:34003/appapi/index.php?mod=user_addblack&buid=%@", [BBSUIContext shareInstance].currentUser.uid];
+            //2.根据会话对象创建task
+            NSURL *url = [NSURL URLWithString:urlStr];
+            
+            //3.创建可变的请求对象
+            NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:url];
+            
+            //4.修改请求方法为POST
+            request.HTTPMethod = @"GET";
+            
+            //5.设置请求体
+            //        request.HTTPBody = [@"username=520it&pwd=520it&type=JSON" dataUsingEncoding:NSUTF8StringEncoding];
+            
+            //6.根据会话对象创建一个Task(发送请求）
+            /*
+             第一个参数：请求对象
+             第二个参数：completionHandler回调（请求完成【成功|失败】的回调）
+             data：响应体信息（期望的数据）
+             response：响应头信息，主要是对服务器端的描述
+             error：错误信息，如果请求失败，则error有值
+             */
+            NSURLSessionDataTask *dataTask = [session dataTaskWithRequest:request completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
+                
+                //8.解析数据
+                NSDictionary *dict = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:nil];
+                NSLog(@"返回数据%@",dict);
+                
+            }];
+            
+            //7.执行任务
+            [dataTask resume];
+        }];
+        [blockVC addAction:blockCancelAction];
+        [blockVC addAction:blockConfirmAction];
+        [self presentViewController:blockVC animated:true completion:nil];
+        
+    }];
+    
+    return @[createdOnOrderAction, blockUserAction];
 }
 
 #pragma mark - 弹出键盘写回复
