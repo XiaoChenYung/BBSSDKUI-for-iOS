@@ -17,7 +17,7 @@
     		<!--作者 start-->
     		<div class="author">
     			<div class="author-left">
-    				<div class="author-portrait" v-if="article.author"><img @click="openAuthor(article.authorId)" src="../assets/images/AvatarDefault2.png"/></div>
+                    <div class="author-portrait" v-if="article.author"><img @click="openAuthor(article.authorId)" :src="article.avatar"/></div>
     				<div class="author-info">
     					<div class="author-name" v-if="article.author" >{{ article.author }}</div>
 						<div class="author-name" v-else >匿名用户</div>

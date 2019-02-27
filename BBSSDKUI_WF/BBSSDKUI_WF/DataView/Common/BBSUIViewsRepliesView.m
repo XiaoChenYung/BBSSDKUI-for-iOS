@@ -40,8 +40,9 @@
     
     [self addSubview:imageView];
     [imageView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.left.top.bottom.equalTo(self);
-        make.width.mas_equalTo(22);
+        make.left.equalTo(self);
+        make.width.height.mas_equalTo(16);
+        make.centerY.equalTo(self);
     }];
     
     UILabel *countLabel = [[UILabel alloc] init];
@@ -51,7 +52,7 @@
     [self addSubview:countLabel];
     [countLabel mas_makeConstraints:^(MASConstraintMaker *make) {
         make.centerY.equalTo(imageView);
-        make.left.equalTo(imageView.mas_right);
+        make.left.equalTo(imageView.mas_right).mas_offset(3);
         make.right.equalTo(self);
     }];
 //    }

@@ -312,7 +312,7 @@
                 [theWebController updateUI];
                 NSDictionary * res = [theWebController dictionaryWithThread:thread];
                 NSMutableDictionary *mutDic = [[NSMutableDictionary alloc] initWithDictionary:res];
-                NSLog(@"bbs message: %@", thread.message);
+                NSLog(@"bbs message: %@", res);
                 if ([BBSSDK isUsePlug])
                 {
                     mutDic[@"isPlug"] = @1;

@@ -196,7 +196,7 @@ static NSString *cellIdentifier = @"ThreadSummaryCell";
     self.tableView.delegate = self;
     self.tableView.dataSource = self;
     self.tableView.fd_debugLogEnabled = YES;
-    self.tableView.backgroundColor = DZSUI_BackgroundColor;
+    self.tableView.backgroundColor = [UIColor whiteColor];
     
     [self.tableView registerClass:[BBSUIThreadSummaryCell class] forCellReuseIdentifier:cellIdentifier];
     
@@ -750,9 +750,9 @@ static NSString *cellIdentifier = @"ThreadSummaryCell";
     if (error.code == 9001200) {
         [BBSUIContext shareInstance].currentUser = nil;
         [[NSNotificationCenter defaultCenter] postNotificationName:@"com.mob.bbs.sdk.BBSNeedLogin" object:nil];
-        BBSUILoginViewController *vc = [[BBSUILoginViewController alloc] init];
-        UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
-        [self presentViewController:nav animated:YES completion:nil];
+//        BBSUILoginViewController *vc = [[BBSUILoginViewController alloc] init];
+//        UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
+//        [self presentViewController:nav animated:YES completion:nil];
     }
 }
 

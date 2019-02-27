@@ -147,6 +147,8 @@
 		6BAFB7C91E6FFFCD00692299 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6BAFB7C81E6FFFCD00692299 /* ViewController.m */; };
 		6BAFB7CE1E6FFFCD00692299 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6BAFB7CD1E6FFFCD00692299 /* Assets.xcassets */; };
 		6BAFB7E91E700B9D00692299 /* libicucore.A.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 6BAFB7E81E700B9D00692299 /* libicucore.A.tbd */; };
+		7943FB322224F2070004B085 /* yj.png in Resources */ = {isa = PBXBuildFile; fileRef = 7943FB312224F2070004B085 /* yj.png */; };
+		7943FB3422253C2C0004B085 /* BBSUIPostTip.xib in Resources */ = {isa = PBXBuildFile; fileRef = 7943FB3322253C2C0004B085 /* BBSUIPostTip.xib */; };
 		79E9565D2212C6FD00198254 /* BBSSDKUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2FA040F0207CCDF4004CE72B /* BBSSDKUI.framework */; };
 		79E9565E2212C6FD00198254 /* BBSSDKUI.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 2FA040F0207CCDF4004CE72B /* BBSSDKUI.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
@@ -581,6 +583,8 @@
 		6BAFB7E81E700B9D00692299 /* libicucore.A.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libicucore.A.tbd; path = usr/lib/libicucore.A.tbd; sourceTree = SDKROOT; };
 		6BAFB7EA1E700BA300692299 /* libstdc++.6.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = "libstdc++.6.tbd"; path = "usr/lib/libstdc++.6.tbd"; sourceTree = SDKROOT; };
 		700C45CC20C7D9F50099A9EA /* BBSSDKDemo_WF.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = BBSSDKDemo_WF.entitlements; sourceTree = "<group>"; };
+		7943FB312224F2070004B085 /* yj.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = yj.png; sourceTree = "<group>"; };
+		7943FB3322253C2C0004B085 /* BBSUIPostTip.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = BBSUIPostTip.xib; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1552,6 +1556,8 @@
 				3ADCBD321F99F7BF0035EE46 /* BBSSDKDemo.entitlements */,
 				6BAFB7C41E6FFFCD00692299 /* AppDelegate.h */,
 				6BAFB7C51E6FFFCD00692299 /* AppDelegate.m */,
+				7943FB312224F2070004B085 /* yj.png */,
+				7943FB3322253C2C0004B085 /* BBSUIPostTip.xib */,
 				6BAFB7C71E6FFFCD00692299 /* ViewController.h */,
 				6BAFB7C81E6FFFCD00692299 /* ViewController.m */,
 				3A8E5C351FC671EC00E453E1 /* MOBShareSDKHelper.h */,
@@ -1685,8 +1691,10 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7943FB322224F2070004B085 /* yj.png in Resources */,
 				2FA042D6207CCDF5004CE72B /* ShareSDKConfigFile.bundle in Resources */,
 				2FF7AD73208053E60054BFE8 /* SVProgressHUD.bundle in Resources */,
+				7943FB3422253C2C0004B085 /* BBSUIPostTip.xib in Resources */,
 				2FA04262207CCDF4004CE72B /* Info.plist in Resources */,
 				2FA04251207CCDF4004CE72B /* BBSSDKUI.bundle in Resources */,
 				2FA042F7207CCDF5004CE72B /* ShareSDK.bundle in Resources */,

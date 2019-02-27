@@ -133,9 +133,9 @@
     //头像
     self.avatarImageView =
     ({
-        UIImage *placeholdImage = [UIImage BBSImageNamed:@"/User/AvatarDefault2.png"];
-        UIImageView *avatarImageView = [[UIImageView alloc] initWithImage:placeholdImage];
-        avatarImageView.layer.cornerRadius = 10;
+//        UIImage *placeholdImage = [UIImage BBSImageNamed:@"/User/AvatarDefault2.png"];
+        UIImageView *avatarImageView = [[UIImageView alloc] init];
+        avatarImageView.layer.cornerRadius = 22;
         avatarImageView.layer.masksToBounds = YES;
         // 光栅化
         avatarImageView.layer.shouldRasterize = true;
@@ -143,7 +143,7 @@
 
         [self.contentView addSubview:avatarImageView];
 
-        avatarImageView.frame = CGRectMake(padding, 15, 45, 45);
+        avatarImageView.frame = CGRectMake(padding, 15, 44, 44);
 
         avatarImageView ;
     });
@@ -423,7 +423,7 @@
         self.read = _threadModel.isSelected;
         _timeLabel.text = [NSString bbs_timeTextWithTimesStamp:dateline];
         [_repliesView setupWithCount:_threadModel.commentnum style:BBSUIViewRepliesStyleImage];
-        [_viewsView setupWithCount:_threadModel.viewnum style:BBSUIViewRepliesStyleImage];
+        [_viewsView setupWithCount:_threadModel.recommend_add style:BBSUIViewRepliesStyleImage];
         
         if(threadModel.pic)
         {
@@ -475,16 +475,16 @@
     
     if ( (!_threadModel.author || _threadModel.author.length == 0) && _threadModel.tid)
     {
-//        _avatarImageView.image = [UIImage BBSImageNamed:@"/Thread/bbs_login_account.png"];
+        _avatarImageView.image = [UIImage BBSImageNamed:@"/User/AvatarDefault2.png"];
     }
     else
     {
     
-//         _avatarImageView.image = [UIImage BBSImageNamed:@"/User/AvatarDefault.png"];
+         _avatarImageView.image = [UIImage BBSImageNamed:@"/User/AvatarDefault2.png"];
         //MARK:-//这个不能写在cell里面，要写在更换头像的地方
          //[[MOBFImageGetter sharedInstance] removeImageForURL:[NSURL URLWithString:_threadModel.avatar]];
         
-        /*
+        
         __weak typeof(self) weakSelf = self;
         [[MOBFImageGetter sharedInstance] getImageDataWithURL:[NSURL URLWithString:_threadModel.avatar] allowReadCache:NO result:^(NSData *imageData, NSError *error) {
 
@@ -498,12 +498,11 @@
             {
                 UIImage *image = [UIImage imageWithData:imageData];
 
-                //[weadSelf setImageWithImage:image inView:_avatarImageView];
+                [weakSelf setImageWithImage:image inView:_avatarImageView];
                 _avatarImageView.image = image;
             }
         }];
-         
-         */
+        
 
         [[SDImageCache sharedImageCache] clearMemory];
         [[SDImageCache sharedImageCache] clearDiskOnCompletion:^{
@@ -610,7 +609,7 @@
  */
 - (void)setImageWithImage:(UIImage *)image inView:(UIImageView *)imageView{
     UIGraphicsBeginImageContextWithOptions(imageView.bounds.size,NO,1.0);
-    [[UIBezierPath bezierPathWithRoundedRect:imageView.bounds cornerRadius:3] addClip];
+    [[UIBezierPath bezierPathWithRoundedRect:imageView.bounds cornerRadius:22] addClip];
     [image drawInRect:imageView.bounds];
     imageView.image = UIGraphicsGetImageFromCurrentImageContext();
     UIGraphicsEndImageContext();

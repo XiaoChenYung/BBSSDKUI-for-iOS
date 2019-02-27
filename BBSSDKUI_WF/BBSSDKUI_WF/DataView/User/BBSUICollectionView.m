@@ -7,7 +7,7 @@
 //
 
 #import "BBSUICollectionView.h"
-#import "BBSUICollectionTableViewCell.h"
+//#import "BBSUICollectionTableViewCell.h"
 #import "Masonry.h"
 #import <BBSSDK/BBSSDK.h>
 #import "MJRefresh.h"
@@ -15,7 +15,9 @@
 #import "BBSUIThreadDetailViewController.h"
 #import "UIView+BBSUITipView.h"
 #import "BBSUILBSShowLocationViewController.h"
+#import "BBSUIThreadSummaryCell.h"
 #define BBSUIPageSize       10
+#import "UITableView+FDTemplateLayoutCell.h"
 
 @interface BBSUICollectionView ()<UITableViewDataSource,UITableViewDelegate>
 
@@ -33,6 +35,8 @@
 @property (nonatomic, assign) BOOL isDeleting;
 
 @end
+
+static NSString *cellIdentifier = @"CollectionCell";
 
 @implementation BBSUICollectionView
 
@@ -63,6 +67,7 @@
 - (void)configureUI
 {
     self.collectionTableView = [[UITableView alloc] initWithFrame:CGRectZero style:UITableViewStylePlain];
+    [self.collectionTableView registerClass:[BBSUIThreadSummaryCell class] forCellReuseIdentifier:cellIdentifier];
     [self addSubview:self.collectionTableView];
     
     [self.collectionTableView mas_makeConstraints:^(MASConstraintMaker *make) {
@@ -205,25 +210,24 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    static NSString *cellIdentifier = @"CollectionCell";
-    BBSUICollectionTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier];
+    BBSUIThreadSummaryCell *cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier];
     if (!cell) {
-        cell = [[BBSUICollectionTableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellIdentifier];
+        cell = [[BBSUIThreadSummaryCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellIdentifier];
     }
     
     cell.selectionStyle = UITableViewCellSelectionStyleNone;
-    cell.collectionViewType = _type;
-    cell.collection = _marrData[indexPath.row];
+//    cell.collectionViewType = _type;
+    cell.threadModel = _marrData[indexPath.row];
+    cell.cellType = BBSUIThreadSummaryCellTypeForums;
+    cell.fd_enforceFrameLayout = NO; // Enable to use "-sizeThatFits:"
     
-
-    
-    __weak typeof(self)weakSelf = self;
-    cell.addressOnClickBlock = ^(BBSThread *threadModel) {
-        CLLocationCoordinate2D coordinate = {threadModel.latitude,threadModel.longitude};
-        BBSUILBSShowLocationViewController *showLocationVC = [[BBSUILBSShowLocationViewController alloc] initWithCoordinate:coordinate title:threadModel.poiTitle];
-        UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:showLocationVC];
-        [[MOBFViewController currentViewController].navigationController presentViewController:nav animated:YES completion:nil];
-    };
+//    __weak typeof(self)weakSelf = self;
+//    cell.addressOnClickBlock = ^(BBSThread *threadModel) {
+//        CLLocationCoordinate2D coordinate = {threadModel.latitude,threadModel.longitude};
+//        BBSUILBSShowLocationViewController *showLocationVC = [[BBSUILBSShowLocationViewController alloc] initWithCoordinate:coordinate title:threadModel.poiTitle];
+//        UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:showLocationVC];
+//        [[MOBFViewController currentViewController].navigationController presentViewController:nav animated:YES completion:nil];
+//    };
     
     return cell;
 }
