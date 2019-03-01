@@ -16,7 +16,7 @@
 #import "UIView+BBSUITipView.h"
 #import "BBSUILBSShowLocationViewController.h"
 #import "BBSUIThreadSummaryCell.h"
-#define BBSUIPageSize       10
+#define BBSUIPageSize       20
 #import "UITableView+FDTemplateLayoutCell.h"
 
 @interface BBSUICollectionView ()<UITableViewDataSource,UITableViewDelegate>
@@ -28,6 +28,8 @@
 @property (nonatomic, strong) NSMutableArray *marrData;
 
 @property (nonatomic, assign) BBSUICollectionViewType type;
+
+@property (nonatomic, copy) NSString *token;
 
 /**
  正在进行删除操作
@@ -87,18 +89,47 @@ static NSString *cellIdentifier = @"CollectionCell";
     [self.collectionTableView setTableHeaderView:tableHeaderView];
     self.collectionTableView.tableFooterView = [UIView new];
     
-    __weak typeof (self) weakSelf = self;
-    self.collectionTableView.mj_header = [MJRefreshNormalHeader headerWithRefreshingBlock:^{
-        weakSelf.currentIndex = 1;
-        [weakSelf requestData];
-    }];
-    self.collectionTableView.mj_footer = [MJRefreshBackNormalFooter footerWithRefreshingBlock:^{
-        weakSelf.currentIndex ++;
-        [weakSelf requestData];
-    }];
-    
     if (_type != CollectionViewTypeThreadFavorites) // 收藏存在取消收藏事件，故收藏拉取数据放在viewWillAppear中
-        [self requestData];
+//        [self requestData];
+        [self login];
+}
+//Cookie
+- (void)login {
+    NSDictionary *user = [[NSUserDefaults standardUserDefaults] valueForKey:@"Cookie"];
+    if (user) {
+        NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"http://47.105.63.78:34003/appapi/login.php"]];
+        NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:url cachePolicy:NSURLRequestReloadIgnoringLocalCacheData timeoutInterval:10];
+        [request addValue:@"application/x-www-form-urlencoded" forHTTPHeaderField:@"Content-Type"];
+        request.HTTPMethod = @"POST";
+        request.HTTPBody = [[NSString stringWithFormat:@"username=%@&password=%@", [user valueForKey:@"bbs_username"], [user valueForKey:@"bbs_password"]] dataUsingEncoding:NSUTF8StringEncoding];
+        NSURLSessionDataTask *task = [[NSURLSession sharedSession] dataTaskWithRequest:request completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
+            if (error == nil) {
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    NSError *serializationError = nil;
+                    NSDictionary *responseObject = [NSJSONSerialization JSONObjectWithData:data options:0 error:&serializationError];
+                    NSLog(@"%@", responseObject);
+                    self.token = [[responseObject valueForKey:@"data"] valueForKey:@"token"];
+                    __weak typeof (self) weakSelf = self;
+                    self.collectionTableView.mj_header = [MJRefreshNormalHeader headerWithRefreshingBlock:^{
+                        weakSelf.currentIndex = 1;
+                        NSLog(@"执行了吗");
+                        [weakSelf requestData];
+                    }];
+                    self.collectionTableView.mj_footer = [MJRefreshBackNormalFooter footerWithRefreshingBlock:^{
+                        NSLog(@"执行了吗");
+                        weakSelf.currentIndex ++;
+                        [weakSelf requestData];
+                    }];
+                    NSLog(@"执行了吗呀");
+                    [self requestData];
+                });
+            } else {
+                NSLog(@"错误:%@", error);
+                BBSUIAlert(@"获取我的帖子失败");
+            }
+        }];
+        [task resume];
+    }
 }
 
 - (void)refreshData
@@ -111,95 +142,162 @@ static NSString *cellIdentifier = @"CollectionCell";
 {
     __weak typeof (self) weakSelf = self;
     if (_type == CollectionViewTypeThreadList) {
-        [BBSSDK getUserThreadListWithAuthorid:nil pageIndex:self.currentIndex pageSize:BBSUIPageSize result:^(NSArray<BBSThread *> *array, NSError *error) {
-            
-            if (error) {
-                return ;
-            }
-            
-            if (weakSelf.currentIndex == 1) {
-                [weakSelf.collectionTableView.mj_header endRefreshing];
-                weakSelf.marrData = [NSMutableArray arrayWithArray:array];
-                [weakSelf.collectionTableView reloadData];
-            }else{
-                if (array.count > 0) {
-                    NSMutableArray *indexPaths = [NSMutableArray array];
-                    for (NSInteger i = 0; i < array.count; i++) {
-                        NSIndexPath *path = [NSIndexPath indexPathForRow:weakSelf.marrData.count + i inSection:0];
-                        [indexPaths addObject:path];
+        NSCharacterSet *encode_set = [NSCharacterSet characterSetWithCharactersInString:@"#%<>[\\]^`{|}\"]+"].invertedSet;
+        NSLog(@"token: %@",self.token);
+        NSString *oriURL = [NSString stringWithFormat:@"http://47.105.63.78:34003/appapi/index.php?mod=space_thread&token=%@&page=%zu&pagesize=%d", self.token, self.currentIndex, BBSUIPageSize];
+        NSLog(@"oriURL: %@",oriURL);
+        NSString *urlString_encode = [oriURL stringByAddingPercentEncodingWithAllowedCharacters: encode_set];
+        NSURL *url = [NSURL URLWithString:urlString_encode];
+        NSLog(@"url: %@", url);
+        NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:url cachePolicy:NSURLRequestReloadIgnoringLocalCacheData timeoutInterval:10];
+        [request addValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
+        request.HTTPMethod = @"GET";
+        NSURLSessionDataTask *task = [[NSURLSession sharedSession] dataTaskWithRequest:request completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
+            if (error == nil) {
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    NSError *serializationError = nil;
+                    NSDictionary *responseObject = [NSJSONSerialization JSONObjectWithData:data options:0 error:&serializationError];
+                    NSLog(@"%@", responseObject);
+                    NSArray *resData = [responseObject valueForKey:@"data"];
+                    NSMutableArray *modelArray = [NSMutableArray array];
+                    for (NSDictionary *modelDict in resData) {
+                        BBSThread *thread = [[BBSThread alloc] init];
+                        thread.tid = [[modelDict valueForKey:@"tid"] integerValue];
+                        thread.subject = [modelDict valueForKey:@"subject"];
+                        thread.content = [modelDict valueForKey:@"dateline"];
+                        thread.displayOrder = [[modelDict valueForKey:@"displayorder"] integerValue];
+                        thread.originUid = [[BBSUIContext shareInstance].currentUser.uid integerValue];
+                        [modelArray addObject:thread];
                     }
-                    [weakSelf.marrData addObjectsFromArray:array];
-                    [weakSelf.collectionTableView insertRowsAtIndexPaths:[indexPaths copy] withRowAnimation:UITableViewRowAnimationAutomatic];
-                }
-            }
-            if (array.count < BBSUIPageSize) {
-                NSLog(@"显示没有更多数据");
-                [weakSelf.collectionTableView.mj_footer endRefreshingWithNoMoreData];
-            }
-            
-            if (weakSelf.currentIndex == 1) {
-                [self bbs_configureTipViewWithTipMessage:@"暂无内容" hasData:weakSelf.marrData.count != 0 hasError:YES reloadButtonBlock:^(id sender) {
-                    [weakSelf.collectionTableView.mj_header beginRefreshing];
-                    [weakSelf requestData];
-                }];
-            }
-        }];
-    }
-    
-    if (_type == CollectionViewTypeThreadFavorites) {
-        [BBSSDK getUserThreadFavoritesWithPageIndex:self.currentIndex pageSize:BBSUIPageSize result:^(NSArray<BBSThread *> *array, NSError *error) {
-            if (error) {
-                return ;
-            }
-            
-            if (weakSelf.currentIndex == 1) {
-                weakSelf.marrData = [NSMutableArray arrayWithArray:array];
-            }else{
-                [weakSelf.marrData addObjectsFromArray:array];
-            }
-            [weakSelf.collectionTableView reloadData];
-            [weakSelf.collectionTableView.mj_header endRefreshing];
-            [weakSelf.collectionTableView.mj_footer endRefreshing];
-            
-            if (weakSelf.currentIndex == 1) {
-                [self bbs_configureTipViewWithTipMessage:@"暂无内容" hasData:weakSelf.marrData.count != 0 hasError:YES reloadButtonBlock:^(id sender) {
-                    [weakSelf.collectionTableView.mj_header beginRefreshing];
-                    [weakSelf requestData];
-                }];
-            }
-        }];
-    }
-    
-    if (_type == CollectionViewTypeOtherUserThreadList && self.authorid) { // 查看他人帖子列表
-        [BBSSDK getUserThreadListWithAuthorid:self.authorid pageIndex:self.currentIndex pageSize:BBSUIPageSize result:^(NSArray<BBSThread *> *array, NSError *error) {
-            if (error) {
-                return ;
-            }
-            
-            if (weakSelf.currentIndex == 1) {
-                weakSelf.marrData = [NSMutableArray arrayWithArray:array];
-            }else{
-                [weakSelf.marrData addObjectsFromArray:array];
-            }
-            [weakSelf.collectionTableView reloadData];
-            [weakSelf.collectionTableView.mj_header endRefreshing];
-            [weakSelf.collectionTableView.mj_footer endRefreshing];
-            
-            if (weakSelf.currentIndex == 1) {
-                [self bbs_configureTipViewWithFrame:CGRectMake(0, 339, DZSUIScreen_width, 339) tipMessage:@"暂无内容" noDataImage:nil hasData:weakSelf.marrData.count != 0 hasError:YES reloadButtonBlock:^(id sender) {
-                    [weakSelf.collectionTableView.mj_header beginRefreshing];
-                    [weakSelf requestData];
-                }];
-            }
-        }];
+                    if (weakSelf.currentIndex == 1) {
+                        [weakSelf.collectionTableView.mj_header endRefreshing];
+                        weakSelf.marrData = [NSMutableArray arrayWithArray:modelArray];
+                        [weakSelf.collectionTableView reloadData];
+                    }else{
+                        if (modelArray.count > 0) {
+                            NSMutableArray *indexPaths = [NSMutableArray array];
+                            for (NSInteger i = 0; i < modelArray.count; i++) {
+                                NSIndexPath *path = [NSIndexPath indexPathForRow:weakSelf.marrData.count + i inSection:0];
+                                [indexPaths addObject:path];
+                            }
+                            [weakSelf.marrData addObjectsFromArray:modelArray];
+                            [weakSelf.collectionTableView reloadData];
+                        }
+                    }
+                    if (modelArray.count < BBSUIPageSize) {
+                        NSLog(@"显示没有更多数据");
+                        [weakSelf.collectionTableView.mj_footer endRefreshingWithNoMoreData];
+                    } else {
+                        [weakSelf.collectionTableView.mj_footer endRefreshing];
+                    }
         
+//                    if (weakSelf.currentIndex == 1) {
+//                        [self bbs_configureTipViewWithTipMessage:@"暂无内容" hasData:weakSelf.marrData.count != 0 hasError:YES reloadButtonBlock:^(id sender) {
+//                            [weakSelf.collectionTableView.mj_header beginRefreshing];
+//                            [weakSelf requestData];
+//                        }];
+//                    }
+                });
+            } else {
+                NSLog(@"错误:%@", error);
+                BBSUIAlert(@"获取我的帖子失败");
+            }
+        }];
+        //    [SwiftTransferTool beginVisitingNetwork];
+        
+        [task resume];
+        
+//        [BBSSDK getUserThreadListWithAuthorid:nil pageIndex:self.currentIndex pageSize:BBSUIPageSize result:^(NSArray<BBSThread *> *array, NSError *error) {
+//
+//            if (error) {
+//                return ;
+//            }
+//
+//            if (weakSelf.currentIndex == 1) {
+//                [weakSelf.collectionTableView.mj_header endRefreshing];
+//                weakSelf.marrData = [NSMutableArray arrayWithArray:array];
+//                [weakSelf.collectionTableView reloadData];
+//            }else{
+//                if (array.count > 0) {
+//                    NSMutableArray *indexPaths = [NSMutableArray array];
+//                    for (NSInteger i = 0; i < array.count; i++) {
+//                        NSIndexPath *path = [NSIndexPath indexPathForRow:weakSelf.marrData.count + i inSection:0];
+//                        [indexPaths addObject:path];
+//                    }
+//                    [weakSelf.marrData addObjectsFromArray:array];
+//                    [weakSelf.collectionTableView insertRowsAtIndexPaths:[indexPaths copy] withRowAnimation:UITableViewRowAnimationAutomatic];
+//                }
+//            }
+//            if (array.count < BBSUIPageSize) {
+//                NSLog(@"显示没有更多数据");
+//                [weakSelf.collectionTableView.mj_footer endRefreshingWithNoMoreData];
+//            } else {
+//                [weakSelf.collectionTableView.mj_footer endRefreshing];
+//            }
+//
+//            if (weakSelf.currentIndex == 1) {
+//                [self bbs_configureTipViewWithTipMessage:@"暂无内容" hasData:weakSelf.marrData.count != 0 hasError:YES reloadButtonBlock:^(id sender) {
+//                    [weakSelf.collectionTableView.mj_header beginRefreshing];
+//                    [weakSelf requestData];
+//                }];
+//            }
+//        }];
     }
+    
+//    if (_type == CollectionViewTypeThreadFavorites) {
+//        [BBSSDK getUserThreadFavoritesWithPageIndex:self.currentIndex pageSize:BBSUIPageSize result:^(NSArray<BBSThread *> *array, NSError *error) {
+//            if (error) {
+//                return ;
+//            }
+//
+//            if (weakSelf.currentIndex == 1) {
+//                weakSelf.marrData = [NSMutableArray arrayWithArray:array];
+//            }else{
+//                [weakSelf.marrData addObjectsFromArray:array];
+//            }
+//            [weakSelf.collectionTableView reloadData];
+//            [weakSelf.collectionTableView.mj_header endRefreshing];
+//            [weakSelf.collectionTableView.mj_footer endRefreshing];
+//
+//            if (weakSelf.currentIndex == 1) {
+//                [self bbs_configureTipViewWithTipMessage:@"暂无内容" hasData:weakSelf.marrData.count != 0 hasError:YES reloadButtonBlock:^(id sender) {
+//                    [weakSelf.collectionTableView.mj_header beginRefreshing];
+//                    [weakSelf requestData];
+//                }];
+//            }
+//        }];
+//    }
+    
+//    if (_type == CollectionViewTypeOtherUserThreadList && self.authorid) { // 查看他人帖子列表
+//        [BBSSDK getUserThreadListWithAuthorid:self.authorid pageIndex:self.currentIndex pageSize:BBSUIPageSize result:^(NSArray<BBSThread *> *array, NSError *error) {
+//            if (error) {
+//                return ;
+//            }
+//
+//            if (weakSelf.currentIndex == 1) {
+//                weakSelf.marrData = [NSMutableArray arrayWithArray:array];
+//            }else{
+//                [weakSelf.marrData addObjectsFromArray:array];
+//            }
+//            [weakSelf.collectionTableView reloadData];
+//            [weakSelf.collectionTableView.mj_header endRefreshing];
+//            [weakSelf.collectionTableView.mj_footer endRefreshing];
+//
+//            if (weakSelf.currentIndex == 1) {
+//                [self bbs_configureTipViewWithFrame:CGRectMake(0, 339, DZSUIScreen_width, 339) tipMessage:@"暂无内容" noDataImage:nil hasData:weakSelf.marrData.count != 0 hasError:YES reloadButtonBlock:^(id sender) {
+//                    [weakSelf.collectionTableView.mj_header beginRefreshing];
+//                    [weakSelf requestData];
+//                }];
+//            }
+//        }];
+//
+//    }
 }
 
 - (void)setAuthorid:(NSNumber *)authorid {
     _authorid = authorid;
-    _currentIndex = 1;
-    [self requestData];
+//    _currentIndex = 1;
+//    [self requestData];
 }
 
 #pragma mark UITbleview  delegate
@@ -214,12 +312,15 @@ static NSString *cellIdentifier = @"CollectionCell";
     if (!cell) {
         cell = [[BBSUIThreadSummaryCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellIdentifier];
     }
-    
+    cell.deleteOnClickBlock = ^(BBSThread *threadModel) {
+        [self deleteThreadWithID:threadModel.tid];
+    };
+    cell.isMyPosts = true;
     cell.selectionStyle = UITableViewCellSelectionStyleNone;
 //    cell.collectionViewType = _type;
     cell.threadModel = _marrData[indexPath.row];
     cell.cellType = BBSUIThreadSummaryCellTypeForums;
-    cell.fd_enforceFrameLayout = NO; // Enable to use "-sizeThatFits:"
+//    cell.fd_enforceFrameLayout = NO; // Enable to use "-sizeThatFits:"
     
 //    __weak typeof(self)weakSelf = self;
 //    cell.addressOnClickBlock = ^(BBSThread *threadModel) {
@@ -232,10 +333,61 @@ static NSString *cellIdentifier = @"CollectionCell";
     return cell;
 }
 
+- (void)deleteThreadWithID:(NSInteger)threadID {
+    UIAlertController *vc = [UIAlertController alertControllerWithTitle:nil message:@"确定删除该帖子吗？" preferredStyle:UIAlertControllerStyleAlert];
+    UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:nil];
+    UIAlertAction *confirm = [UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDestructive handler:^(UIAlertAction * _Nonnull action) {
+//        NSURL *url = [NSURL URLWithString;
+        NSCharacterSet *encode_set = [NSCharacterSet characterSetWithCharactersInString:@"#%<>[\\]^`{|}\"]+"].invertedSet;
+        NSString *oriURL = [NSString stringWithFormat:@"http://47.105.63.78:34003/appapi/index.php?mod=delete_forum&tid=%zu&token=%@", threadID, self.token];
+          NSLog(@"oriURL: %@",oriURL);
+          NSString *urlString_encode = [oriURL stringByAddingPercentEncodingWithAllowedCharacters: encode_set];
+          NSURL *url = [NSURL URLWithString:urlString_encode];
+        NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:url cachePolicy:NSURLRequestReloadIgnoringLocalCacheData timeoutInterval:10];
+        [request addValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
+        request.HTTPMethod = @"GET";
+        NSURLSessionDataTask *task = [[NSURLSession sharedSession] dataTaskWithRequest:request completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
+            if (error == nil) {
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    [self deleteCellWithID:threadID];
+                });
+            } else {
+                NSLog(@"错误:%@", error);
+                BBSUIAlert(@"删除失败，请稍后再试");
+            }
+        }];
+        //    [SwiftTransferTool beginVisitingNetwork];
+        
+        [task resume];
+    }];
+    [vc addAction:cancel];
+    [vc addAction:confirm];
+    [[MOBFViewController currentViewController] presentViewController:vc animated:true completion:nil];
+}
+
+- (void)deleteCellWithID:(NSInteger)threadID {
+    NSInteger index = 0;
+    for (BBSThread *model in self.marrData) {
+        if (model.tid == threadID) {
+            break;
+        }
+        index ++;
+    }
+    NSLog(@"索引: %zu %zu threadID %zu", index, self.marrData.count, threadID);
+    if (index < self.marrData.count) {
+        [self.marrData removeObjectAtIndex:index];
+        [self.collectionTableView deleteRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:index inSection:0]] withRowAnimation:UITableViewRowAnimationAutomatic];
+        BBSUIAlert(@"删除成功");
+    }
+}
+
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
     BBSThread *thread = self.marrData[indexPath.row];
-    
+    if (thread.displayOrder == -2) {
+        BBSUIAlert(@"审核中的帖子不支持查看");
+        return;
+    }
     BBSUIThreadDetailViewController *detailVC = [[BBSUIThreadDetailViewController alloc] initWithThreadModel:thread];
     
     if ([MOBFViewController currentViewController].navigationController)

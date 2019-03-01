@@ -57,7 +57,7 @@
 			<div id="postTitle"></div>
     		<ul class="comment" v-if="commentList.length>0" id="comm">
     			<li v-for="(list,index) in commentList">
-    				<div class="left" v-if="list.author"><img @click="openAuthor(list.authorId)" src="../assets/images/AvatarDefault.png"/></div>
+                    <div class="left" v-if="list.author"><img @click="openAuthor(list.authorId)" :src="list.avatar"/></div>
     				<div class="right">
     					<div class="comment-name"  v-if="list.author">{{ list.author }}<span v-if="list.authorId==article.authorId" class="comment-author">楼主</span><span class="comment-floor">{{ list.position }}楼</span></div>
 						<div class="comment-name"  v-else>匿名用户<span v-if="list.authorId==article.authorId" class="comment-author">楼主</span><span class="comment-floor">{{ list.position }}楼</span></div>

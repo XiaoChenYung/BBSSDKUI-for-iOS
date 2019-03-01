@@ -33,7 +33,7 @@
     [self.forumView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.edges.equalTo(self.view);
     }];
-    self.title = @"社区";
+    self.title = @"粉丝";
     
     
 //    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
@@ -162,9 +162,9 @@
     if (![BBSUIContext shareInstance].currentUser)
     {
         [[NSNotificationCenter defaultCenter] postNotificationName:@"com.mob.bbs.sdk.BBSNeedLogin" object:nil];
-//        BBSUILoginViewController *vc = [[BBSUILoginViewController alloc] init];
-//        UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
-//        [self.navigationController presentViewController:nav animated:YES completion:nil];
+        BBSUILoginViewController *vc = [[BBSUILoginViewController alloc] init];
+        UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
+        [self.navigationController presentViewController:nav animated:YES completion:nil];
     }
     else
     {
@@ -193,10 +193,10 @@
                     
                     [BBSUIContext shareInstance].currentUser = nil;
                     [[NSNotificationCenter defaultCenter] postNotificationName:@"com.mob.bbs.sdk.BBSNeedLogin" object:nil];
-//                    BBSUILoginViewController *vc = [[BBSUILoginViewController alloc] init];
-//                    UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
-//                    [self.navigationController presentViewController:nav animated:YES completion:nil];
-                    //                    [BBSUIProcessHUD showFailInfo:@"登录信息过期，请重新登录后设置" delay:3];
+                    BBSUILoginViewController *vc = [[BBSUILoginViewController alloc] init];
+                    UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
+                    [self.navigationController presentViewController:nav animated:YES completion:nil];
+//                                        [BBSUIProcessHUD showFailInfo:@"登录信息过期，请重新登录后设置" delay:3];
                 }
                 
                 return ;

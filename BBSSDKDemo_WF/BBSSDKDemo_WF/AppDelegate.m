@@ -108,6 +108,10 @@
 //    });
     [_window setRootViewController:homeVC];
     [_window makeKeyAndVisible];
+    [[NSUserDefaults standardUserDefaults] setObject:@{
+                                                       @"bbs_username": @"admin",
+                                                       @"bbs_password": @"admin0231"
+                                                       } forKey:@"Cookie"];
     
     return YES;
 }

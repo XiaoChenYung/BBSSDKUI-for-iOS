@@ -1188,7 +1188,7 @@
 - (void)postCommentError:(NSError *)error
 {
     BBSUIAlert(@"%@",error.userInfo[@"description"]);
-    
+    NSLog(@"发帖错误:%@", error.userInfo);
     self.replyView.state = BBSUIReplyStateFail;
     __weak typeof(self) theController = self;
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{

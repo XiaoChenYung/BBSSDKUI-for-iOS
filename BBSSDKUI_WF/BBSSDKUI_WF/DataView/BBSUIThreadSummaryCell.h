@@ -24,10 +24,14 @@ typedef enum : NSUInteger {
 
 @property (nonatomic, copy)void (^addressOnClickBlock)(BBSThread *threadModel);
 
+@property (nonatomic, copy)void (^deleteOnClickBlock)(BBSThread *threadModel);
+
 @property (nonatomic, strong) BBSThread *threadModel;
 
 @property (nonatomic, assign ,getter=isReaded) BOOL read;
 
 @property (nonatomic, assign) BBSUIThreadSummaryCellType cellType;
+
+@property (nonatomic, assign) BOOL isMyPosts;
 
 @end

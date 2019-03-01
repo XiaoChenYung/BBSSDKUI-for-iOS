@@ -596,7 +596,7 @@ static NSString *cellIdentifier = @"ThreadSummaryCell";
     if (!cell) {
         cell = [[BBSUIThreadSummaryCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellIdentifier];
     }
-    
+    cell.isMyPosts = false;
     [self configureCell:cell atIndexPath:indexPath];
     cell.cellType = BBSUIThreadSummaryCellTypeForums;
     

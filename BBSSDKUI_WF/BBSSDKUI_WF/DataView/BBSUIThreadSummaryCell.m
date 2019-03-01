@@ -107,6 +107,16 @@
  */
 @property (nonatomic, strong) UIButton *addressTagView;
 
+/**
+ 删除按钮
+ */
+@property (nonatomic, strong) UIButton *deleteButton;
+
+/**
+ 话题状态
+ */
+@property (nonatomic, strong) UILabel *threadStatusLabel;
+
 @property (nonatomic, strong) BBSUIThreadSummaryImageContentView *imagesContentView;
 
 @end
@@ -218,7 +228,8 @@
 //        [summaryLabel setContentHuggingPriority:UILayoutPriorityRequiredforAxis:UILayoutConstraintAxisVertical];
         
         [summaryLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.left.right.equalTo(_subjectLabel);
+            make.left.equalTo(_subjectLabel);
+            make.right.equalTo(self.contentView).mas_offset(-12);
             make.top.equalTo(_subjectLabel.mas_bottom).offset(5);
         }];
         
@@ -344,6 +355,44 @@
         addressTagView ;
     });
     
+    self.deleteButton = ({
+        UIButton *addressTagView = [UIButton buttonWithType:UIButtonTypeCustom];
+        addressTagView.imageEdgeInsets = UIEdgeInsetsMake(8, 8, 8, 8);
+        [addressTagView setImage:[UIImage BBSImageNamed:@"/User/nav_icon_delete_nor.png"] forState:UIControlStateNormal];
+        [addressTagView addTarget:self action:@selector(deleteOnClick) forControlEvents:UIControlEventTouchUpInside];
+        [self.contentView addSubview:addressTagView];
+        
+        [addressTagView mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.size.mas_equalTo(CGSizeMake(44, 44));
+            make.right.equalTo(self.contentView);
+            make.centerY.equalTo(self.subjectLabel).mas_offset(-5);
+        }];
+        
+        addressTagView ;
+    });
+    
+    //主标题
+    self.threadStatusLabel =
+    ({
+        UILabel *subjectLabel = [[UILabel alloc] init];
+        subjectLabel.lineBreakMode = NSLineBreakByTruncatingTail;
+        subjectLabel.font = [UIFont fontWithName:@"PingFangSC-Medium" size:12];
+        subjectLabel.textColor = [UIColor colorWithRed:255/255.0 green:125/255.0 blue:161/255.0 alpha:1/1.0];
+        subjectLabel.numberOfLines = 1 ;
+        subjectLabel.textAlignment = NSTextAlignmentRight;
+        //        subjectLabel.lineBreakMode = NSLineBreakByTruncatingTail;
+        [self.contentView addSubview:subjectLabel];
+        
+        [subjectLabel mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.centerY.equalTo(self.deleteButton);
+            make.height.mas_equalTo(15);
+            make.width.mas_equalTo(65);
+            make.right.equalTo(self.deleteButton.mas_left).offset(-3);
+            //            make.height.equalTo(@30);
+        }];
+        subjectLabel;
+    });
+    
     // 横线
     _line = [[UIView alloc] init];
     _line.backgroundColor = DZSUIColorFromHex(0xF9F9F9);
@@ -401,6 +450,30 @@
     self.summaryLabel.preferredMaxLayoutWidth = [UIScreen mainScreen].bounds.size.width - 24;
 }
 
+- (void)setIsMyPosts:(BOOL)isMyPosts {
+    _isMyPosts = isMyPosts;
+    self.avatarImageView.hidden = isMyPosts;
+    self.authorLabel.hidden = isMyPosts;
+    self.imagesContentView.hidden = isMyPosts;
+    self.viewsView.hidden = isMyPosts;
+    self.repliesView.hidden = isMyPosts;
+    self.deleteButton.hidden = !isMyPosts;
+    self.threadStatusLabel.hidden = !isMyPosts;
+    if (isMyPosts) {
+        [_timeLabel mas_remakeConstraints:^(MASConstraintMaker *make) {
+            make.height.mas_equalTo(15);
+            make.right.equalTo(self.contentView).mas_offset(-12);
+            make.top.equalTo(_subjectLabel.mas_bottom).offset(10).priorityHigh();
+        }];
+        [_line mas_remakeConstraints:^(MASConstraintMaker *make) {
+            make.left.right.equalTo(self.contentView).priorityHigh();
+            make.height.mas_equalTo(1).priorityHigh();
+            make.top.equalTo(_timeLabel.mas_bottom);
+            make.left.bottom.equalTo(self.contentView);
+        }];
+    }
+}
+
 #pragma mark - cell赋值
 
 - (void) setThreadModel:(BBSThread *)threadModel
@@ -408,7 +481,23 @@
     //threadModel.address = @"游族网络";
     _threadModel = threadModel ;
     NSInteger dateline;
-    
+    if (threadModel.displayOrder == 0) {
+        self.threadStatusLabel.text = @"已通过";
+    } else if (threadModel.displayOrder == -1 || threadModel.displayOrder == -3) {
+        self.threadStatusLabel.text = @"审核未通过";
+    } else if (threadModel.displayOrder == -2) {
+        self.threadStatusLabel.text = @"审核中";
+    }
+    [self.subjectLabel mas_remakeConstraints:^(MASConstraintMaker *make) {
+        make.left.equalTo(_avatarImageView);
+        make.top.equalTo(self.contentView).offset(self.isMyPosts ? 12 : 70);
+        if (self.isMyPosts) {
+            make.right.equalTo(self.threadStatusLabel.mas_left).mas_offset(-5);
+        } else {
+            make.right.equalTo(self.contentView).offset(-12);
+        }
+        //            make.height.equalTo(@30);
+    }];
     if (threadModel.dateline)
     {
         dateline = threadModel.dateline;
@@ -480,7 +569,7 @@
     else
     {
     
-         _avatarImageView.image = [UIImage BBSImageNamed:@"/User/AvatarDefault2.png"];
+//         _avatarImageView.image = [UIImage BBSImageNamed:@"/User/AvatarDefault2.png"];
         //MARK:-//这个不能写在cell里面，要写在更换头像的地方
          //[[MOBFImageGetter sharedInstance] removeImageForURL:[NSURL URLWithString:_threadModel.avatar]];
         
@@ -534,7 +623,11 @@
     [_signView setupWithPaths:_signs.mutableCopy];
     
     
-    _timeLabel.text = [NSString bbs_timeTextWithTimesStamp:dateline];
+    if (self.isMyPosts) {
+        _timeLabel.text = threadModel.content;
+    } else {
+        _timeLabel.text = [NSString bbs_timeTextWithTimesStamp:dateline];
+    }
     
     NSInteger imageCount = _threadModel.images.count ;
     
@@ -613,6 +706,13 @@
     [image drawInRect:imageView.bounds];
     imageView.image = UIGraphicsGetImageFromCurrentImageContext();
     UIGraphicsEndImageContext();
+}
+
+- (void)deleteOnClick {
+    if (self.deleteOnClickBlock) {
+        NSLog(@"删除");
+        self.deleteOnClickBlock(self.threadModel);
+    }
 }
 
 - (void)makeConstraintWithImageType
@@ -1053,7 +1153,6 @@
     {
         _signView.hidden = true;
         _forumTagView.hidden = YES;
-        _timeLabel.hidden = NO;
         _subjectLabel.font = [UIFont boldSystemFontOfSize:16];
         
         [_repliesView setupWithCount:_threadModel.replies style:BBSUIViewRepliesStyleCharacters];

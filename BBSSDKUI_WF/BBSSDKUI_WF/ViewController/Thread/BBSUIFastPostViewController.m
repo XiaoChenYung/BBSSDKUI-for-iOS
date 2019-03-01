@@ -179,7 +179,7 @@
     self.hideNameButtonItem = [[UIBarButtonItem alloc] initWithCustomView:hideNameBtn];
     self.checkMasterButtonItem = [[UIBarButtonItem alloc] initWithCustomView:checkMasterButton];
     
-        self.navigationItem.rightBarButtonItems = @[self.publishButtonItem, self.hideNameButtonItem,self.checkMasterButtonItem];
+        self.navigationItem.rightBarButtonItems = @[self.publishButtonItem];
 //    }
 //    else
 //    {
