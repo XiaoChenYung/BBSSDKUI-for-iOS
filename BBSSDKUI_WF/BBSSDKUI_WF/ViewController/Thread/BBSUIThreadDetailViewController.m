@@ -980,7 +980,7 @@
             
             //1.创建会话对象
             NSURLSession *session = [NSURLSession sharedSession];
-            NSString *urlStr = [NSString stringWithFormat:@"http://47.105.63.78:34003/appapi/index.php?mod=user_addblack&buid=%@", [BBSUIContext shareInstance].currentUser.uid];
+            NSString *urlStr = [NSString stringWithFormat:@"http://bbs-qf.cloutropy.com/appapi/index.php?mod=user_addblack&buid=%@", [BBSUIContext shareInstance].currentUser.uid];
             //2.根据会话对象创建task
             NSURL *url = [NSURL URLWithString:urlStr];
             

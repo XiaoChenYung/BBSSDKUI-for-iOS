@@ -180,7 +180,7 @@
     for (BBSForum *obj in allData)
     {
         NSString *string = [NSString stringWithFormat:@"%ld", (long)obj.fup];
-        NSLog(@"----sss---%@", string);
+//        NSLog(@"----sss---%@", string);
         if (res[string])
         {
             [res[string] addObject:obj];
@@ -191,7 +191,7 @@
         }
     }
     
-    NSLog(@"-----%@",res.allValues);
+//    NSLog(@"-----%@",res.allValues);
     self.allDataArr = [NSMutableArray arrayWithArray:res.allValues];
     
 //    NSMutableArray *dataArray = [NSMutableArray arrayWithArray:res.allValues];
@@ -282,7 +282,7 @@
     }
     
     [self.stickArray enumerateObjectsUsingBlock:^(BBSForum *obj, NSUInteger idx, BOOL * _Nonnull stop) {
-        NSLog(@"====333==%@=%ld",obj.name, (long)obj.todayposts);
+//        NSLog(@"====333==%@=%ld",obj.name, (long)obj.todayposts);
     }];
     
 }
@@ -420,7 +420,7 @@
 - (void)stickChanged:(BBSUIForumSummaryCellTableViewCell *)cell
 {
     [self.stickArray enumerateObjectsUsingBlock:^(BBSForum *obj, NSUInteger idx, BOOL * _Nonnull stop) {
-        NSLog(@"====55555==%@=%ld",obj.name, (long)obj.todayposts);
+//        NSLog(@"====55555==%@=%ld",obj.name, (long)obj.todayposts);
     }];
     [[BBSUICacheManager sharedInstance] setStickForums:self.stickArray uid:[BBSUIContext shareInstance].currentUser.uid];
     

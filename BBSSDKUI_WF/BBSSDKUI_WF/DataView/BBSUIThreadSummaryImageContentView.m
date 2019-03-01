@@ -8,6 +8,7 @@
 
 #import "BBSUIThreadSummaryImageContentView.h"
 #import "BBSUIImagePreviewHUD.h"
+#import "UIImageView+WebCache.h"
 
 @interface BBSUIThreadSummaryImageContentView ()
 
@@ -55,17 +56,19 @@
         imageView.userInteractionEnabled = true;
         imageView.backgroundColor = [UIColor clearColor];
         if (i < images.count) {
-            imageView.image = [UIImage BBSImageNamed:@"/Home/wutu@2x.png"];
             NSString *url = images[i];
-            [[MOBFImageGetter sharedInstance] getImageDataWithURL:[NSURL URLWithString:url] result:^(NSData *imageData, NSError *error) {
-                if (error)
-                {
-                    NSLog(@"%@",error);
-                    return ;
-                }
-                UIImage *image = [UIImage imageWithData:imageData];
-                imageView.image = image;
-            }];
+            [imageView sd_setImageWithURL:[NSURL URLWithString:url]];
+//            imageView.image = [UIImage BBSImageNamed:@"/Home/wutu@2x.png"];
+//            NSString *url = images[i];
+//            [[MOBFImageGetter sharedInstance] getImageDataWithURL:[NSURL URLWithString:url] result:^(NSData *imageData, NSError *error) {
+//                if (error)
+//                {
+//                    NSLog(@"%@",error);
+//                    return ;
+//                }
+//                UIImage *image = [UIImage imageWithData:imageData];
+//                imageView.image = image;
+//            }];
         }
         [stackView addArrangedSubview:imageView];
     }

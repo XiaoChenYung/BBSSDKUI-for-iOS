@@ -13,6 +13,8 @@
 #import "BBSForum+BBSUI.h"
 #import "BBSUIProcessHUD.h"
 #import "BBSUIContentInsetsLabel.h"
+#import "UIImageView+WebCache.h"
+#import "UIImageView+WebCache.h"
 
 #define BBSUIForumImageViewHeight 50
 
@@ -170,19 +172,20 @@
         }];
     }
     if (forum.forumPic) {
-        self.forumImageView.image = [UIImage BBSImageNamed:@"/Common/forumList.png"];
-        [[MOBFImageGetter sharedInstance] getImageWithURL:[NSURL URLWithString:forum.forumPic] result:^(UIImage *image, NSError *error) {
-            
-            if (image) {
-                self.forumImageView.image = image;
-            }else{
-                if (forum.fid == 0) {
-                    [self.forumImageView setImage:[UIImage BBSImageNamed:@"/Forum/All.png"]];
-                }else{
-                    [self.forumImageView setImage:[UIImage BBSImageNamed:@"/Common/forumList.png"]];
-                }
-            }
-        }];
+        [self.forumImageView sd_setImageWithURL:[NSURL URLWithString:forum.forumPic]];
+//        self.forumImageView.image = [UIImage BBSImageNamed:@"/Common/forumList.png"];
+//        [[MOBFImageGetter sharedInstance] getImageWithURL:[NSURL URLWithString:forum.forumPic] result:^(UIImage *image, NSError *error) {
+//
+//            if (image) {
+//                self.forumImageView.image = image;
+//            }else{
+//                if (forum.fid == 0) {
+//                    [self.forumImageView setImage:[UIImage BBSImageNamed:@"/Forum/All.png"]];
+//                }else{
+//                    [self.forumImageView setImage:[UIImage BBSImageNamed:@"/Common/forumList.png"]];
+//                }
+//            }
+//        }];
         
     }else{
         if (forum.fid == 0) {

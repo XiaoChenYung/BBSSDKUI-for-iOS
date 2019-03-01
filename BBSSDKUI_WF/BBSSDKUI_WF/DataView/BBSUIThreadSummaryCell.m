@@ -479,6 +479,7 @@
 - (void) setThreadModel:(BBSThread *)threadModel
 {
     //threadModel.address = @"游族网络";
+    NSLog(@"aothorID: %@", @(threadModel.authorId));
     _threadModel = threadModel ;
     NSInteger dateline;
     if (threadModel.displayOrder == 0) {
@@ -574,31 +575,33 @@
          //[[MOBFImageGetter sharedInstance] removeImageForURL:[NSURL URLWithString:_threadModel.avatar]];
         
         
-        __weak typeof(self) weakSelf = self;
-        [[MOBFImageGetter sharedInstance] getImageDataWithURL:[NSURL URLWithString:_threadModel.avatar] allowReadCache:NO result:^(NSData *imageData, NSError *error) {
+//        __weak typeof(self) weakSelf = self;
+//        NSLog(@"头像地址: %@, %@", _threadModel.author, _threadModel.avatar);
+//        [[MOBFImageGetter sharedInstance] clearDisk];
+//        [[MOBFImageGetter sharedInstance] getImageDataWithURL:[NSURL URLWithString:_threadModel.avatar] allowReadCache:NO result:^(NSData *imageData, NSError *error) {
+//
+//            if (error)
+//            {
+//                NSLog(@"%@",error);
+//                return ;
+//            }
+//
+//            if (weakSelf.threadModel == _threadModel)
+//            {
+//                UIImage *image = [UIImage imageWithData:imageData];
+//
+//                [weakSelf setImageWithImage:image inView:_avatarImageView];
+//                _avatarImageView.image = image;
+//            }
+//        }];
+        [_avatarImageView sd_setImageWithURL:[NSURL URLWithString:_threadModel.avatar] placeholderImage:nil];
 
-            if (error)
-            {
-                NSLog(@"%@",error);
-                return ;
-            }
-
-            if (weakSelf.threadModel == _threadModel)
-            {
-                UIImage *image = [UIImage imageWithData:imageData];
-
-                [weakSelf setImageWithImage:image inView:_avatarImageView];
-                _avatarImageView.image = image;
-            }
-        }];
-        
-
-        [[SDImageCache sharedImageCache] clearMemory];
-        [[SDImageCache sharedImageCache] clearDiskOnCompletion:^{
-
-//            [_avatarImageView sd_setImageWithURL:[NSURL URLWithString:_threadModel.avatar]];
-
-        }];
+//        [[SDImageCache sharedImageCache] clearMemory];
+//        [[SDImageCache sharedImageCache] clearDiskOnCompletion:^{
+//
+////            [_avatarImageView sd_setImageWithURL:[NSURL URLWithString:_threadModel.avatar]];
+//
+//        }];
     }
     
     self.read = _threadModel.isSelected;
@@ -1017,21 +1020,21 @@
         
         //NSLog(@"--%@----vvv---setRead-%ld", _threadModel, (long)_threadModel.viewnum);
 
-        [_viewsView setupWithCount:_threadModel.viewnum style:BBSUIViewRepliesStyleImage];
+        [_viewsView setupWithCount:_threadModel.recommend_add style:BBSUIViewRepliesStyleImage];
         [_repliesView setupWithCount:_threadModel.commentnum style:BBSUIViewRepliesStyleImage];
     }
     else if (_cellType == BBSUIThreadSummaryCellTypeSearch)
     {
         title = _threadModel.subject;
         content = _threadModel.message;
-        [_viewsView setupWithCount:_threadModel.views style:BBSUIViewRepliesStyleImage];
+        [_viewsView setupWithCount:_threadModel.recommend_add style:BBSUIViewRepliesStyleImage];
         [_repliesView setupWithCount:_threadModel.replies style:BBSUIViewRepliesStyleImage];
     }
     else
     {
         title = _threadModel.subject;
         content = _threadModel.summary;
-        [_viewsView setupWithCount:_threadModel.views style:BBSUIViewRepliesStyleImage];
+        [_viewsView setupWithCount:_threadModel.recommend_add style:BBSUIViewRepliesStyleImage];
         [_repliesView setupWithCount:_threadModel.replies style:BBSUIViewRepliesStyleImage];
     }
     if (content.length == 0 || !content)
@@ -1156,7 +1159,7 @@
         _subjectLabel.font = [UIFont boldSystemFontOfSize:16];
         
         [_repliesView setupWithCount:_threadModel.replies style:BBSUIViewRepliesStyleCharacters];
-        [_viewsView setupWithCount:_threadModel.views style:BBSUIViewRepliesStyleCharacters];
+        [_viewsView setupWithCount:_threadModel.recommend_add style:BBSUIViewRepliesStyleCharacters];
         
 //        [_repliesView mas_remakeConstraints:^(MASConstraintMaker *make) {
 //            make.left.equalTo(self.contentView).offset(15);
@@ -1202,7 +1205,7 @@
         //NSLog(@"--%@----vvv----%ld", _threadModel, (long)_threadModel.views);
         
         
-        [_viewsView setupWithCount:_threadModel.views style:BBSUIViewRepliesStyleImage];
+        [_viewsView setupWithCount:_threadModel.recommend_add style:BBSUIViewRepliesStyleImage];
         
 //        [_repliesView mas_remakeConstraints:^(MASConstraintMaker *make) {
 //            make.left.equalTo(_forumTagView.mas_right).offset(23);

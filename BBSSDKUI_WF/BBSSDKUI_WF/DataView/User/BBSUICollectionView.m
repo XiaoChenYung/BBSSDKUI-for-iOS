@@ -97,7 +97,7 @@ static NSString *cellIdentifier = @"CollectionCell";
 - (void)login {
     NSDictionary *user = [[NSUserDefaults standardUserDefaults] valueForKey:@"Cookie"];
     if (user) {
-        NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"http://47.105.63.78:34003/appapi/login.php"]];
+        NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"http://bbs-qf.cloutropy.com/appapi/login.php"]];
         NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:url cachePolicy:NSURLRequestReloadIgnoringLocalCacheData timeoutInterval:10];
         [request addValue:@"application/x-www-form-urlencoded" forHTTPHeaderField:@"Content-Type"];
         request.HTTPMethod = @"POST";
@@ -112,15 +112,12 @@ static NSString *cellIdentifier = @"CollectionCell";
                     __weak typeof (self) weakSelf = self;
                     self.collectionTableView.mj_header = [MJRefreshNormalHeader headerWithRefreshingBlock:^{
                         weakSelf.currentIndex = 1;
-                        NSLog(@"执行了吗");
                         [weakSelf requestData];
                     }];
                     self.collectionTableView.mj_footer = [MJRefreshBackNormalFooter footerWithRefreshingBlock:^{
-                        NSLog(@"执行了吗");
                         weakSelf.currentIndex ++;
                         [weakSelf requestData];
                     }];
-                    NSLog(@"执行了吗呀");
                     [self requestData];
                 });
             } else {
@@ -144,7 +141,7 @@ static NSString *cellIdentifier = @"CollectionCell";
     if (_type == CollectionViewTypeThreadList) {
         NSCharacterSet *encode_set = [NSCharacterSet characterSetWithCharactersInString:@"#%<>[\\]^`{|}\"]+"].invertedSet;
         NSLog(@"token: %@",self.token);
-        NSString *oriURL = [NSString stringWithFormat:@"http://47.105.63.78:34003/appapi/index.php?mod=space_thread&token=%@&page=%zu&pagesize=%d", self.token, self.currentIndex, BBSUIPageSize];
+        NSString *oriURL = [NSString stringWithFormat:@"http://bbs-qf.cloutropy.com/appapi/index.php?mod=space_thread&token=%@&page=%zu&pagesize=%d", self.token, self.currentIndex, BBSUIPageSize];
         NSLog(@"oriURL: %@",oriURL);
         NSString *urlString_encode = [oriURL stringByAddingPercentEncodingWithAllowedCharacters: encode_set];
         NSURL *url = [NSURL URLWithString:urlString_encode];
@@ -166,7 +163,7 @@ static NSString *cellIdentifier = @"CollectionCell";
                         thread.subject = [modelDict valueForKey:@"subject"];
                         thread.content = [modelDict valueForKey:@"dateline"];
                         thread.displayOrder = [[modelDict valueForKey:@"displayorder"] integerValue];
-                        thread.originUid = [[BBSUIContext shareInstance].currentUser.uid integerValue];
+                        thread.authorId = [[modelDict valueForKey:@"authorid"] integerValue];
                         [modelArray addObject:thread];
                     }
                     if (weakSelf.currentIndex == 1) {
@@ -339,7 +336,7 @@ static NSString *cellIdentifier = @"CollectionCell";
     UIAlertAction *confirm = [UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDestructive handler:^(UIAlertAction * _Nonnull action) {
 //        NSURL *url = [NSURL URLWithString;
         NSCharacterSet *encode_set = [NSCharacterSet characterSetWithCharactersInString:@"#%<>[\\]^`{|}\"]+"].invertedSet;
-        NSString *oriURL = [NSString stringWithFormat:@"http://47.105.63.78:34003/appapi/index.php?mod=delete_forum&tid=%zu&token=%@", threadID, self.token];
+        NSString *oriURL = [NSString stringWithFormat:@"http://bbs-qf.cloutropy.com/appapi/index.php?mod=delete_forum&tid=%zu&token=%@", threadID, self.token];
           NSLog(@"oriURL: %@",oriURL);
           NSString *urlString_encode = [oriURL stringByAddingPercentEncodingWithAllowedCharacters: encode_set];
           NSURL *url = [NSURL URLWithString:urlString_encode];
